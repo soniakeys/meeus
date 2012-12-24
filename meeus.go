@@ -276,3 +276,27 @@ func (a *Angle) Format(f fmt.State, c rune) {
 func (a Angle) String() string {
 	return fmt.Sprintf("%s", a)
 }
+
+// FloorDivInt returns the floor of x / y.
+//
+// It uses integer math only, so is more efficient than using floating point
+// intermediate values.  This function can be used in many places where INT()
+// appears in AA.  As with built in integer division, it panics with y == 0.
+func FloorDivInt(x, y int) int {
+	if (x < 0) == (y < 0) {
+		return x / y
+	}
+	return x/y - 1
+}
+
+// FloorDivInt64 returns the floor of x / y.
+//
+// It uses integer math only, so is more efficient than using floating point
+// intermediate values.  This function can be used in many places where INT()
+// appears in AA.  As with built in integer division, it panics with y == 0.
+func FloorDivInt64(x, y int64) int64 {
+	if (x < 0) == (y < 0) {
+		return x / y
+	}
+	return x/y - 1
+}
