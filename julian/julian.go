@@ -1,4 +1,7 @@
-// Julian date conversions
+// Copyright 2012 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
+// Julian: Chapter 7, Julian day.
 package julian
 
 // JDMod is the Julian date of the modified Julian date epoch.

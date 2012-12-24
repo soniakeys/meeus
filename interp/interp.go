@@ -1,7 +1,7 @@
 // Copyright 2012 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Interp contains interpolation routines.
+// Interp: Chapter 3, Interpolation.
 package interp
 
 // Diff2 interpolates by taking second differences.
