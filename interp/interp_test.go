@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/soniakeys/meeus"
 	"github.com/soniakeys/meeus/interp"
 )
 
@@ -45,5 +46,22 @@ func TestExtremum2(t *testing.T) {
 	}
 	if math.Abs(y-1.3812030) > 1e-7 {
 		t.Fatal("Wrong ym", y)
+	}
+}
+
+func TestZero2(t *testing.T) {
+	x0 := 26.
+	dx := 1.
+	yTable := []float64{
+		meeus.DMSToRad(true, 0, 28, 13.4),
+		meeus.DMSToRad(false, 0, 6, 46.3),
+		meeus.DMSToRad(false, 0, 38, 23.2),
+	}
+	x, ok := interp.Zero2(yTable, x0, dx)
+	if !ok {
+		t.Fatal("Zero2 not ok")
+	}
+	if math.Abs(x-26.79873) > 1e-5 {
+		t.Fatal("Zero2", x)
 	}
 }

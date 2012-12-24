@@ -10,5 +10,5 @@ with corrections as of August 10, 2009.
     <tr><td>Unnamed chapter "Some Symbols and Abbreviations", plus chapter 1 "Hints and Tips"</td><td>meeus</td><td>complete</td></tr>
     <tr><td>3.  Interpolations</td><td>interp</td><td>partial</td></tr>
     <tr><td>7.  Julian Day</td><td>julian</td><td>complete</td></tr>
-    <tr><td>11. The Earth's globe</td><td>globe</td><td>complete</td></tr>
+    <tr><td>11. The Earth's Globe</td><td>globe</td><td>complete</td></tr>
 </table>
