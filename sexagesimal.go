@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 )
@@ -68,216 +69,86 @@ func DMSToDeg(neg bool, d, m int, s float64) float64 {
 	return s
 }
 
-// Angle, Time, and RA are defined with custom formatters.
-//
-// Given a value equivalent to 1.23 seconds,
-//	%s formats as 1.23″   (s for standard formatting)
-//	%d formats as 1″.23   (d for decimal symbol, as in DecSymAdd)
-//	%c formats as 1″̣23    (c for combining dot, as in DecSymCombine)
-//	%x formats as 1       (x for Fortran space, suppresses unit symbols)
-//	%0.2x formats as 00 00 0123
-//	%v formats the same as %s
-//
-// Width and precision are supported.  Precision must be <= 15.
-// The following flags are supported:
-//	+ always print leading sign
-//	- left justify within width
-//	' ' (space) leave space for elided sign
-//	0 pad all segments with leading zeros
-//
-// The 0 flag forces all formatted strings to have three numeric components,
-// An hour or degree, a minute, and a second.  Without the 0 flag, small vaues
-// will have zero values of hours, degrees, or minutes elided or space padded.
-// In most cases where you use the %x verb, you should also use the 0 flag.
-//
-// Note: for default floating point formatting, simply convert to float64.
-type Angle struct {
-	Rad           float64 // Angle in radians.
-	WidthOverflow string  // Message valid after format.
+// SexUnitSymbols (as in sexagesimal) holds symbols for formatting Angle,
+// HourAngle, and RA types.
+type SexUnitSymbols struct {
+	First, M, S rune
 }
 
-func NewAngle(rad float64) *Angle {
-	return &Angle{Rad: rad}
-}
+// DMSRunes specifies symbols use when formatting Angles.  You can change
+// these, perhaps to ASCII 'd', 'm', and 's', as needed.
+var DMSRunes = SexUnitSymbols{'°', '′', '″'}
 
-func (a *Angle) SetDMS(neg bool, d, m int, s float64) {
-	a.Rad = DMSToDeg(neg, d, m, s) * (math.Pi / 180)
-}
+// HMSRunes specifies symbols use when formatting HourAngles and RAs.
+// You can change these, perhaps to ASCII 'h', 'm', and 's', as needed.
+var HMSRunes = SexUnitSymbols{'ʰ', 'ᵐ', 'ˢ'}
 
-// implement fmt.Formatter
-func (a Angle) Format(f fmt.State, c rune) {
-	a.WidthOverflow = ""
-	// valiate verb
-	switch c {
-	case 's', 'd', 'c', 'v', 'x':
-	default:
-		fmt.Fprintf(f, "Invalid verb for Angle: %%%c", c)
-		return
-	}
-	// get meaningful precision
-	prec, ok := f.Precision()
-	if !ok {
-		prec = 0
-	}
-	// compute a width suitable for overflow result. the default is the width
-	// specified in the format spec, otherwise a reasonable minimum width.
-	wid, widSpec := f.Width()
-	if !widSpec {
-		if f.Flag('0') {
-			wid = 9 // 000 00 00
-		} else {
-			wid = 1 // at least one digit to left of decimal point
-		}
-		if prec > 0 {
-			wid = prec + 1
-		}
-		if f.Flag(' ') || f.Flag('+') {
-			wid++ // leading sign
-		}
-	}
-	// quick sanity checks.
-	// prec <= 13 keeps 60*pi exact in calculation a little bit below.
-	if prec > 13 {
-		a.WidthOverflow = "max allowed prec is 13"
-		f.Write(bytes.Repeat([]byte{'*'}, wid)) // overflow result
-		return
-	}
-	if math.IsNaN(a.Rad) || math.IsInf(a.Rad, 0) {
-		a.WidthOverflow = "Nan or Inf"
-		f.Write(bytes.Repeat([]byte{'*'}, wid)) // overflow result
-		return
-	}
-	// work with positive value
-	neg := false
-	x := a.Rad
-	if x < 0 {
-		neg = true
-		x = -x
-	}
-	pf := math.Pow(10, float64(prec)) // precision factor
-	// xs = x in seconds, scaled to precision
-	xs := x * pf * 3600 * 180 / math.Pi
-	// check that we can work with as as int64 without overflow
-	i := int64(xs + .5) // round
-	if i >= 1<<52 || math.Abs(xs-float64(i)) >= 1 {
-		a.WidthOverflow = "loss of precision"
-		f.Write(bytes.Repeat([]byte{'*'}, wid)) // overflow result
-		return
-	}
-	// compute integer values of segments
-	pi := int64(pf)
-	s := i % (60 * pi) // second segment, scaled to precision
-	i /= 60 * pi       // i now == minutes
-	m := i % 60        // minute segment
-	d := i / 60        // degree segment
-
-	// format seconds into partial result r
-	sw := prec + 1
-	if f.Flag('0') {
-		sw++
-	}
-	r := fmt.Sprintf("%0*d", sw, s) // format with leading zeros
-	if prec > 0 && c != 'x' {
-		r = r[:len(r)-prec] + "." + r[len(r)-prec:] // insert decimal point
-	}
-	// add seconds unit symbol
-	switch c {
-	case 's', 'v':
-		r += "″"
-	case 'd':
-		r = DecSymAdd(r, '″')
-	case 'c':
-		r = DecSymCombine(r, '″')
-	}
-	// add degrees, minutes to partial result
-	if c == 'x' {
-		switch {
-		case f.Flag('0'):
-			r = fmt.Sprintf("%03d %02d %s", d, m, r)
-		case d > 0:
-			r = fmt.Sprintf("%d %d %s", d, m, r)
-		case m > 0:
-			r = fmt.Sprintf("%d %s", m, r)
-		}
-	} else {
-		switch {
-		case f.Flag('0'):
-			r = fmt.Sprintf("%03d°%02d′%s", d, m, r)
-		case d > 0:
-			r = fmt.Sprintf("%d°%d′%s", d, m, r)
-		case m > 0:
-			r = fmt.Sprintf("%d′%s", m, r)
-		}
-	}
-	// add leading sign
-	switch {
-	case neg:
-		r = "-" + r
-	case f.Flag('+'):
-		r = "+" + r
-	case f.Flag(' '):
-		r = " " + r
-	}
-	// format complete, check for width overflow
-	if widSpec {
-		pad := wid - utf8.RuneCountInString(r)
-		if pad < 0 {
-			a.WidthOverflow = "result overflows width"
-			f.Write(bytes.Repeat([]byte{'*'}, wid)) // overflow result
-			return
-		}
-		if pad > 0 {
-			if f.Flag('-') {
-				r += strings.Repeat(" ", pad)
-			} else {
-				r = strings.Repeat(" ", pad) + r
-			}
-		}
-	}
-	f.Write([]byte(r))
-}
-
-func (a Angle) String() string {
-	return fmt.Sprintf("%s", a)
-}
-
-// RA formats to hours, minutes, seconds like Time, but wrapped to the range
-// 0 to 24 hours.  Sign formatting flags '+' and ' ' are ignored.
-// Otherwise see formatting notes under Angle.
-type RA struct {
-	Rad           float64 // Right ascension in radians.
-	WidthOverflow string  // Message valid after format.
-}
-
-func (ra *RA) SetHMS(neg bool, h, m int, s float64) {
-	hr := math.Mod(DMSToDeg(neg, h, m, s), 24)
-	if hr < 0 {
-		hr += 24
-	}
-	ra.Rad = hr * 15 * math.Pi / 180
-}
-
-// HourAngle formats to hours, minutes, seconds.  See formatting notes under Angle.
-type HourAngle struct {
-	Rad           float64 // Hour angle in radians.
-	WidthOverflow string  // Message valid after format.
-}
-
-func (ha *HourAngle) SetHMS(neg bool, h, m int, s float64) {
-	ha.Rad = DMSToDeg(neg, h, m, s) * 15 * math.Pi / 180
-}
-
+// WidthError is an explanatory error set when a formatting operation outputs
+// all stars, indicating a format overflow error.
 type WidthError string
 
+// Error implements the built in error interface.
 func (e WidthError) Error() string {
 	return string(e)
 }
 
-var WidthErrorInvalidPrecision = WidthError("Invalid precision")
-var WidthErrorLossOfPrecision = WidthError("Possible loss of precision")
+// Predefined WidthErrors.  The custom formatters for Angle, HourAngle, and RA
+// emit all asterisks, "*************", in these overflow cases.
+// The exact error is stored in the WidthError field of the type.
+var (
+	WidthErrorInvalidPrecision = WidthError("Invalid precision")
+	WidthErrorLossOfPrecision  = WidthError("Possible loss of precision")
+	WidthErrorDegreeOverflow   = WidthError("Degrees overflow width")
+	WidthErrorHourOverflow     = WidthError("Hours overflow width")
+	WidthErrorInfP             = WidthError("+Inf")
+	WidthErrorInfN             = WidthError("-Inf")
+	WidthErrorNaN              = WidthError("NaN")
+)
 
-func Split60(x float64, prec int) (neg bool, quo int64, rem string, err error) {
-	// limit of 15 set by max power of 10 is exactly representable as a float64
+// Split60 splits a decimal segment from a floating point number that
+// will be formatted in some sexagesimal notation.
+//
+// It is a low-level function used internally but exported to support
+// formatting cases not handled by the custom formatters of the Angle,
+// HourAngle, and RA types.
+//
+// Argument x is the number to split and prec specifies the number digits
+// to place past the decimal point in the decimal segment.
+//
+// Return value neg will be true if x is < 0. x60 and seg are then returned as
+// non-negative numbers.  Seg will be a formatted string in the range [0,60)
+// and the relation
+//	x60 * 60 + seg = abs(x)
+// will hold.
+//
+// Seg is returned as a string because x is rounded specifically for the
+// the specified precision.  Do not convert seg to a floating point number and
+// do further operations on it or you risk seeing results like 23′60″.
+// Seg will always have at least 1 digit to the left of the decimal point.
+// Set argument pad to true to 0-pad seg to two digits to the left.
+//
+// Maximum allowed precision is 15, but that is only valid for angles smaller
+// than a few arc seconds.  Larger angles will give a "Possible loss of
+// precision" error.  The maximum precision before getting a loss of precision
+// error decreases as the angle magnitude increases.  At one degree you can
+// get 12 digits of precision.  At 360 degrees you get 9.
+func Split60(x float64, prec int, pad bool) (neg bool, x60 int64, seg string,
+	err error) {
+
+	switch {
+	case math.IsNaN(x):
+		err = WidthErrorNaN
+	case !math.IsInf(x, 0):
+		goto P
+	case math.IsInf(x, 1):
+		err = WidthErrorInfP
+	default:
+		err = WidthErrorInfN
+	}
+	return
+P:
+	// limit of 15 set by max power of 10 that is exactly representable
+	// as a float64
 	if prec < 0 || prec > 15 {
 		err = WidthErrorInvalidPrecision
 		return
@@ -286,22 +157,214 @@ func Split60(x float64, prec int) (neg bool, quo int64, rem string, err error) {
 		x = -x
 		neg = true
 	}
-	pf := math.Pow(10, float64(prec)) // precision factor, exact
-	xs := x * pf                      // scale to precision
-	// check that we can work with xs as uint64 without overflow
+	// precision factor, known to be exact
+	pf := math.Pow(10, float64(prec))
+	xs := x * pf // scale to precision
+
+	// check that we can represent xs exactly
 	i := int64(xs + .5) // round
 	if i > 1<<52 {
 		err = WidthErrorLossOfPrecision
 		return
 	}
-	// compute integer values of segments
+	// compute final return values
 	p60 := 60 * int64(pf)
-	quo = i / p60
-	// digits of second segment, scaled to precision
-	rem = fmt.Sprintf("%0*d", prec+1, i%p60)
+	x60 = i / p60
+	// digits of segment, scaled to precision
+	digits := prec + 1
+	if pad {
+		digits++
+	}
+	seg = fmt.Sprintf("%0*d", digits, i%p60)
 	if prec > 0 {
-		split := len(rem) - prec
-		rem = rem[:split] + "." + rem[split:]
+		split := len(seg) - prec
+		seg = seg[:split] + "." + seg[split:]
 	}
 	return
+}
+
+// Angle represents a formattable angle.
+type Angle struct {
+	Rad        float64 // Angle in radians.
+	WidthError error   //  valid after format.
+}
+
+// SetDMS sets the value of an Angle from sign, degree, minute, and second
+// components.
+func (a *Angle) SetDMS(neg bool, d, m int, s float64) {
+	a.Rad = DMSToDeg(neg, d, m, s) * (math.Pi / 180)
+}
+
+// Format implements fmt.Formatter, formatting to degrees, minutes,
+// and seconds.
+func (a *Angle) Format(f fmt.State, c rune) {
+	a.WidthError = formatSex(a.Rad*3600*180/math.Pi, fsAngle, nil, f, c)
+}
+
+// String implements fmt.Stringer
+func (a *Angle) String() string {
+	return fmt.Sprintf("%s", a)
+}
+
+// HourAngle represents an angle corresponding to angular rotation of
+// the Earth in a specified time.
+type HourAngle struct {
+	Rad        float64 // Hour angle in radians.
+	WidthError error   // Valid after format.
+}
+
+// SetHMS sets the value of the HourAngle from time components sign, hour,
+// minute, and second.
+func (ha *HourAngle) SetHMS(neg bool, h, m int, s float64) {
+	ha.Rad = DMSToDeg(neg, h, m, s) * 15 * math.Pi / 180
+}
+
+// Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
+func (ha *HourAngle) Format(f fmt.State, c rune) {
+	ha.WidthError =
+		formatSex(ha.Rad*3600*180/math.Pi/15, fsHourAngle, nil, f, c)
+}
+
+// String implements fmt.Stringer
+func (ha *HourAngle) String() string {
+	return fmt.Sprintf("%s", ha)
+}
+
+// RA represents a value of right ascension.
+type RA struct {
+	Rad        float64 // Right ascension in radians.
+	WidthError error   // Valid after format.
+}
+
+// SetHMS sets the value of RA from components hour, minute, and second.
+// Negative values are not supported, and SetHMS wraps values larger than 24
+// to the range [0,24) hours.
+func (ra *RA) SetHMS(h, m int, s float64) {
+	hr := math.Mod(DMSToDeg(false, h, m, s), 24)
+	ra.Rad = hr * 15 * math.Pi / 180
+}
+
+// Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
+func (ra *RA) Format(f fmt.State, c rune) {
+	// repeat mod in case Rad was directly set to something out of range
+	decimalHours := math.Mod(ra.Rad*180/math.Pi/15, 24)
+	if decimalHours < 0 {
+		decimalHours += 24
+	}
+	ra.WidthError = formatSex(decimalHours*3600, fsRA, nil, f, c)
+}
+
+// String implements fmt.Stringer
+func (ra *RA) String() string {
+	return fmt.Sprintf("%s", ra)
+}
+
+const (
+	fsAngle = iota
+	fsHourAngle
+	fsRA
+)
+
+func formatSex(x float64, caller int, mock *string, f fmt.State, c rune) error {
+	// valiate verb
+	switch c {
+	case 's', 'd', 'c', 'v', 'x':
+	default:
+		fmt.Fprintf(f, "Invalid verb: %%%c", c)
+		return nil // not an overflow error
+	}
+	// declare some variables ahead of goto
+	var (
+		d, m     int64
+		s1       string
+		sexRune  SexUnitSymbols
+		wid1     int
+		wid1Spec bool
+	)
+	// get meaningful precision
+	prec, ok := f.Precision()
+	if !ok {
+		prec = 0
+	}
+	neg, x60, r, err := Split60(x, prec, f.Flag('0'))
+	if err != nil {
+		goto Overflow
+	}
+	// add seconds unit symbol
+	switch {
+	case c == 'x':
+		sexRune = SexUnitSymbols{' ', ' ', ' '}
+	case caller == fsAngle:
+		sexRune = DMSRunes
+	default:
+		sexRune = HMSRunes
+	}
+	switch c {
+	case 's', 'v':
+		r += string(sexRune.S)
+	case 'd':
+		r = DecSymAdd(r, sexRune.S)
+	case 'c':
+		r = DecSymCombine(r, sexRune.S)
+	}
+	// add degrees, minutes to partial result
+	d = x60 / 60
+	m = x60 % 60
+	s1 = strconv.FormatInt(d, 10)
+	wid1, wid1Spec = f.Width()
+	if wid1Spec {
+		// simple rule applies in all cases where width is specified:
+		if len(s1) > wid1 {
+			if caller == fsAngle {
+				err = WidthErrorDegreeOverflow
+			} else {
+				err = WidthErrorHourOverflow
+			}
+			goto Overflow
+		}
+	}
+	if f.Flag('#') || d > 0 {
+		if f.Flag('0') {
+			r = fmt.Sprintf("%0*s%c%02d%c%s",
+				wid1, s1, sexRune.First, m, sexRune.M, r)
+		} else {
+			r = fmt.Sprintf("%s%c%d%c%s",
+				s1, sexRune.First, m, sexRune.M, r)
+		}
+	} else if m > 0 {
+		if f.Flag('0') {
+			r = fmt.Sprintf("%02d%c%s", m, sexRune.M, r)
+		} else {
+			r = fmt.Sprintf("%d%c%s", m, sexRune.M, r)
+		}
+	}
+	// add leading sign
+	if caller != fsRA {
+		switch {
+		case neg:
+			r = "-" + r
+		case f.Flag('+'):
+			r = "+" + r
+		case f.Flag(' '):
+			r = " " + r
+		}
+	}
+	if mock == nil {
+		f.Write([]byte(r))
+	} else {
+		*mock = r
+	}
+	return nil
+Overflow:
+	err1 := err
+	var width int
+	if mock != nil { // detect recursive loop
+		width = 10
+	} else {
+		var valid string
+		formatSex(0, caller, &valid, f, c)
+		width = utf8.RuneCountInString(valid)
+	}
+	f.Write(bytes.Repeat([]byte{'*'}, width)) // emit overflow indicator
+	return err1
 }

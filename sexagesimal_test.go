@@ -65,7 +65,7 @@ func TestDMSToDeg(t *testing.T) {
 func TestRA_SetHMS(t *testing.T) {
 	// example p. 8
 	var a meeus.RA
-	a.SetHMS(false, 9, 14, 55.8)
+	a.SetHMS(9, 14, 55.8)
 	if math.Abs(math.Tan(a.Rad) - -.877517) > 1e-6 {
 		t.Fatal()
 	}
@@ -76,12 +76,54 @@ func TestAngle_SetDMS(t *testing.T) {
 	var a meeus.Angle
 	a.SetDMS(true, 13, 47, 22) // negative angle
 	if a.String() != "-13°47′22″" {
-		t.Fail()
+		t.Fatal(a.String())
 	}
 	a.SetDMS(true, 0, 32, 41) // negative, < 1 degree
-	if a.String() != "-32′41″" {
-		t.Fail()
+	t.Log(a.Rad)
+	if f := a.String(); f != "-32′41″" {
+		t.Fatal(f)
 	}
+}
+
+// example p. 6
+func TestAngle_Format(t *testing.T) {
+	a := new(meeus.Angle)
+	a.SetDMS(false, 23, 26, 44)
+	if f := a.String(); f != "23°26′44″" {
+		t.Fatal(f)
+	}
+}
+
+// example p. 6
+func TestHourAngle_Format(t *testing.T) {
+	a := new(meeus.HourAngle)
+	a.SetHMS(false, 15, 22, 7)
+	if f := fmt.Sprintf("%0s", a); f != "15ʰ22ᵐ07ˢ" {
+		t.Fatalf(f)
+	}
+}
+
+func TestOverflow(t *testing.T) {
+	a := new(meeus.Angle)
+	a.SetDMS(false, 23, 26, 44)
+	t.Logf("%03s", a)
+	a.SetDMS(false, 4423, 26, 44)
+	t.Logf("%03s", a)
+}
+
+func ExampleSplit60() {
+	neg, x60, seg, err := meeus.Split60(-123.456, 2, true)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	s := ""
+	if neg {
+		s = "-"
+	}
+	fmt.Printf("%s%02d° %s′\n", s, x60, seg)
+	// Output:
+	// -02° 03.46′
 }
 
 func TestSplit60(t *testing.T) {
@@ -105,7 +147,7 @@ func TestSplit60(t *testing.T) {
 		// 360 degrees (21600 minutes) can have 9.
 		{360 * 3600, 9, false, 21600, "0.000000000", nil},
 	} {
-		neg, quo, rem, err := meeus.Split60(tc.x, tc.prec)
+		neg, quo, rem, err := meeus.Split60(tc.x, tc.prec, false)
 		t.Log(neg, quo, rem, err)
 		if err != tc.err {
 			t.Logf("%#v", tc)
