@@ -2,115 +2,133 @@
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Interp: Chapter 3, Interpolation.
+//
+// Len3 and Len5 functions
+//
+// These functions interpolate from a table of equidistant x values
+// and corresponding y values.  Since the x values are equidistant,
+// only the first and last values are supplied as arguments.  The interior
+// values are implicit.
+//
+// All y values must be supplied however.  They are passed as a slice,
+// so the length of y is fixed.  For Len3 functions it must be 3 and for
+// Len5 functions it must be 5.
 package interp
 
 import (
+	"errors"
 	"math"
-
-	"github.com/soniakeys/meeus"
 )
 
-// Diff2 interpolates by taking second differences.
+var (
+	ErrorNot3        = errors.New("Argument yTable must be length 3")
+	ErrorNoXRange    = errors.New("Argument x3 cannot equal x1")
+	ErrorXOutOfRange = errors.New("Argument x outside of range x1 to x3")
+	ErrorNoExtremum  = errors.New("No extremum in table")
+	ErrorZeroOutside = errors.New("Zero falls outside of table")
+	ErrorNoConverge  = errors.New("Failure to converge")
+)
+
+// Len3Interpolate interpolates from a table of three rows
+// by taking second differences.
 //
-// AA p. 24.
-//
-// Argument y must be a table of y-values corresponding to evenly spaced
-// increasing x values.  The function panics if Len(y)<3.
-// Args x0 and xLast are the x values corresponding to the first and last
-// entries in the table.  xLast must be be > x0.
-// Function returns interpolated y value for argument x.
-//
-// The function extrapolates for values of x outside the table.
-func Diff2(y []float64, x0, xLast, x float64) float64 {
-	xRange := xLast - x0
-	iMax := float64(len(y) - 1)
-	i2 := int((x-x0)*iMax/xRange + .5)
-	switch {
-	case i2 < 1:
-		i2 = 1
-	case i2 > len(y)-2:
-		i2 = len(y) - 2
+// Function returns interpolated y value for argument x, as long as x is
+// within the table.  X3 must be > x1,
+func Len3Interpolate(x, x1, x3 float64, yTable []float64, allowExtrapolate bool) (y float64, err error) {
+	// AA p. 24.
+	if len(yTable) != 3 {
+		return 0, ErrorNot3
 	}
-	y2 := y[i2]
-	a := y2 - y[i2-1]
-	b := y[i2+1] - y2
+	if x3 == x1 {
+		return 0, ErrorNoXRange
+	}
+	if !allowExtrapolate {
+		if x3 > x1 {
+			// increasing x
+			if x < x1 || x > x3 {
+				return 0, ErrorXOutOfRange
+			}
+		} else {
+			// decreasing x
+			if x > x1 || x < x3 {
+				return 0, ErrorXOutOfRange
+			}
+		}
+	}
+	a := yTable[1] - yTable[0]
+	b := yTable[2] - yTable[1]
 	c := b - a
-	n := x - x0 - float64(i2)*xRange/iMax
-	return y2 + (n/2)*(a+b+n*c)
+	n := x - (x1+x3)*.5
+	return yTable[1] + n*.5*(a+b+n*c), nil
 }
 
-// Extremum2 finds and interpolates the first extremum in the table,
+// Len3Extremum finds the extremum in a table of 3 rows, interpolating
 // by second differences.
 //
-// It returns the x and y values at the extremum and ok=true if found,
-// ok=false otherwise.
-func Extremum2(y []float64, x0, dx float64) (xm, ym float64, ok bool) {
+// It returns the x and y values at the extremum.
+func Len3Extremum(x1, x3 float64, yTable []float64) (x, y float64, err error) {
 	// AA p. 25.
-	y2 := y[1] // y2 name corresponding to book
-	dir := meeus.Cmp(y[0], y2)
-	for i, y3 := range y[2:] {
-		if meeus.Cmp(y2, y3) != dir {
-			// found "appropriate part" of table
-			a := y2 - y[i]
-			b := y3 - y2
-			c := b - a
-			apb := a + b
-			ym = y2 - (apb*apb)/(8*c)
-			nm := apb / (-2 * c)
-			xm = x0 + (float64(i+1)+nm)*dx
-			ok = true
-			return
-		}
-		y2 = y3
+	if len(yTable) != 3 {
+		return 0, 0, ErrorNot3
 	}
-	return // fail
+	if x3 == x1 {
+		return 0, 0, ErrorNoXRange
+	}
+	a := yTable[1] - yTable[0]
+	b := yTable[2] - yTable[1]
+	c := b - a
+	if c == 0 {
+		return 0, 0, ErrorNoExtremum
+	}
+	apb := a + b
+	y = yTable[1] - (apb*apb)/(8*c)
+	n := apb / (-2 * c)
+	x = .5 * ((x3 + x1) + (x3-x1)*n)
+	return x, y, nil
 }
 
-// Zero2 finds and interpolates the first zero in the table,
+// Len3Zero finds the first zero in a table of three rows, interpolating
 // by second differences.
 //
-// It returns the x and y values at the extremum and ok=true if found,
-// ok=false otherwise.
-func Zero2(y []float64, x0, dx float64) (xy0 float64, ok bool) {
+// It returns the x value that yields y=0.
+//
+// Argument strong switches between two strategies for the estimation step.
+// when iterating to converge on the zero.
+// Strong=false specifies a quick and dirty estimate that works well
+// for gentle curves, but can work poorly or fail on more dramatic curves.
+//
+// Strong=true specifies a more sophisticated and thus somewhat more
+// expensive estimate.  However, if the curve has quick changes, This estimate
+// will converge more reliably and in fewer steps, making it a better choice.
+func Len3Zero(x1, x3 float64, yTable []float64, strong bool) (x float64, err error) {
 	// AA p. 26.
-	if len(y) < 3 {
-		return // fail. table too small
+	if len(yTable) != 3 {
+		return 0, ErrorNot3
 	}
-	y1 := y[0]
-	if y1 == 0 {
-		return x0, true
+	if x3 == x1 {
+		return 0, ErrorNoXRange
 	}
-	y2 := y[1]
-	if y2 == 0 {
-		return x0 + dx, true
-	}
-	s0 := math.Signbit(y1)
-	var y3 float64
-	i := 2
-	for {
-		y3 = y[i]
-		if y3 == 0 {
-			return x0 + float64(i)*dx, true
-		}
-		if math.Signbit(y3) != s0 {
-			break
-		}
-		i++
-		if i == len(y) {
-			return // fail.  no zero
-		}
-		y1, y2 = y2, y3
-	}
-	a := y2 - y1
-	b := y3 - y2
+	a := yTable[1] - yTable[0]
+	b := yTable[2] - yTable[1]
 	c := b - a
 	var n0, n1 float64
-	for {
-		n1 = -2 * y2 / (a + b + c*n0)
+	for limit := 0; limit < 50; limit++ {
+		if strong {
+			// AA p. 27.
+			n1 = n0 - (2*yTable[1]+n0*(a+b+c*n0))/(a+b+2*c*n0)
+		} else {
+			n1 = -2 * yTable[1] / (a + b + c*n0)
+		}
+		if math.IsInf(n1, 0) || math.IsNaN(n1) {
+			break // failure to converge
+		}
 		if math.Abs((n1-n0)/n0) < 1e-15 {
-			break
+			if n1 > 1 || n1 < -1 {
+				return 0, ErrorZeroOutside
+			}
+			return .5 * ((x3 + x1) + (x3-x1)*n1), nil // success
 		}
 		n0 = n1
 	}
-	return x0 + (float64(i-1)+n1)*dx, true
+	return 0, ErrorNoConverge
 }
