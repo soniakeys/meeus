@@ -69,19 +69,18 @@ func DMSToDeg(neg bool, d, m int, s float64) float64 {
 	return s
 }
 
-// SexUnitSymbols (as in sexagesimal) holds symbols for formatting Angle,
-// HourAngle, and RA types.
-type SexUnitSymbols struct {
+// UnitSymbols holds symbols for formatting Angle, HourAngle, and RA types.
+type UnitSymbols struct {
 	First, M, S rune
 }
 
 // DMSRunes specifies symbols use when formatting Angles.  You can change
 // these, perhaps to ASCII 'd', 'm', and 's', as needed.
-var DMSRunes = SexUnitSymbols{'°', '′', '″'}
+var DMSRunes = UnitSymbols{'°', '′', '″'}
 
 // HMSRunes specifies symbols use when formatting HourAngles and RAs.
 // You can change these, perhaps to ASCII 'h', 'm', and 's', as needed.
-var HMSRunes = SexUnitSymbols{'ʰ', 'ᵐ', 'ˢ'}
+var HMSRunes = UnitSymbols{'ʰ', 'ᵐ', 'ˢ'}
 
 // WidthError is an explanatory error set when a formatting operation outputs
 // all stars, indicating a format overflow error.
@@ -185,8 +184,8 @@ P:
 
 // Angle represents a formattable angle.
 type Angle struct {
-	Rad        float64 // Angle in radians.
-	WidthError error   //  valid after format.
+	Rad        float64 // angle in radians
+	WidthError error   // valid after format
 }
 
 // SetDMS sets the value of an Angle from sign, degree, minute, and second
@@ -209,8 +208,8 @@ func (a *Angle) String() string {
 // HourAngle represents an angle corresponding to angular rotation of
 // the Earth in a specified time.
 type HourAngle struct {
-	Rad        float64 // Hour angle in radians.
-	WidthError error   // Valid after format.
+	Rad        float64 // hour angle in radians
+	WidthError error   // valid after format
 }
 
 // SetHMS sets the value of the HourAngle from time components sign, hour,
@@ -232,8 +231,8 @@ func (ha *HourAngle) String() string {
 
 // RA represents a value of right ascension.
 type RA struct {
-	Rad        float64 // Right ascension in radians.
-	WidthError error   // Valid after format.
+	Rad        float64 // right ascension in radians
+	WidthError error   // valid after format
 }
 
 // SetHMS sets the value of RA from components hour, minute, and second.
@@ -277,7 +276,7 @@ func formatSex(x float64, caller int, mock *string, f fmt.State, c rune) error {
 	var (
 		d, m     int64
 		s1       string
-		sexRune  SexUnitSymbols
+		sexRune  UnitSymbols
 		wid1     int
 		wid1Spec bool
 	)
@@ -293,7 +292,7 @@ func formatSex(x float64, caller int, mock *string, f fmt.State, c rune) error {
 	// add seconds unit symbol
 	switch {
 	case c == 'x':
-		sexRune = SexUnitSymbols{' ', ' ', ' '}
+		sexRune = UnitSymbols{' ', ' ', ' '}
 	case caller == fsAngle:
 		sexRune = DMSRunes
 	default:

@@ -27,7 +27,7 @@ func FloorDiv64(x, y int64) int64 {
 	return x/y - 1
 }
 
-// Cmp compares two float64s and returns -1, 0, or 1 if a is <, >, or == b,
+// Cmp compares two float64s and returns -1, 0, or 1 if a is <, ==, or > b,
 // respectively.
 //
 // The name and semantics are chosen to match big.Cmp in the Go standard

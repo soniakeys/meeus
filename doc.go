@@ -39,10 +39,10 @@
 //
 // Verbs are s, d, c, x, and v.  The meanings are different than for
 // common Go types.  Given an Angle equivalent to 1.23 seconds,
-//  %s formats as 1.23″   (s for standard formatting)
-//  %d formats as 1″.23   (d for decimal symbol, as in DecSymAdd)
-//  %c formats as 1″̣23    (c for combining dot, as in DecSymCombine)
-//  %x formats as 1       (x for space, suppresses unit symbols)
+//  %.2s formats as 1.23″   (s for standard formatting)
+//  %.2d formats as 1″.23   (d for decimal symbol, as in DecSymAdd)
+//  %.2c formats as 1″̣23    (c for combining dot, as in DecSymCombine)
+//  %.2x formats as 123     (x for space, suppresses unit symbols and decimal point)
 //  %v formats the same as %s
 //
 // The following flags are supported:
@@ -51,7 +51,7 @@
 //  # display all three segments, even if 0
 //  0 pad all segments with leading zeros
 //
-// A + flag takes precedence over a ' ' flag.
+// A + flag takes precedence over a ' ' (space) flag.
 // The # flag forces all formatted strings to have three numeric components,
 // an hour or degree, a minute, and a second.  Without the # flag, small vaues
 // will have zero values of hours, degrees, or minutes elided.
@@ -66,8 +66,8 @@
 //
 // Precision specifies the number of places to display past the decimal point.
 //
-// To ensure fixed width output, use one of the + or ' ' flags, use the 0 flag,
-// and use a width.
+// To ensure fixed width output, use one of the + or ' ' (space) flags,
+// use the 0 flag, and use a width.
 //
 // The symbols used for degrees, minutes, and seconds for the Angle type
 // are taken from the package variable DMSRunes.  The symbols for
