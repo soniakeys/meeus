@@ -1,3 +1,5 @@
+// Globe: Chapter 11, The Earth's Globe.
+//
 // Globe contains functions concerning the surface of the Earth idealized as
 // an ellipsoid of revolution.
 package globe
@@ -28,7 +30,7 @@ func (e Ellipsoid) Eccentricity() float64 {
 	return math.Sqrt((2 - e.Fl) * e.Fl)
 }
 
-// Parallax computes parallax constants ρ sin φ' and ρ cos φ'.
+// Parallax computes parallax constants ρ sin φ′ and ρ cos φ′.
 //
 // Arguments are geographic latitude φ in radians and height h
 // in meters above the ellipsoid.
@@ -91,7 +93,7 @@ func OneDegreeOfLatitude(rm float64) float64 {
 }
 
 // GeocentricLatitudeDifference returns geographic latitude - geocentric
-// latitude (φ - φ') given geographic latitude (φ).
+// latitude (φ - φ′) given geographic latitude (φ).
 //
 // Units are radians.
 func GeocentricLatitudeDifference(φ float64) float64 {

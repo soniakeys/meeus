@@ -1,6 +1,7 @@
 package globe_test
 
 import (
+	"fmt"
 	"math"
 	"testing"
 
@@ -8,70 +9,67 @@ import (
 	"github.com/soniakeys/meeus/globe"
 )
 
+func ExampleEllipsoid_Parallax() {
+	// Example 11.a, p 82.
+	// phi = geographic latitude of Palomar
+	φ := new(meeus.Angle).SetDMS(false, 33, 21, 22)
+	s, c := globe.Earth76.Parallax(φ.Rad, 1706)
+	fmt.Printf("ρ sin φ′ = %+.6f\n", s)
+	fmt.Printf("ρ cos φ′ = %+.6f\n", c)
+	// Output:
+	// ρ sin φ′ = +0.546861
+	// ρ cos φ′ = +0.836339
+}
+
 // p. 83
 func TestLatDiff(t *testing.T) {
-	φ := meeus.DMSToRad(false, 45, 5, 46.36)
-	diff := globe.GeocentricLatitudeDifference(φ)
-	answer := meeus.DMSToRad(false, 0, 11, 32.73)
-	if math.Abs(answer-diff) > math.Pi/(180*3600*100) {
-		t.Fatalf("lat diff %d", diff)
+	φ0 := new(meeus.Angle).SetDMS(false, 45, 5, 46.36)
+	diff := new(meeus.Angle)
+	diff.Rad = globe.GeocentricLatitudeDifference(φ0.Rad)
+	if f := fmt.Sprintf("%.2d", diff); f != "11′32″.73" {
+		t.Fatal(f)
 	}
 }
 
-// Example 11.a, p 82.
-func TestParallax(t *testing.T) {
-	// phi = geographic latitude of Palomar
-	φ := meeus.DMSToRad(false, 33, 21, 22)
-	s, c := globe.Earth76.Parallax(φ, 1706)
-	if math.Abs(s-.546861) > 1e-6 || math.Abs(c-.836339) > 1e-6 {
-		t.Fatal("parallax")
-	}
-}
-
-// Example 11.b p 84.
-func TestOther(t *testing.T) {
+func ExampleEllipsoid_RadiusAtLatitude() {
+	// Example 11.b p 84.
 	φ := 42 * math.Pi / 180
 	rp := globe.Earth76.RadiusAtLatitude(φ)
-	if math.Abs(rp-4747.001) > 1e-3 {
-		t.Fatal("radius at lat")
-	}
-	if math.Abs(globe.OneDegreeOfLongitude(rp)-82.8508) > 1e-4 {
-		t.Fatal("degree of long")
-	}
-	if math.Abs(rp*globe.RotationRate1996_5-.34616) > 1e-5 {
-		t.Fatal("linear velocity")
-	}
+	fmt.Printf("Rp = %.3f km\n", rp)
+	fmt.Printf("1° of longitude = %.4f km\n", globe.OneDegreeOfLongitude(rp))
+	fmt.Printf("linear velocity = ωRp = %.5f km/second\n",
+		rp*globe.RotationRate1996_5)
 	rm := globe.Earth76.RadiusOfCurvature(φ)
-	if math.Abs(rm-6364.033) > 1e-3 {
-		t.Fatal("radius of curvature")
-	}
-	if math.Abs(globe.OneDegreeOfLatitude(rm)-111.0733) > 1e-4 {
-		t.Fatal("degree of lat")
-	}
+	fmt.Printf("Rm = %.3f km\n", rm)
+	fmt.Printf("1° of latitude = %.4f km\n", globe.OneDegreeOfLatitude(rm))
+	// Output:
+	// Rp = 4747.001 km
+	// 1° of longitude = 82.8508 km
+	// linear velocity = ωRp = 0.34616 km/second
+	// Rm = 6364.033 km
+	// 1° of latitude = 111.0733 km
 }
 
-// Example 11.c p 85.
-func TestDistance(t *testing.T) {
+func ExampleEllipsoid_Distance() {
+	// Example 11.c p 85.
 	c1 := globe.Coord{
-		meeus.DMSToRad(false, 48, 50, 11), // geographic latitude
-		meeus.DMSToRad(true, 2, 20, 14),   // geographic longitude
+		new(meeus.Angle).SetDMS(false, 48, 50, 11).Rad, // geographic latitude
+		new(meeus.Angle).SetDMS(true, 2, 20, 14).Rad,   // geographic longitude
 	}
 	c2 := globe.Coord{
-		meeus.DMSToRad(false, 38, 55, 17),
-		meeus.DMSToRad(false, 77, 3, 56),
+		new(meeus.Angle).SetDMS(false, 38, 55, 17).Rad,
+		new(meeus.Angle).SetDMS(false, 77, 3, 56).Rad,
 	}
-	if math.Abs(globe.Earth76.Distance(c1, c2)-6181.63) > .01 {
-		t.Fatal("distance")
-	}
+	fmt.Printf("%.2f km\n", globe.Earth76.Distance(c1, c2))
 	cos := globe.ApproxAngularDistance(c1, c2)
-	if math.Abs(cos-.567146) > 1e-6 {
-		t.Fatal("ApproxAngularDistance")
-	}
+	fmt.Printf("cos d = %.6f\n", cos)
 	d := math.Acos(cos)
-	if math.Abs(d*180/math.Pi-55.44855) > 1e-5 {
-		t.Fatal("Acos")
-	}
-	if math.Abs(globe.ApproxLinearDistance(d)-6166) > 1 {
-		t.Fatal("ApproxLinearDistance", globe.ApproxLinearDistance(d))
-	}
+	fmt.Println("    d =",
+		meeus.DecSymAdd(fmt.Sprintf("%.5f", d*180/math.Pi), '°'))
+	fmt.Printf("    s = %.0f km\n", globe.ApproxLinearDistance(d))
+	// Output:
+	// 6181.63 km
+	// cos d = 0.567146
+	//     d = 55°.44855
+	//     s = 6166 km
 }
