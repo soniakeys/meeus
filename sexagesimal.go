@@ -190,8 +190,11 @@ type Angle struct {
 
 // SetDMS sets the value of an Angle from sign, degree, minute, and second
 // components.
-func (a *Angle) SetDMS(neg bool, d, m int, s float64) {
+//
+// The receiver is returned as a convenience.
+func (a *Angle) SetDMS(neg bool, d, m int, s float64) *Angle {
 	a.Rad = DMSToDeg(neg, d, m, s) * (math.Pi / 180)
+	return a
 }
 
 // Format implements fmt.Formatter, formatting to degrees, minutes,
@@ -214,8 +217,11 @@ type HourAngle struct {
 
 // SetHMS sets the value of the HourAngle from time components sign, hour,
 // minute, and second.
-func (ha *HourAngle) SetHMS(neg bool, h, m int, s float64) {
+//
+// The receiver is returned as a convenience.
+func (ha *HourAngle) SetHMS(neg bool, h, m int, s float64) *HourAngle {
 	ha.Rad = DMSToDeg(neg, h, m, s) * 15 * math.Pi / 180
+	return ha
 }
 
 // Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
@@ -238,9 +244,12 @@ type RA struct {
 // SetHMS sets the value of RA from components hour, minute, and second.
 // Negative values are not supported, and SetHMS wraps values larger than 24
 // to the range [0,24) hours.
-func (ra *RA) SetHMS(h, m int, s float64) {
+//
+// The receiver is returned as a convenience.
+func (ra *RA) SetHMS(h, m int, s float64) *RA {
 	hr := math.Mod(DMSToDeg(false, h, m, s), 24)
 	ra.Rad = hr * 15 * math.Pi / 180
+	return ra
 }
 
 // Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
