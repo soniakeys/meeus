@@ -1,6 +1,7 @@
 package julian_test
 
 import (
+	"fmt"
 	"math"
 	"testing"
 	"time"
@@ -8,13 +9,29 @@ import (
 	"github.com/soniakeys/meeus/julian"
 )
 
+func ExampleCalendarGregorianToJD_sputnik() {
+	// Example 7.a, p. 61.
+	jd := julian.CalendarGregorianToJD(1957, 10, 4.81)
+	fmt.Printf("%.2f\n", jd)
+	// Output:
+	// 2436116.31
+}
+
+func ExampleCalendarGregorianToJD_halley() {
+	// Example 7.c, p. 64.
+	jd1 := julian.CalendarGregorianToJD(1910, 4, 20)
+	jd2 := julian.CalendarGregorianToJD(1986, 2, 9)
+	fmt.Printf("%.0f\n", jd2-jd1)
+	// Output:
+	// 27689
+}
+
 func TestGreg(t *testing.T) {
 	for _, tp := range []struct {
 		y, m  int
 		d, jd float64
 	}{
-		{1957, 10, 4.81, 2436116.31}, // Sputnik, Ex 7.a, p. 61
-		{2000, 1, 1.5, 2451545},      // more examples, p. 62
+		{2000, 1, 1.5, 2451545}, // more examples, p. 62
 		{1999, 1, 1, 2451179.5},
 		{1987, 1, 27, 2446822.5},
 		{1987, 6, 19.5, 2446966},
@@ -32,12 +49,19 @@ func TestGreg(t *testing.T) {
 	}
 }
 
+func ExampleCalendarJulianToJD() {
+	// Example 7.b, p. 61.
+	jd := julian.CalendarJulianToJD(333, 1, 27.5)
+	fmt.Printf("%.1f\n", jd)
+	// Output:
+	// 1842713.0
+}
+
 func TestJuli(t *testing.T) {
 	for _, tp := range []struct {
 		y, m  int
 		d, jd float64
 	}{
-		{333, 1, 27.5, 1842713},   // Ex 7.b, p. 61
 		{837, 4, 10.3, 2026871.8}, // more examples, p. 62
 		{-123, 12, 31, 1676496.5},
 		{-122, 1, 1, 1676497.5},
@@ -91,13 +115,20 @@ func TestGregLeap(t *testing.T) {
 	}
 }
 
+func ExampleJDToCalendar() {
+	// Example 7.c, p. 64.
+	y, m, d := julian.JDToCalendar(2436116.31)
+	fmt.Println("%d %d %.2f\n", y, m, d)
+	// Output
+	// 1957 10 4.81
+}
+
 func TestYMD(t *testing.T) {
 	for _, tp := range []struct {
 		jd   float64
 		y, m int
 		d    float64
 	}{
-		{2436116.31, 1957, 10, 4.81},
 		{1842713, 333, 1, 27.5},
 		{1507900.13, -584, 5, 28.63},
 	} {
@@ -109,33 +140,37 @@ func TestYMD(t *testing.T) {
 	}
 }
 
-func TestDOW(t *testing.T) {
-	if julian.DayOfWeek(2434923.5) != 3 {
-		t.Fatal("DOW")
-	}
+func ExampleDayOWeek() {
+	// Example 7.e, p. 65.
+	fmt.Println(julian.DayOfWeek(2434923.5))
+	// Output:
+	// 3
 }
 
-var doyTD = []struct {
-	y, m, d int
-	leap    bool
-	doy     int
-}{
-	{1978, 11, 14, false, 318},
-	{1988, 4, 22, true, 113},
+func ExampleDayOfYear_f() {
+	// Example 7.f, p. 65.
+	fmt.Println(julian.DayOfYear(1978, 11, 14, false))
+	// Output:
+	// 318
 }
 
-func TestDOY(t *testing.T) {
-	for _, tp := range doyTD {
-		doy := julian.DayOfYear(tp.y, tp.m, tp.d, tp.leap)
-		if doy != tp.doy {
-			t.Logf("%#v", tp)
-			t.Fatal("DayOfYear", doy)
-		}
-	}
+func ExampleDayOfYear_g() {
+	// Example 7.g, p. 65.
+	fmt.Println(julian.DayOfYear(1988, 4, 22, true))
+	// Output:
+	// 113
 }
 
 func TestDOYToCal(t *testing.T) {
-	for _, tp := range doyTD {
+	for _, tp := range []struct {
+		y, m, d int
+		leap    bool
+		doy     int
+	}{
+		// same data as examples above
+		{1978, 11, 14, false, 318},
+		{1988, 4, 22, true, 113},
+	} {
 		m, d := julian.DayOfYearToCalendar(tp.doy, tp.leap)
 		if m != tp.m || d != tp.d {
 			t.Logf("%#v", tp)

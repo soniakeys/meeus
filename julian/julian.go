@@ -5,8 +5,10 @@
 package julian
 
 import (
-	"github.com/soniakeys/meeus"
 	"math"
+	"time"
+
+	"github.com/soniakeys/meeus"
 )
 
 // JDMod is the Julian date of the modified Julian date epoch.
@@ -23,10 +25,10 @@ func CalendarGregorianToJD(y, m int, d float64) float64 {
 		y--
 		m += 12
 	}
-	a := meeus.FloorDivInt(y, 100)
-	b := 2 - a + meeus.FloorDivInt(a, 4)
-	return float64(meeus.FloorDivInt64(36525*(int64(y+4716)), 100)) +
-		float64(meeus.FloorDivInt(306*(m+1), 10)+b) + d - 1524.5
+	a := meeus.FloorDiv(y, 100)
+	b := 2 - a + meeus.FloorDiv(a, 4)
+	return float64(meeus.FloorDiv64(36525*(int64(y+4716)), 100)) +
+		float64(meeus.FloorDiv(306*(m+1), 10)+b) + d - 1524.5
 }
 
 // CalendarJulianToJD converts a Julian year, month, and day of month to Julian day.
@@ -39,8 +41,8 @@ func CalendarJulianToJD(y, m int, d float64) float64 {
 		y--
 		m += 12
 	}
-	return float64(meeus.FloorDivInt64(36525*(int64(y+4716)), 100)) +
-		float64(meeus.FloorDivInt(306*(m+1), 10)) + d - 1524.5
+	return float64(meeus.FloorDiv64(36525*(int64(y+4716)), 100)) +
+		float64(meeus.FloorDiv(306*(m+1), 10)) + d - 1524.5
 }
 
 // LeapYearJulian returns true if year y in the Julian calendar is a leap year.
@@ -54,20 +56,23 @@ func LeapYearGregorian(y int) bool {
 }
 
 // JDToCalendar returns the calendar date for the given jd.
+//
+// Note that this function returns a date in either the Julian or Gregorian
+// Calendar, as appropriate.
 func JDToCalendar(jd float64) (year, month int, day float64) {
 	zf, f := math.Modf(jd + .5)
 	z := int64(zf)
 	a := z
 	if z >= 2299151 {
-		α := meeus.FloorDivInt64(z*100-186721625, 3652425)
-		a = z + 1 + α - meeus.FloorDivInt64(α, 4)
+		α := meeus.FloorDiv64(z*100-186721625, 3652425)
+		a = z + 1 + α - meeus.FloorDiv64(α, 4)
 	}
 	b := a + 1524
-	c := meeus.FloorDivInt64(b*100-12210, 36525)
-	d := meeus.FloorDivInt64(36525*c, 100)
-	e := int(meeus.FloorDivInt64((b-d)*1e4, 306001))
+	c := meeus.FloorDiv64(b*100-12210, 36525)
+	d := meeus.FloorDiv64(36525*c, 100)
+	e := int(meeus.FloorDiv64((b-d)*1e4, 306001))
 	// compute return values
-	day = float64(int(b-d)-meeus.FloorDivInt(306001*e, 1e4)) + f
+	day = float64(int(b-d)-meeus.FloorDiv(306001*e, 1e4)) + f
 	switch e {
 	default:
 		month = e - 1
@@ -81,6 +86,54 @@ func JDToCalendar(jd float64) (year, month int, day float64) {
 		year = int(c) - 4715
 	}
 	return
+}
+
+// jdToCalendarGregorian returns the Gregorian calendar date for the given jd.
+//
+// Note that it returns a Gregorian date even for dates before the start of
+// the Gregorian calendar.  The function is useful when working with Go
+// time.Time values because they are always based on the Gregorian calendar.
+func jdToCalendarGregorian(jd float64) (year, month int, day float64) {
+	zf, f := math.Modf(jd + .5)
+	z := int64(zf)
+	α := meeus.FloorDiv64(z*100-186721625, 3652425)
+	a := z + 1 + α - meeus.FloorDiv64(α, 4)
+	b := a + 1524
+	c := meeus.FloorDiv64(b*100-12210, 36525)
+	d := meeus.FloorDiv64(36525*c, 100)
+	e := int(meeus.FloorDiv64((b-d)*1e4, 306001))
+	// compute return values
+	day = float64(int(b-d)-meeus.FloorDiv(306001*e, 1e4)) + f
+	switch e {
+	default:
+		month = e - 1
+	case 14, 15:
+		month = e - 13
+	}
+	switch month {
+	default:
+		year = int(c) - 4716
+	case 1, 2:
+		year = int(c) - 4715
+	}
+	return
+}
+
+// JDToTime takes a JD and returns a Go time.Time value.
+func JDToTime(jd float64) time.Time {
+	// time.Time is always Gregorian
+	y, m, d := jdToCalendarGregorian(jd)
+	t := time.Date(y, time.Month(m), 0, 0, 0, 0, 0, time.UTC)
+	return t.Add(time.Duration(d * 24 * float64(time.Hour)))
+}
+
+// TimeToJD takes a Go time.Time and returns a JD as float64.
+func TimeToJD(t time.Time) float64 {
+	ut := t.UTC()
+	y, m, _ := ut.Date()
+	d := ut.Sub(time.Date(y, m, 0, 0, 0, 0, 0, time.UTC))
+	// time.Time is always Gregorian
+	return CalendarGregorianToJD(y, int(m), float64(d)/float64(24*time.Hour))
 }
 
 // DayOfWeek determines the day of the week for a given JD.
