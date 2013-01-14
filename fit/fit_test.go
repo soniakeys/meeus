@@ -101,8 +101,8 @@ func ExampleMultiple3() {
 		{344, -.2126},
 	}
 	f0 := math.Sin
-	f1 := func(x float64) float64 { return math.Sin(2*x) }
-	f2 := func(x float64) float64 { return math.Sin(3*x) }
+	f1 := func(x float64) float64 { return math.Sin(2 * x) }
+	f2 := func(x float64) float64 { return math.Sin(3 * x) }
 	a, b, c := fit.Multiple3(data, f0, f1, f2)
 	fmt.Println(a, b, c)
 }

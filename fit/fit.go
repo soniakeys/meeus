@@ -79,19 +79,19 @@ func Multiple3(p []struct{ X, Y float64 }, f0, f1, f2 func(float64) float64) (a,
 		y0 := f0(x)
 		y1 := f1(x)
 		y2 := f2(x)
-		M += y0*y0
-		P += y0*y1
-		Q += y0*y2
-		R += y1*y1
-		S += y1*y2
-		T += y2*y2
-		U += y*y0
-		V += y*y1
-		W += y*y2
+		M += y0 * y0
+		P += y0 * y1
+		Q += y0 * y2
+		R += y1 * y1
+		S += y1 * y2
+		T += y2 * y2
+		U += y * y0
+		V += y * y1
+		W += y * y2
 	}
 	D := M*R*T + 2*P*Q*S - M*S*S - R*Q*Q - T*P*P
-	a = (U*(R*T - S*S) + V*(Q*S - P*T) + W*(P*S - Q*R)) / D
-	b = (U*(S*Q - P*T) + V*(M*T - Q*Q) + W*(P*Q - M*S)) / D
-	c = (U*(P*S - R*Q) + V*(P*Q - M*S) + W*(M*R - P*P)) / D
+	a = (U*(R*T-S*S) + V*(Q*S-P*T) + W*(P*S-Q*R)) / D
+	b = (U*(S*Q-P*T) + V*(M*T-Q*Q) + W*(P*Q-M*S)) / D
+	c = (U*(P*S-R*Q) + V*(P*Q-M*S) + W*(M*R-P*P)) / D
 	return
 }
