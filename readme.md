@@ -11,4 +11,5 @@ with corrections as of August 10, 2009.
     <tr><td>3.  Interpolations</td><td>interp</td><td>complete</td></tr>
     <tr><td>7.  Julian Day</td><td>julian</td><td>complete</td></tr>
     <tr><td>11. The Earth's Globe</td><td>globe</td><td>complete</td></tr>
+    <tr><td>12. Sidereal Time at Greenwich</td><td>greenwich</td><td>partial</td></tr>
 </table>
