@@ -3,6 +3,7 @@ package fit_test
 import (
 	"fmt"
 	"math"
+	"testing"
 
 	"github.com/soniakeys/meeus/fit"
 )
@@ -74,10 +75,40 @@ func ExampleCorrelationCoefficient() {
 	// r = -0.767
 }
 
-// Meeus provides this as an example, but without exact results.
-// In fact the answer doesn't seem close at all.  Correctness of the
-// function Multiple3 is suspect.
-func ExampleMultiple3() {
+// example data p. 40.
+// useful for testing Quadratic and Func3
+var qdata = []struct{ X, Y float64 }{
+	{-4, -6},
+	{-3, -1},
+	{-2, 2},
+	{-1, 3},
+	{0, 2},
+	{1, -1},
+	{2, -6},
+}
+
+func TestQuadratic(t *testing.T) {
+	a, b, c := fit.Quadratic(qdata)
+	if a != -1 || b != -2 || c != 2 {
+		t.Fatal(a, b, c)
+	}
+}
+
+// Text p. 45 shows quadratic is special case of Func3.
+// This indicates a test case for Func3
+func TestFunc3(t *testing.T) {
+	f0 := func(x float64) float64 { return x * x }
+	f1 := func(x float64) float64 { return x }
+	f2 := func(x float64) float64 { return 1 }
+	a, b, c := fit.Func3(qdata, f0, f1, f2)
+	if a != -1 || b != -2 || c != 2 {
+		t.Fatal(a, b, c)
+	}
+}
+
+func ExampleFunc3() {
+	// Example 4.c, p. 44.
+	// Provided without results.
 	data := []struct{ X, Y float64 }{
 		{3, .0433},
 		{20, .2532},
@@ -103,6 +134,21 @@ func ExampleMultiple3() {
 	f0 := math.Sin
 	f1 := func(x float64) float64 { return math.Sin(2 * x) }
 	f2 := func(x float64) float64 { return math.Sin(3 * x) }
-	a, b, c := fit.Multiple3(data, f0, f1, f2)
+	a, b, c := fit.Func3(data, f0, f1, f2)
 	fmt.Println(a, b, c)
+}
+
+func ExampleFunc1() {
+	data := []struct{ X, Y float64 }{
+		{0, 0},
+		{1, 1.2},
+		{2, 1.4},
+		{3, 1.7},
+		{4, 2.1},
+		{5, 2.2},
+	}
+	a := fit.Func1(data, math.Sqrt)
+	fmt.Printf("y = %.3f√x", a)
+	// Output:
+	// y = 1.016√x
 }

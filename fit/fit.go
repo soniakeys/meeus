@@ -66,12 +66,12 @@ func Quadratic(p []struct{ X, Y float64 }) (a, b, c float64) {
 	return
 }
 
-// Multiple3 implements multiple linear regression for a linear combination
+// Func3 implements multiple linear regression for a linear combination
 // of three functions.
 //
-// Given sample data and three functions in x, Multiple3 returns coefficients
+// Given sample data and three functions in x, Func3 returns coefficients
 // a, b, and c fitting y = aƒ₀(x) + bƒ₁(x) + cƒ₂(x) to sample data.
-func Multiple3(p []struct{ X, Y float64 }, f0, f1, f2 func(float64) float64) (a, b, c float64) {
+func Func3(p []struct{ X, Y float64 }, f0, f1, f2 func(float64) float64) (a, b, c float64) {
 	var M, P, Q, R, S, T, U, V, W float64
 	for i := range p {
 		x := p[i].X
@@ -94,4 +94,19 @@ func Multiple3(p []struct{ X, Y float64 }, f0, f1, f2 func(float64) float64) (a,
 	b = (U*(S*Q-P*T) + V*(M*T-Q*Q) + W*(P*Q-M*S)) / D
 	c = (U*(P*S-R*Q) + V*(P*Q-M*S) + W*(M*R-P*P)) / D
 	return
+}
+
+// Func1 fits a linear multiple of a function to sample data.
+//
+// Given sample data and a function in x, Func1 returns coefficient
+// a fitting y = aƒ(x).
+func Func1(p []struct{ X, Y float64 }, f func(float64) float64) float64 {
+	var syf, sf2 float64
+	for i := range p {
+		f := f(p[i].X)
+		y := p[i].Y
+		syf += y * f
+		sf2 += f * f
+	}
+	return syf / sf2
 }
