@@ -29,11 +29,24 @@
 // the unit symbol ahead of the decimal point.  Numbers modified with either
 // function can be returned to their original form with DecSymStrip.
 //
+// Sexagesimal types
+//
+// Not described in AA, but of great use are four types commonly expressed
+// in sexagesimal format: Angle, HourAngle, RA, and Time.
+// The underlying type of each is float64.  The unit for Angle, HourAngle,
+// and RA is radians.  The unit for Time is seconds.
+// Each type has a constructor that takes sexegesimal components.  Each type
+// also has a method, Rad or Seconds, that simply returns the underlying type.
+// Being based on float64s, these types are relatively efficient.
+//
 // Custom formatters
 //
-// Not described in AA, but of great use, three types are defined with custom
-// formatters that produce sexagesimal formattng.  These types are the Angle,
-// HourAngle, and RA types.
+// Parallel to the four types just described are four types with custom
+// formatters that produce sexagesimal formattng.  These types are FmtAngle,
+// FmtHourAngle, FmtRA, and FmtTime.  These types are structs with methods
+// that have pointer receivers.  There is more overhead with these types
+// than with the basic Angle, HourAngle, RA, and Time types.
+//
 // The syntax of a format specifier is
 //  %[flags][width][.precision]verb
 //
@@ -69,10 +82,10 @@
 // To ensure fixed width output, use one of the + or ' ' (space) flags,
 // use the 0 flag, and use a width.
 //
-// The symbols used for degrees, minutes, and seconds for the Angle type
+// The symbols used for degrees, minutes, and seconds for the FmtAngle type
 // are taken from the package variable DMSRunes.  The symbols for
-// hours, minutes, and seconds for the HourAngle and RA types are taken
-// from HMSRunes.
+// hours, minutes, and seconds for the FmtHourAngle, FmtRA, and FmtTime
+// types are taken from HMSRunes.
 //
 // Width Errors
 //

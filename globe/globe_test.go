@@ -12,8 +12,8 @@ import (
 func ExampleEllipsoid_Parallax() {
 	// Example 11.a, p 82.
 	// phi = geographic latitude of Palomar
-	φ := new(meeus.Angle).SetDMS(false, 33, 21, 22)
-	s, c := globe.Earth76.Parallax(φ.Rad, 1706)
+	φ := meeus.NewAngle(false, 33, 21, 22).Rad()
+	s, c := globe.Earth76.Parallax(φ, 1706)
 	fmt.Printf("ρ sin φ′ = %+.6f\n", s)
 	fmt.Printf("ρ cos φ′ = %+.6f\n", c)
 	// Output:
@@ -23,9 +23,8 @@ func ExampleEllipsoid_Parallax() {
 
 // p. 83
 func TestLatDiff(t *testing.T) {
-	φ0 := new(meeus.Angle).SetDMS(false, 45, 5, 46.36)
-	diff := new(meeus.Angle)
-	diff.Rad = globe.GeocentricLatitudeDifference(φ0.Rad)
+	φ0 := meeus.NewAngle(false, 45, 5, 46.36).Rad()
+	diff := meeus.NewFmtAngle(globe.GeocentricLatitudeDifference(φ0))
 	if f := fmt.Sprintf("%.2d", diff); f != "11′32″.73" {
 		t.Fatal(f)
 	}
@@ -53,12 +52,12 @@ func ExampleEllipsoid_RadiusAtLatitude() {
 func ExampleEllipsoid_Distance() {
 	// Example 11.c p 85.
 	c1 := globe.Coord{
-		new(meeus.Angle).SetDMS(false, 48, 50, 11).Rad, // geographic latitude
-		new(meeus.Angle).SetDMS(true, 2, 20, 14).Rad,   // geographic longitude
+		meeus.NewAngle(false, 48, 50, 11).Rad(), // geographic latitude
+		meeus.NewAngle(true, 2, 20, 14).Rad(),   // geographic longitude
 	}
 	c2 := globe.Coord{
-		new(meeus.Angle).SetDMS(false, 38, 55, 17).Rad,
-		new(meeus.Angle).SetDMS(false, 77, 3, 56).Rad,
+		meeus.NewAngle(false, 38, 55, 17).Rad(),
+		meeus.NewAngle(false, 77, 3, 56).Rad(),
 	}
 	fmt.Printf("%.2f km\n", globe.Earth76.Distance(c1, c2))
 	cos := globe.ApproxAngularDistance(c1, c2)

@@ -35,9 +35,11 @@ func ExampleLinear() {
 		{.1755, 9.32},
 		{.1746, 9.20},
 	})
-	fmt.Printf("a, b: %.2f, %.2f\n", a, b)
+	fmt.Printf("a = %.2f  b = %.2f\n", a, b)
+	fmt.Printf("m = %.2f + 5 logΔ  + %.2f log r\n", b, a)
 	// Output:
-	// a, b: 13.67, 7.03
+	// a = 13.67  b = 7.03
+	// m = 7.03 + 5 logΔ  + 13.67 log r
 }
 
 func ExampleCorrelationCoefficient() {
@@ -148,7 +150,7 @@ func ExampleFunc1() {
 		{5, 2.2},
 	}
 	a := fit.Func1(data, math.Sqrt)
-	fmt.Printf("y = %.3f√x", a)
+	fmt.Printf("y = %.3f√x\n", a)
 	// Output:
 	// y = 1.016√x
 }

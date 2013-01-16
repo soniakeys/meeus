@@ -7,13 +7,30 @@ import (
 	"time"
 
 	"github.com/soniakeys/meeus/deltat"
+	"github.com/soniakeys/meeus/interp"
 	"github.com/soniakeys/meeus/julian"
 )
 
-func ExampleDeltaT1900to1997() {
+func ExampleDeltaT1900to1997_table() {
 	// Example 10.a, p. 78.
-	// Text says ΔT = +48, Table 10.A on p. 79 shows +47.5
-	// DeltaT1900to1997 expected accuracy is 0.9 second.
+	jd := julian.TimeToJD(time.Date(1977, 2, 18, 3, 37, 40, 0, time.UTC))
+	year := 2000 + (jd-julian.J2000)/365.25
+	fmt.Printf("year %.1f\n", year)
+	x1, x3, yTable := interp.Slice(year,
+		deltat.TableYear1, deltat.TableYearN, deltat.Table10A, 3)
+	dt, err := interp.Len3Interpolate(year, x1, x3, yTable, false)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("%+.1f seconds\n", dt)
+	// Output:
+	// year 1977.1
+	// +46.8 seconds
+}
+
+func ExampleDeltaT1900to1997_polynomial() {
+	// Example 10.a, p. 78.
 	jd := julian.TimeToJD(time.Date(1977, 2, 18, 3, 37, 40, 0, time.UTC))
 	year := 2000 + (jd-julian.J2000)/365.25
 	fmt.Printf("year %.1f\n", year)

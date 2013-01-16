@@ -18,7 +18,7 @@ func ExampleLen3Interpolate() {
 		.877366,
 		.870531,
 	}
-	x := 8 + (4+21/60.)/24 // quick computation of the 8th day at 4:21
+	x := 8 + meeus.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
 	y, err := interp.Len3Interpolate(x, x1, x3, yTable, false)
 	if err != nil {
 		fmt.Println(err)
@@ -57,11 +57,11 @@ func ExampleLen3Zero() {
 	// Example 3.c, p. 26.
 	x1 := 26.
 	x3 := 28.
-	// work in degrees
+	// the y unit doesn't matter.  working in degrees is fine
 	yTable := []float64{
-		meeus.DMSToDeg(true, 0, 28, 13.4) * 180 / math.Pi,
-		meeus.DMSToDeg(false, 0, 6, 46.3) * 180 / math.Pi,
-		meeus.DMSToDeg(false, 0, 38, 23.2) * 180 / math.Pi,
+		meeus.DMSToDeg(true, 0, 28, 13.4),
+		meeus.DMSToDeg(false, 0, 6, 46.3),
+		meeus.DMSToDeg(false, 0, 38, 23.2),
 	}
 	x, err := interp.Len3Zero(x1, x3, yTable, false)
 	if err != nil {
@@ -93,18 +93,12 @@ func ExampleLen5Interpolate() {
 	x1 := 27.
 	x5 := 29.
 	// work in radians to get answer in radians
-	var pTable [5]meeus.Angle
-	pTable[0].SetDMS(false, 0, 54, 36.125)
-	pTable[1].SetDMS(false, 0, 54, 24.606)
-	pTable[2].SetDMS(false, 0, 54, 15.486)
-	pTable[3].SetDMS(false, 0, 54, 08.694)
-	pTable[4].SetDMS(false, 0, 54, 04.133)
 	yTable := []float64{
-		pTable[0].Rad,
-		pTable[1].Rad,
-		pTable[2].Rad,
-		pTable[3].Rad,
-		pTable[4].Rad,
+		meeus.NewAngle(false, 0, 54, 36.125).Rad(),
+		meeus.NewAngle(false, 0, 54, 24.606).Rad(),
+		meeus.NewAngle(false, 0, 54, 15.486).Rad(),
+		meeus.NewAngle(false, 0, 54, 08.694).Rad(),
+		meeus.NewAngle(false, 0, 54, 04.133).Rad(),
 	}
 	x := 28 + (3+20./60)/24
 	y, err := interp.Len5Interpolate(x, x1, x5, yTable, false)
@@ -113,7 +107,7 @@ func ExampleLen5Interpolate() {
 		return
 	}
 	// radians easy to format
-	fmt.Printf("%.3d", &meeus.Angle{Rad: y})
+	fmt.Printf("%.3d", meeus.NewFmtAngle(y))
 	// Output:
 	// 54′13″.369
 }
@@ -148,22 +142,17 @@ func TestLen5Zero(t *testing.T) {
 
 func ExampleLen4Half() {
 	// Example 3.f, p. 32.
-	var hTable [4]meeus.RA
-	hTable[0].SetHMS(10, 18, 48.732)
-	hTable[1].SetHMS(10, 23, 22.835)
-	hTable[2].SetHMS(10, 27, 57.247)
-	hTable[3].SetHMS(10, 32, 31.983)
 	half, err := interp.Len4Half([]float64{
-		hTable[0].Rad,
-		hTable[1].Rad,
-		hTable[2].Rad,
-		hTable[3].Rad,
+		meeus.NewRA(10, 18, 48.732).Rad(),
+		meeus.NewRA(10, 23, 22.835).Rad(),
+		meeus.NewRA(10, 27, 57.247).Rad(),
+		meeus.NewRA(10, 32, 31.983).Rad(),
 	})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("%.3d", &meeus.RA{Rad: half})
+	fmt.Printf("%.3d", meeus.NewFmtRA(half))
 	// Output:
 	// 10ʰ25ᵐ40ˢ.001
 }

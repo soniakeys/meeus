@@ -26,11 +26,15 @@ func jdToCFrac(jd float64) (cen, dayFrac float64) {
 // Union.
 var iau82 = []float64{24110.54841, 8640184.812866, 0.093104, 0.0000062}
 
-// MeanSidereal82 returns mean sidereal time at Greenwich for the given JD.
+// MeanSidereal returns mean sidereal time at Greenwich for the given JD.
 //
 // Computation is by IAU 1982 coefficients.  The results is in seconds of
 // time and is in the range [0,86400).
-func MeanSidereal82(jd float64) float64 {
+func MeanSidereal(jd float64) float64 {
 	cen, dayFrac := jdToCFrac(jd)
-	return math.Mod(meeus.Horner(cen, iau82)+dayFrac*1.00273790935*86400, 86400)
+	s := math.Mod(meeus.Horner(cen, iau82)+dayFrac*1.00273790935*86400, 86400)
+	if s < 0 {
+		s += 86400
+	}
+	return s
 }

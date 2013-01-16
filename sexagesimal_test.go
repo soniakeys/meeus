@@ -64,15 +64,15 @@ func TestDMSToDeg(t *testing.T) {
 
 func ExampleRA_SetHMS() {
 	// Example 1.a, p. 8.
-	a := new(meeus.RA).SetHMS(9, 14, 55.8)
-	fmt.Printf("%.6f\n", math.Tan(a.Rad))
+	a := meeus.NewRA(9, 14, 55.8)
+	fmt.Printf("%.6f\n", math.Tan(a.Rad()))
 	// Output:
 	// -0.877517
 }
 
 func TestAngle_SetDMS(t *testing.T) {
 	// examples p. 9
-	a := new(meeus.Angle).SetDMS(true, 13, 47, 22) // negative angle
+	a := new(meeus.FmtAngle).SetDMS(true, 13, 47, 22) // negative angle
 	if a.String() != "-13°47′22″" {
 		t.Fatal(a.String())
 	}
@@ -84,7 +84,7 @@ func TestAngle_SetDMS(t *testing.T) {
 
 // example p. 6
 func TestAngle_Format(t *testing.T) {
-	a := new(meeus.Angle).SetDMS(false, 23, 26, 44)
+	a := new(meeus.FmtAngle).SetDMS(false, 23, 26, 44)
 	if f := a.String(); f != "23°26′44″" {
 		t.Fatal(f)
 	}
@@ -92,14 +92,14 @@ func TestAngle_Format(t *testing.T) {
 
 // example p. 6
 func TestHourAngle_Format(t *testing.T) {
-	a := new(meeus.HourAngle).SetHMS(false, 15, 22, 7)
+	a := new(meeus.FmtHourAngle).SetHMS(false, 15, 22, 7)
 	if f := fmt.Sprintf("%0s", a); f != "15ʰ22ᵐ07ˢ" {
 		t.Fatalf(f)
 	}
 }
 
 func TestOverflow(t *testing.T) {
-	a := new(meeus.Angle).SetDMS(false, 23, 26, 44)
+	a := new(meeus.FmtAngle).SetDMS(false, 23, 26, 44)
 	if f := fmt.Sprintf("%03s", a); f != "023°26′44″" {
 		t.Fatal(f)
 	}

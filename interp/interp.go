@@ -16,10 +16,9 @@
 //
 // For these Len3 and Len5 functions, Meeus notes the importance of choosing
 // the 3 or 5 rows of a larger table that will minimize the interpolating
-// factor n.  He does not provide algorithms for doing this however, so none
-// are provided here.  For Interpolate, you must use your own algorithm to
-// select 3 or 5 rows that will have a middle row with x value closest to
-// the argument.  For Extremum and Zero, you must use your own algorithm to
+// factor n.  He does not provide algorithms for doing this however.
+// For Interpolate, see the Slice function.  For Extremum and Zero,
+// this package offers no solution yet.  You must use your own algorithm to
 // select 3 or 5 rows that will have a middle row with x value closest to
 // the expected result.
 package interp
@@ -43,6 +42,35 @@ var (
 	ErrorZeroOutside = errors.New("Zero falls outside of table")
 	ErrorNoConverge  = errors.New("Failure to converge")
 )
+
+// Slice finds the slice of an interpolation table that minimizes the
+// interplation factor.
+//
+// It is applicable when interpolating on tables with equadistant x values.
+//
+// Argument x is the x value to interpolate, x1 and xn are the first and last
+// x values of the table, y is the table of y values, n is the length of the
+// slice to return, typically 3 or 5.
+//
+// Return values are the first and last x values corresponding to the slice
+// and the slice itself.
+func Slice(x, x1, xn float64, y []float64, n int) (sx1, sxn float64, s []float64) {
+	if n >= len(y) {
+		return x1, xn, y
+	}
+	interval := (xn - x1) / float64(len(y)-1)
+	nearestX := int((x-x1)/interval + .5)
+	span := (n - 1) / 2
+	switch {
+	case nearestX < span:
+		nearestX = span
+	case nearestX > len(y)-1-span:
+		nearestX = span
+	}
+	start := nearestX - span
+	return x1 + float64(start)*interval, x1 + float64(start+n-1)*interval,
+		y[start : start+n]
+}
 
 // Len3Interpolate interpolates from a table of three rows
 // by taking second differences.

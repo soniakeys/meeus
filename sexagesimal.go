@@ -69,16 +69,19 @@ func DMSToDeg(neg bool, d, m int, s float64) float64 {
 	return s
 }
 
-// UnitSymbols holds symbols for formatting Angle, HourAngle, and RA types.
+// UnitSymbols holds symbols for formatting FmtAngle, FmtHourAngle, FmtRA,
+// and FmtTime types.
 type UnitSymbols struct {
 	First, M, S rune
 }
 
-// DMSRunes specifies symbols use when formatting Angles.  You can change
+// DMSRunes specifies symbols use when formatting angles.  You can change
 // these, perhaps to ASCII 'd', 'm', and 's', as needed.
 var DMSRunes = UnitSymbols{'°', '′', '″'}
 
-// HMSRunes specifies symbols use when formatting HourAngles and RAs.
+// HMSRunes specifies symbols use when formatting hour angles, right
+// ascensions, and times.
+//
 // You can change these, perhaps to ASCII 'h', 'm', and 's', as needed.
 var HMSRunes = UnitSymbols{'ʰ', 'ᵐ', 'ˢ'}
 
@@ -91,9 +94,9 @@ func (e WidthError) Error() string {
 	return string(e)
 }
 
-// Predefined WidthErrors.  The custom formatters for Angle, HourAngle, and RA
-// emit all asterisks, "*************", in these overflow cases.
-// The exact error is stored in the WidthError field of the type.
+// Predefined WidthErrors.  The custom formatters for FmtAngle, FmtHourAngle,
+// FmtRA, and FmtTime emit all asterisks, "*************", in these overflow
+// cases.  The exact error is stored in the WidthError field of the type.
 var (
 	WidthErrorInvalidPrecision = WidthError("Invalid precision")
 	WidthErrorLossOfPrecision  = WidthError("Possible loss of precision")
@@ -108,8 +111,8 @@ var (
 // will be formatted in some sexagesimal notation.
 //
 // It is a low-level function used internally but exported to support
-// formatting cases not handled by the custom formatters of the Angle,
-// HourAngle, and RA types.
+// formatting cases not handled by the custom formatters of the FmtAngle,
+// FmtHourAngle, FmtRA, and FmtTime types.
 //
 // Argument x is the number to split and prec specifies the number digits
 // to place past the decimal point in the decimal segment.
@@ -131,8 +134,7 @@ var (
 // precision" error.  The maximum precision before getting a loss of precision
 // error decreases as the angle magnitude increases.  At one degree you can
 // get 12 digits of precision.  At 360 degrees you get 9.
-func Split60(x float64, prec int, pad bool) (neg bool, x60 int64, seg string,
-	err error) {
+func Split60(x float64, prec int, pad bool) (neg bool, x60 int64, seg string, err error) {
 
 	switch {
 	case math.IsNaN(x):
@@ -182,63 +184,133 @@ P:
 	return
 }
 
-// Angle represents a formattable angle.
-type Angle struct {
-	Rad        float64 // angle in radians
-	WidthError error   // valid after format
+// Angle represents a general purpose angle.
+//
+// Unit is radians.
+type Angle float64
+
+// NewAngle constructs a new Angle value from sign, degree, minute, and second
+// components.
+func NewAngle(neg bool, d, m int, s float64) Angle {
+	return Angle(DMSToDeg(neg, d, m, s) * (math.Pi / 180))
 }
 
-// SetDMS sets the value of an Angle from sign, degree, minute, and second
+// Rad returns the value of the angle as a float64.
+func (a Angle) Rad() float64 { return float64(a) }
+
+// FmtAngle is represents a formattable angle.
+type FmtAngle struct {
+	Angle            // embedded Angle with Rad method
+	WidthError error // valid after format
+}
+
+// NewFmtAngle constructs a new FmtAngle from a float64 in radians.
+func NewFmtAngle(rad float64) *FmtAngle {
+	return &FmtAngle{Angle: Angle(rad)}
+}
+
+// SetDMS sets the value of an FAngle from sign, degree, minute, and second
 // components.
 //
 // The receiver is returned as a convenience.
-func (a *Angle) SetDMS(neg bool, d, m int, s float64) *Angle {
-	a.Rad = DMSToDeg(neg, d, m, s) * (math.Pi / 180)
+func (a *FmtAngle) SetDMS(neg bool, d, m int, s float64) *FmtAngle {
+	a.Angle = NewAngle(neg, d, m, s)
 	return a
 }
 
 // Format implements fmt.Formatter, formatting to degrees, minutes,
 // and seconds.
-func (a *Angle) Format(f fmt.State, c rune) {
-	a.WidthError = formatSex(a.Rad*3600*180/math.Pi, fsAngle, nil, f, c)
+func (a *FmtAngle) Format(f fmt.State, c rune) {
+	a.WidthError = formatSex(a.Rad()*3600*180/math.Pi, fsAngle, nil, f, c)
 }
 
 // String implements fmt.Stringer
-func (a *Angle) String() string {
+func (a *FmtAngle) String() string {
 	return fmt.Sprintf("%s", a)
 }
 
 // HourAngle represents an angle corresponding to angular rotation of
 // the Earth in a specified time.
-type HourAngle struct {
-	Rad        float64 // hour angle in radians
-	WidthError error   // valid after format
+//
+// Unit is radians.
+type HourAngle float64
+
+// NewHourAngle constructs a new HourAngle value from sign, hour, minute,
+// and second components.
+func NewHourAngle(neg bool, h, m int, s float64) HourAngle {
+	return HourAngle(DMSToDeg(neg, h, m, s) * 15 * math.Pi / 180)
+}
+
+// Rad returns the value of the hour angle as a float64.
+//
+// Unit is radians.
+func (a HourAngle) Rad() float64 { return float64(a) }
+
+// FmtHourAngle represents a formattable angle hour.
+type FmtHourAngle struct {
+	HourAngle        // embedded HourAngle with Rad method
+	WidthError error // valid after format
+}
+
+// NewFmtHourAngle constructs a new FmtHourAngle from a float64 in radians.
+func NewFmtHourAngle(rad float64) *FmtHourAngle {
+	return &FmtHourAngle{HourAngle: HourAngle(rad)}
 }
 
 // SetHMS sets the value of the HourAngle from time components sign, hour,
 // minute, and second.
 //
 // The receiver is returned as a convenience.
-func (ha *HourAngle) SetHMS(neg bool, h, m int, s float64) *HourAngle {
-	ha.Rad = DMSToDeg(neg, h, m, s) * 15 * math.Pi / 180
+func (ha *FmtHourAngle) SetHMS(neg bool, h, m int, s float64) *FmtHourAngle {
+	ha.HourAngle = NewHourAngle(neg, h, m, s)
 	return ha
 }
 
 // Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
-func (ha *HourAngle) Format(f fmt.State, c rune) {
+func (ha *FmtHourAngle) Format(f fmt.State, c rune) {
 	ha.WidthError =
-		formatSex(ha.Rad*3600*180/math.Pi/15, fsHourAngle, nil, f, c)
+		formatSex(ha.Rad()*3600*180/math.Pi/15, fsHourAngle, nil, f, c)
 }
 
 // String implements fmt.Stringer
-func (ha *HourAngle) String() string {
+func (ha *FmtHourAngle) String() string {
 	return fmt.Sprintf("%s", ha)
 }
 
 // RA represents a value of right ascension.
-type RA struct {
-	Rad        float64 // right ascension in radians
-	WidthError error   // valid after format
+//
+// Unit is radians.
+type RA float64
+
+// NewRA constructs a new RA value from hour, minute, and second components.
+//
+// Negative values are not supported, and NewRA wraps values larger than 24
+// to the range [0,24) hours.
+func NewRA(h, m int, s float64) RA {
+	hr := math.Mod(DMSToDeg(false, h, m, s), 24)
+	return RA(hr * 15 * math.Pi / 180)
+}
+
+// Rad returns the RA value as a float64.
+//
+// Unit is radians.
+func (ra RA) Rad() float64 { return float64(ra) }
+
+// FmtRA represents a formattable right ascension.
+type FmtRA struct {
+	RA               // embedded RA with Rad method
+	WidthError error // valid after format
+}
+
+// NewFmtRA constructs a new FmtRA from a float64 in radians.
+//
+// The value is wrapped to the range [0,24) hours.
+func NewFmtRA(rad float64) *FmtRA {
+	rad = math.Mod(rad, 2*math.Pi)
+	if rad < 0 {
+		rad += 2 * math.Pi
+	}
+	return &FmtRA{RA: RA(rad)}
 }
 
 // SetHMS sets the value of RA from components hour, minute, and second.
@@ -246,16 +318,15 @@ type RA struct {
 // to the range [0,24) hours.
 //
 // The receiver is returned as a convenience.
-func (ra *RA) SetHMS(h, m int, s float64) *RA {
-	hr := math.Mod(DMSToDeg(false, h, m, s), 24)
-	ra.Rad = hr * 15 * math.Pi / 180
+func (ra *FmtRA) SetHMS(h, m int, s float64) *FmtRA {
+	ra.RA = NewRA(h, m, s)
 	return ra
 }
 
 // Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
-func (ra *RA) Format(f fmt.State, c rune) {
+func (ra *FmtRA) Format(f fmt.State, c rune) {
 	// repeat mod in case Rad was directly set to something out of range
-	decimalHours := math.Mod(ra.Rad*180/math.Pi/15, 24)
+	decimalHours := math.Mod(ra.Rad()*180/math.Pi/15, 24)
 	if decimalHours < 0 {
 		decimalHours += 24
 	}
@@ -263,14 +334,74 @@ func (ra *RA) Format(f fmt.State, c rune) {
 }
 
 // String implements fmt.Stringer
-func (ra *RA) String() string {
+func (ra *FmtRA) String() string {
 	return fmt.Sprintf("%s", ra)
+}
+
+// Time represents a duration or relative time.
+//
+// Unit is seconds.
+type Time float64
+
+// NewTime constructs a new Time value from sign, hour, minute, and
+// second components.
+func NewTime(neg bool, h, m int, s float64) Time {
+	s += float64((h*60 + m) * 60)
+	if neg {
+		return Time(-s)
+	}
+	return Time(s)
+}
+
+// Sec returns the Time value as a float64.
+//
+// Unit is seconds.
+func (t Time) Sec() float64 { return float64(t) }
+
+// Min returns time in minutes.
+func (t Time) Min() float64 { return float64(t)/60 }
+
+// Hour returns time in hours. 
+func (t Time) Hour() float64 { return float64(t)/3600 }
+
+// Day returns time in days.
+func (t Time) Day() float64 { return float64(t)/3600/24 }
+
+// FmtTime represents a formattable duration or relative time.
+type FmtTime struct {
+	Time             // embedded Time with Sec method
+	WidthError error // valid after format
+}
+
+// NewFmtTime constructs a new FmtTime from a float64 in seconds.
+func NewFmtTime(sec float64) *FmtTime {
+	return &FmtTime{Time: Time(sec)}
+}
+
+// SetHMS sets the value of FmtTime from time components sign, hour,
+// minute, and second.
+//
+// The receiver is returned as a convenience.
+func (t *FmtTime) SetHMS(neg bool, h, m int, s float64) *FmtTime {
+	t.Time = NewTime(neg, h, m, s)
+	return t
+}
+
+// Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
+func (t *FmtTime) Format(f fmt.State, c rune) {
+	t.WidthError = formatSex(t.Sec(), fsTime, nil, f, c)
+}
+
+// String implements fmt.Stringer
+func (t *FmtTime) String() string {
+	return fmt.Sprintf("%s", t)
 }
 
 const (
 	fsAngle = iota
 	fsHourAngle
 	fsRA
+	fsTime
 )
 
 func formatSex(x float64, caller int, mock *string, f fmt.State, c rune) error {
