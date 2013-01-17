@@ -11,12 +11,6 @@ import (
 	"github.com/soniakeys/meeus"
 )
 
-// JDMod is the Julian date of the modified Julian date epoch.
-const JDMod = 2400000.5
-
-// J2000 is the Julian date corresponding to January 1.5, year 2000.
-const J2000 = 2451545.0
-
 // CalendarGregorianToJD converts a Gregorian year, month, and day of month
 // to Julian day.
 //
@@ -131,6 +125,9 @@ func JDToTime(jd float64) time.Time {
 }
 
 // TimeToJD takes a Go time.Time and returns a JD as float64.
+//
+// Any time zone offset in the time.Time is ignored and the time is
+// treated as UTC.
 func TimeToJD(t time.Time) float64 {
 	ut := t.UTC()
 	y, m, _ := ut.Date()
