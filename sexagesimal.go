@@ -359,13 +359,16 @@ func NewTime(neg bool, h, m int, s float64) Time {
 func (t Time) Sec() float64 { return float64(t) }
 
 // Min returns time in minutes.
-func (t Time) Min() float64 { return float64(t)/60 }
+func (t Time) Min() float64 { return float64(t) / 60 }
 
-// Hour returns time in hours. 
-func (t Time) Hour() float64 { return float64(t)/3600 }
+// Hour returns time in hours.
+func (t Time) Hour() float64 { return float64(t) / 3600 }
 
 // Day returns time in days.
-func (t Time) Day() float64 { return float64(t)/3600/24 }
+func (t Time) Day() float64 { return float64(t) / 3600 / 24 }
+
+// Rad returns time in radians, where 1 day = 2 Pi radians.
+func (t Time) Rad() float64 { return float64(t) * math.Pi / 12 / 3600 }
 
 // FmtTime represents a formattable duration or relative time.
 type FmtTime struct {
