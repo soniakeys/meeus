@@ -192,11 +192,16 @@ type Angle float64
 // NewAngle constructs a new Angle value from sign, degree, minute, and second
 // components.
 func NewAngle(neg bool, d, m int, s float64) Angle {
-	return Angle(DMSToDeg(neg, d, m, s) * (math.Pi / 180))
+	return Angle(DMSToDeg(neg, d, m, s) * math.Pi / 180)
 }
 
-// Rad returns the value of the angle as a float64.
+// Rad returns the angle in radians.
+//
+// This is the underlying representation and involves no scaling.
 func (a Angle) Rad() float64 { return float64(a) }
+
+// Deg returns the angle in degrees.
+func (a Angle) Deg() float64 { return float64(a) * 180 / math.Pi }
 
 // FmtAngle is represents a formattable angle.
 type FmtAngle struct {
@@ -241,10 +246,13 @@ func NewHourAngle(neg bool, h, m int, s float64) HourAngle {
 	return HourAngle(DMSToDeg(neg, h, m, s) * 15 * math.Pi / 180)
 }
 
-// Rad returns the value of the hour angle as a float64.
+// Rad returns the hour angle as an angle in radians.
 //
-// Unit is radians.
+// This is the underlying representation and involves no scaling.
 func (a HourAngle) Rad() float64 { return float64(a) }
+
+// Hour returns the hour angle as hours of time.
+func (a HourAngle) Hour() float64 { return float64(a) * 12 / math.Pi }
 
 // FmtHourAngle represents a formattable angle hour.
 type FmtHourAngle struct {
@@ -291,10 +299,13 @@ func NewRA(h, m int, s float64) RA {
 	return RA(hr * 15 * math.Pi / 180)
 }
 
-// Rad returns the RA value as a float64.
+// Rad returns the right ascension as an angle in radians.
 //
-// Unit is radians.
+// This is the underlying representation and involves no scaling.
 func (ra RA) Rad() float64 { return float64(ra) }
+
+// Hour returns the right ascension as hours of time.
+func (ra RA) Hour() float64 { return float64(ra) * 12 / math.Pi }
 
 // FmtRA represents a formattable right ascension.
 type FmtRA struct {
@@ -353,9 +364,9 @@ func NewTime(neg bool, h, m int, s float64) Time {
 	return Time(s)
 }
 
-// Sec returns the Time value as a float64.
+// Sec returns the time in seconds.
 //
-// Unit is seconds.
+// This is the underlying representation and involves no scaling.
 func (t Time) Sec() float64 { return float64(t) }
 
 // Min returns time in minutes.
