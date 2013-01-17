@@ -16,7 +16,7 @@ import (
 // final value of sidereal time.
 func jdToCFrac(jd float64) (cen, dayFrac float64) {
 	j0, f := math.Modf(jd + .5)
-	return (j0 - .5 - meeus.JD2000) / 36525, f
+	return (j0 - .5 - meeus.J2000) / 36525, f
 }
 
 // iau82 is a polynomial giving mean sidereal time at Greenwich at 0h UT.

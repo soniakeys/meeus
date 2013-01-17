@@ -77,7 +77,7 @@ var table22A = []struct {
 }
 
 func c2000(jd float64) float64 {
-	return (jd - meeus.JD2000) / 36525
+	return (jd - meeus.J2000) / 36525
 }
 
 // Nutation returns nutation in longitude (Δψ) and nutation in obliquity (Δε)
@@ -120,7 +120,7 @@ func Nutation(jde float64) (Δψ, Δε float64) {
 //
 // Result units are radians.
 func ApproxNutation(jde float64) (Δψ, Δε float64) {
-	T := (jde - meeus.JD2000) / 36525
+	T := (jde - meeus.J2000) / 36525
 	Ω := (125.04452 - 1934.136261*T) * math.Pi / 180
 	L := (280.4665 + 36000.7698*T) * math.Pi / 180
 	N := (218.3165 + 481267.8813*T) * math.Pi / 180

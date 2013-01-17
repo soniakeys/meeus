@@ -15,7 +15,7 @@ import (
 func ExampleDeltaT1900to1997_table() {
 	// Example 10.a, p. 78.
 	jd := julian.TimeToJD(time.Date(1977, 2, 18, 3, 37, 40, 0, time.UTC))
-	year := 2000 + (jd-meeus.JD2000)/365.25
+	year := 2000 + (jd-meeus.J2000)/365.25
 	fmt.Printf("year %.1f\n", year)
 	x1, x3, yTable := interp.Slice(year,
 		deltat.TableYear1, deltat.TableYearN, deltat.Table10A, 3)
@@ -33,7 +33,7 @@ func ExampleDeltaT1900to1997_table() {
 func ExampleDeltaT1900to1997_polynomial() {
 	// Example 10.a, p. 78.
 	jd := julian.TimeToJD(time.Date(1977, 2, 18, 3, 37, 40, 0, time.UTC))
-	year := 2000 + (jd-meeus.JD2000)/365.25
+	year := 2000 + (jd-meeus.J2000)/365.25
 	fmt.Printf("year %.1f\n", year)
 	fmt.Printf("%+.1f seconds\n", deltat.DeltaT1900to1997(year))
 	// Output:
