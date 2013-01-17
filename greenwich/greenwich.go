@@ -5,7 +5,7 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus"
-	"github.com/soniakeys/meeus/julian"
+	"github.com/soniakeys/meeus/nutation"
 )
 
 // jdToCFrac returns values for use in computing sidereal time at Greenwich.
@@ -16,7 +16,7 @@ import (
 // final value of sidereal time.
 func jdToCFrac(jd float64) (cen, dayFrac float64) {
 	j0, f := math.Modf(jd + .5)
-	return (j0 - .5 - julian.J2000) / 36525, f
+	return (j0 - .5 - meeus.JD2000) / 36525, f
 }
 
 // iau82 is a polynomial giving mean sidereal time at Greenwich at 0h UT.
@@ -37,4 +37,11 @@ func MeanSidereal(jd float64) float64 {
 		s += 86400
 	}
 	return s
+}
+
+func ApparentSidereal(jd float64) float64 {
+	s := MeanSidereal(jd)               // seconds of time
+	n := nutation.NutationInRA(jd)      // angle (radians) of RA
+	ns := n * 3600 * 180 / math.Pi / 15 // convert RA to time in seconds
+	return s + ns
 }

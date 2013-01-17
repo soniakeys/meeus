@@ -13,10 +13,12 @@ func ExampleMeanSidereal_a() {
 	// Example 12.a, p. 88.
 	jd := 2446895.5
 	s := greenwich.MeanSidereal(jd)
-	t := meeus.NewFmtTime(s)
-	fmt.Printf("%.4d\n", t)
+	sa := greenwich.ApparentSidereal(jd)
+	fmt.Printf("%.4d\n", meeus.NewFmtTime(s))
+	fmt.Printf("%.4d\n", meeus.NewFmtTime(sa))
 	// Output:
 	// 13ʰ10ᵐ46ˢ.3668
+	// 13ʰ10ᵐ46ˢ.1351
 }
 
 func ExampleMeanSidereal_b() {
