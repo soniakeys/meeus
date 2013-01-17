@@ -173,3 +173,13 @@ func MeanObliquityLaskar(jde float64) float64 {
 		2.45 / 3600 * (math.Pi / 180),
 	})
 }
+
+// NutationInRA returns "nutation in right ascension" or "equation of the
+// equinoxes."
+//
+// Result is an angle in radians.
+func NutationInRA(jde float64) float64 {
+	Δψ, Δε := Nutation(jde)
+	ε0 := MeanObliquityIAU1980(jde)
+	return Δψ * math.Cos(ε0+Δε)
+}
