@@ -3,12 +3,6 @@
 
 package meeus
 
-// JMod is the Julian date of the modified Julian date epoch.
-const JMod = 2400000.5
-
-// J2000 is the Julian date corresponding to January 1.5, year 2000.
-const J2000 = 2451545.0
-
 // FloorDiv returns the floor of x / y.
 //
 // It uses integer math only, so is more efficient than using floating point

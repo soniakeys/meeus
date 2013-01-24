@@ -8,7 +8,7 @@ import (
 // Table10A encodes ΔT = TD - UT for the range of years TableYear1 to
 // TableYearN.
 //
-// Interpolate with interp.Slice and interp.Len3Interpolate, for example.
+// See example at DeltaT1900to1997.
 var (
 	TableYear1 = 1620.
 	TableYearN = 2010.
@@ -39,38 +39,46 @@ var (
 		63.8, 64.3, 64.6, 64.8, 65.5, 66.1}
 )
 
+// c2000 returns centuries from calendar year 2000.0.
+//
+// Arg should be a calendar year.
 func c2000(y float64) float64 {
 	return (y - 2000) * .01
 }
 
 // DeltaTBefore948 returns a polynomial approximation valid for years
 // before 948.
+//
+// Apparently year should be calendar year.  It's not exactly clear.
 func DeltaTBefore948(year float64) float64 {
 	return meeus.Horner(c2000(year), []float64{2177, 497, 44.1})
 }
 
-// DeltaT948to1600 returns a polynomial approximation valid for years
-// 948 to 1600.
+// DeltaT948to1600 returns a polynomial approximation valid for calendar
+// years 948 to 1600.
 func DeltaT948to1600(year float64) float64 {
 	return meeus.Horner(c2000(year), []float64{102, 102, 25.3})
 }
 
-// DeltaTAfter2000 returns a polynomial approximation valid for years
-// after 2000.
+// DeltaTAfter2000 returns a polynomial approximation valid for calendar
+// years after 2000.
 func DeltaTAfter2000(year float64) float64 {
 	return DeltaT948to1600(year) + .37*(year-2100)
 }
 
-func c1900(y float64) float64 {
-	return (y - 1900) * .01
+// jc1900 returns julian centuries from the epoch J1900.0
+//
+// Arg should be a julian day, technically JDE.
+func jc1900(jde float64) float64 {
+	return (jde - meeus.J1900) / meeus.JulianCentury
 }
 
 // DeltaT1800to1997 returns a polynomial approximation valid for years
 // 1800 to 1997.
 //
 // The accuracy is within 2.3 seconds.
-func DeltaT1800to1997(year float64) float64 {
-	return meeus.Horner(c1900(year), []float64{
+func DeltaT1800to1997(jde float64) float64 {
+	return meeus.Horner(jc1900(jde), []float64{
 		-1.02, 91.02, 265.90, -839.16, -1545.20,
 		3603.62, 4385.98, -6993.23, -6090.04,
 		6298.12, 4102.86, -2137.64, -1081.51})
@@ -80,8 +88,8 @@ func DeltaT1800to1997(year float64) float64 {
 // 1800 to 1899.
 //
 // The accuracy is within 0.9 seconds.
-func DeltaT1800to1899(year float64) float64 {
-	return meeus.Horner(c1900(year), []float64{
+func DeltaT1800to1899(jde float64) float64 {
+	return meeus.Horner(jc1900(jde), []float64{
 		-2.50, 228.95, 5218.61, 56282.84, 324011.78,
 		1061660.75, 2087298.89, 2513807.78,
 		1818961.41, 727058.63, 123563.95})
@@ -91,9 +99,9 @@ func DeltaT1800to1899(year float64) float64 {
 // 1900 to 1997.
 //
 // The accuracy is within 0.9 seconds.
-func DeltaT1900to1997(year float64) float64 {
-	return meeus.Horner(c1900(year), []float64{
+func DeltaT1900to1997(jde float64) float64 {
+	return meeus.Horner(jc1900(jde), []float64{
 		-2.44, 87.24, 815.20, -2637.80, -18756.33,
-		124906.16, -303191.19, 372919.88,
+		124906.15, -303191.19, 372919.88,
 		-232424.66, 58353.42})
 }
