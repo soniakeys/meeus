@@ -7,6 +7,114 @@ import (
 	"github.com/soniakeys/meeus"
 )
 
+func c2000(jd float64) float64 {
+	return (jd - meeus.J2000) / 36525
+}
+
+// Nutation returns nutation in longitude (Δψ) and nutation in obliquity (Δε)
+// for a given JDE.
+//
+// JDE = UT + ΔT, see package deltat.
+//
+// Computation is by 1980 IAU theory, with terms < .0003″ neglected.
+//
+// Result units are radians.
+func Nutation(jde float64) (Δψ, Δε float64) {
+	T := c2000(jde)
+	D := meeus.Horner(T, []float64{
+		297.85036, 445267.11148, -0.0019142, 1. / 189474}) * math.Pi / 180
+	M := meeus.Horner(T, []float64{
+		357.52772, 35999.050340, -0.0001603, -1. / 300000}) * math.Pi / 180
+	N := meeus.Horner(T, []float64{
+		134.96298, 477198.867398, 0.0086972, 1. / 5620}) * math.Pi / 180
+	F := meeus.Horner(T, []float64{
+		93.27191, 483202.017538, -0.0036825, 1. / 327270}) * math.Pi / 180
+	Ω := meeus.Horner(T, []float64{
+		125.04452, -1934.136261, 0.0020708, 1. / 450000}) * math.Pi / 180
+	// sum in reverse order to accumulate smaller terms first
+	for i := len(table22A) - 1; i >= 0; i-- {
+		row := table22A[i]
+		arg := row.d*D + row.m*M + row.n*N + row.f*F + row.ω*Ω
+		s, c := math.Sincos(arg)
+		Δψ += s * (row.s0 + row.s1*T)
+		Δε += c * (row.c0 + row.c1*T)
+	}
+	Δψ *= .0001 / 3600 * (math.Pi / 180)
+	Δε *= .0001 / 3600 * (math.Pi / 180)
+	return
+}
+
+// ApproxNutation returns a fast approximation of nutation in longitude (Δψ)
+// and nutation in obliquity (Δε) for a given JDE.
+//
+// Accuracy is 0.5″ in Δψ, 0.1″ in Δε.
+//
+// Result units are radians.
+func ApproxNutation(jde float64) (Δψ, Δε float64) {
+	T := (jde - meeus.J2000) / 36525
+	Ω := (125.04452 - 1934.136261*T) * math.Pi / 180
+	L := (280.4665 + 36000.7698*T) * math.Pi / 180
+	N := (218.3165 + 481267.8813*T) * math.Pi / 180
+	sΩ, cΩ := math.Sincos(Ω)
+	s2L, c2L := math.Sincos(2 * L)
+	s2N, c2N := math.Sincos(2 * N)
+	s2Ω, c2Ω := math.Sincos(2 * Ω)
+	Δψ = (-17.2*sΩ - 1.32*s2L - 0.23*s2N + 0.21*s2Ω) / 3600 * (math.Pi / 180)
+	Δε = (9.2*cΩ + 0.57*c2L + 0.1*c2N - 0.09*c2Ω) / 3600 * (math.Pi / 180)
+	return
+}
+
+// MeanObliquity returns mean obliquity (ε₀) following the IAU 1980
+// polynomial.
+//
+// Accuracy is 1″ over the range 1000 to 3000 years and 10″ over the range
+// 0 to 4000 years.
+//
+// Result unit is radians.
+func MeanObliquity(jde float64) float64 {
+	return meeus.Horner(c2000(jde), []float64{
+		meeus.NewAngle(false, 23, 26, 21.448).Rad(),
+		-46.815 / 3600 * (math.Pi / 180),
+		-0.00059 / 3600 * (math.Pi / 180),
+		0.001813 / 3600 * (math.Pi / 180),
+	})
+}
+
+// MeanObliquityLaskar returns mean obliquity (ε₀) following the Laskar
+// 1986 polynomial.
+//
+// Accuracy over the range 1000 to 3000 years is .01″.
+//
+// Accuracy over the valid date range of -8000 to +12000 years is
+// "a few seconds."
+//
+// Result unit is radians.
+func MeanObliquityLaskar(jde float64) float64 {
+	return meeus.Horner(c2000(jde)*.01, []float64{
+		meeus.NewAngle(false, 23, 26, 21.448).Rad(),
+		-4680.93 / 3600 * (math.Pi / 180),
+		-1.55 / 3600 * (math.Pi / 180),
+		1999.25 / 3600 * (math.Pi / 180),
+		-51.38 / 3600 * (math.Pi / 180),
+		-249.67 / 3600 * (math.Pi / 180),
+		-39.05 / 3600 * (math.Pi / 180),
+		7.12 / 3600 * (math.Pi / 180),
+		2787 / 3600 * (math.Pi / 180),
+		5.79 / 3600 * (math.Pi / 180),
+		2.45 / 3600 * (math.Pi / 180),
+	})
+}
+
+// NutationInRA returns "nutation in right ascension" or "equation of the
+// equinoxes."
+//
+// Result is an angle in radians.
+func NutationInRA(jde float64) float64 {
+	Δψ, Δε := Nutation(jde)
+	ε0 := MeanObliquity(jde)
+	return Δψ * math.Cos(ε0+Δε)
+}
+
 var table22A = []struct {
 	d, m, n, f, ω  float64
 	s0, s1, c0, c1 float64
@@ -74,112 +182,4 @@ var table22A = []struct {
 	{2, -1, -1, 2, 2, -3, 0, 0, 0},
 	{0, 0, 3, 2, 2, -3, 0, 0, 0},
 	{2, -1, 0, 2, 2, -3, 0, 0, 0},
-}
-
-func c2000(jd float64) float64 {
-	return (jd - meeus.J2000) / 36525
-}
-
-// Nutation returns nutation in longitude (Δψ) and nutation in obliquity (Δε)
-// for a given JDE.
-//
-// JDE = UT + ΔT, see package deltat.
-//
-// Computation is by 1980 IAU theory, with terms < .0003″ neglected.
-//
-// Result units are radians.
-func Nutation(jde float64) (Δψ, Δε float64) {
-	T := c2000(jde)
-	D := meeus.Horner(T, []float64{
-		297.85036, 445267.11148, -0.0019142, 1. / 189474}) * math.Pi / 180
-	M := meeus.Horner(T, []float64{
-		357.52772, 35999.050340, -0.0001603, -1. / 300000}) * math.Pi / 180
-	N := meeus.Horner(T, []float64{
-		134.96298, 477198.867398, 0.0086972, 1. / 5620}) * math.Pi / 180
-	F := meeus.Horner(T, []float64{
-		93.27191, 483202.017538, -0.0036825, 1. / 327270}) * math.Pi / 180
-	Ω := meeus.Horner(T, []float64{
-		125.04452, -1934.136261, 0.0020708, 1. / 450000}) * math.Pi / 180
-	// sum in reverse order to accumulate smaller terms first
-	for i := len(table22A) - 1; i >= 0; i-- {
-		row := table22A[i]
-		arg := row.d*D + row.m*M + row.n*N + row.f*F + row.ω*Ω
-		s, c := math.Sincos(arg)
-		Δψ += s * (row.s0 + row.s1*T)
-		Δε += c * (row.c0 + row.c1*T)
-	}
-	Δψ *= .0001 / 3600 * (math.Pi / 180)
-	Δε *= .0001 / 3600 * (math.Pi / 180)
-	return
-}
-
-// ApproxNutation returns a fast approximation of nutation in longitude (Δψ)
-// and nutation in obliquity (Δε) for a given JDE.
-//
-// Accuracy is 0.5″ in Δψ, 0.1″ in Δε.
-//
-// Result units are radians.
-func ApproxNutation(jde float64) (Δψ, Δε float64) {
-	T := (jde - meeus.J2000) / 36525
-	Ω := (125.04452 - 1934.136261*T) * math.Pi / 180
-	L := (280.4665 + 36000.7698*T) * math.Pi / 180
-	N := (218.3165 + 481267.8813*T) * math.Pi / 180
-	sΩ, cΩ := math.Sincos(Ω)
-	s2L, c2L := math.Sincos(2 * L)
-	s2N, c2N := math.Sincos(2 * N)
-	s2Ω, c2Ω := math.Sincos(2 * Ω)
-	Δψ = (-17.2*sΩ - 1.32*s2L - 0.23*s2N + 0.21*s2Ω) / 3600 * (math.Pi / 180)
-	Δε = (9.2*cΩ + 0.57*c2L + 0.1*c2N - 0.09*c2Ω) / 3600 * (math.Pi / 180)
-	return
-}
-
-// MeanObliquityIAU1980 returns mean obliquity (ε₀) following the IAU 1980
-// polynomial.
-//
-// Accuracy is 1″ over the range 1000 to 3000 years and 10″ over the range
-// 0 to 4000 years.
-//
-// Result unit is radians.
-func MeanObliquityIAU1980(jde float64) float64 {
-	return meeus.Horner(c2000(jde), []float64{
-		meeus.NewAngle(false, 23, 26, 21.448).Rad(),
-		-46.815 / 3600 * (math.Pi / 180),
-		-0.00059 / 3600 * (math.Pi / 180),
-		0.001813 / 3600 * (math.Pi / 180),
-	})
-}
-
-// MeanObliquityIAU1980 returns mean obliquity (ε₀) following the Laskar
-// 1986 polynomial.
-//
-// Accuracy over the range 1000 to 3000 years is .01″.
-//
-// Accuracy over the valid date range of -8000 to +12000 years is
-// "a few seconds."
-//
-// Result unit is radians.
-func MeanObliquityLaskar(jde float64) float64 {
-	return meeus.Horner(c2000(jde)*.01, []float64{
-		meeus.NewAngle(false, 23, 26, 21.448).Rad(),
-		-4680.93 / 3600 * (math.Pi / 180),
-		-1.55 / 3600 * (math.Pi / 180),
-		1999.25 / 3600 * (math.Pi / 180),
-		-51.38 / 3600 * (math.Pi / 180),
-		-249.67 / 3600 * (math.Pi / 180),
-		-39.05 / 3600 * (math.Pi / 180),
-		7.12 / 3600 * (math.Pi / 180),
-		2787 / 3600 * (math.Pi / 180),
-		5.79 / 3600 * (math.Pi / 180),
-		2.45 / 3600 * (math.Pi / 180),
-	})
-}
-
-// NutationInRA returns "nutation in right ascension" or "equation of the
-// equinoxes."
-//
-// Result is an angle in radians.
-func NutationInRA(jde float64) float64 {
-	Δψ, Δε := Nutation(jde)
-	ε0 := MeanObliquityIAU1980(jde)
-	return Δψ * math.Cos(ε0+Δε)
 }

@@ -37,7 +37,7 @@ func TestMn(t *testing.T) {
 // in Example 21.a, p. 132, and ecliptic motions given in table 21.A,
 // p. 138.
 func TestEqProperMotionToEcl(t *testing.T) {
-	sε, cε := math.Sincos(nutation.MeanObliquityIAU1980(meeus.J2000))
+	sε, cε := math.Sincos(nutation.MeanObliquity(meeus.J2000))
 	mλ, mβ := eqProperMotionToEcl(
 		// eq motions from p. 132.
 		meeus.NewHourAngle(true, 0, 0, 0.0169).Rad(),

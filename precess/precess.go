@@ -176,7 +176,7 @@ func PrecessEcl(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo, mα, mδ flo
 }
 
 func eqProperMotionToEcl(mα, mδ, epoch float64, pos *coord.Ecliptic) (mλ, mβ float64) {
-	ε := nutation.MeanObliquityIAU1980(meeus.JulianYearToJDE(epoch))
+	ε := nutation.MeanObliquity(meeus.JulianYearToJDE(epoch))
 	sε, cε := math.Sincos(ε)
 	eqPos := new(coord.Equatorial).EclToEq(pos, sε, cε)
 	sα, cα := math.Sincos(eqPos.RA)

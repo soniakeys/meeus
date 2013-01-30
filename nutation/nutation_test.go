@@ -14,7 +14,7 @@ func ExampleNutation() {
 	// Example 22.a, p. 148.
 	jd := julian.CalendarGregorianToJD(1987, 4, 10)
 	Δψ, Δε := nutation.Nutation(jd)
-	ε0 := nutation.MeanObliquityIAU1980(jd)
+	ε0 := nutation.MeanObliquity(jd)
 	ε := ε0 + Δε
 	fmt.Printf("%+.3d\n", meeus.NewFmtAngle(Δψ))
 	fmt.Printf("%+.3d\n", meeus.NewFmtAngle(Δε))
@@ -41,7 +41,7 @@ func TestApproxNutation(t *testing.T) {
 func TestIAUvsLaskar(t *testing.T) {
 	for _, y := range []int{1000, 2000, 3000} {
 		jd := julian.CalendarGregorianToJD(y, 0, 0)
-		i := nutation.MeanObliquityIAU1980(jd)
+		i := nutation.MeanObliquity(jd)
 		l := nutation.MeanObliquityLaskar(jd)
 		if math.Abs(i-l)*(180/math.Pi)*3600 > 1 {
 			t.Fatal(y)
@@ -49,7 +49,7 @@ func TestIAUvsLaskar(t *testing.T) {
 	}
 	for _, y := range []int{0, 4000} {
 		jd := julian.CalendarGregorianToJD(y, 0, 0)
-		i := nutation.MeanObliquityIAU1980(jd)
+		i := nutation.MeanObliquity(jd)
 		l := nutation.MeanObliquityLaskar(jd)
 		if math.Abs(i-l)*(180/math.Pi)*3600 > 10 {
 			t.Fatal(y)
