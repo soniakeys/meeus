@@ -4,11 +4,12 @@ package nutation
 import (
 	"math"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/hints"
 )
 
 func c2000(jd float64) float64 {
-	return (jd - meeus.J2000) / 36525
+	return (jd - common.J2000) / 36525
 }
 
 // Nutation returns nutation in longitude (Δψ) and nutation in obliquity (Δε)
@@ -21,15 +22,15 @@ func c2000(jd float64) float64 {
 // Result units are radians.
 func Nutation(jde float64) (Δψ, Δε float64) {
 	T := c2000(jde)
-	D := meeus.Horner(T, []float64{
+	D := hints.Horner(T, []float64{
 		297.85036, 445267.11148, -0.0019142, 1. / 189474}) * math.Pi / 180
-	M := meeus.Horner(T, []float64{
+	M := hints.Horner(T, []float64{
 		357.52772, 35999.050340, -0.0001603, -1. / 300000}) * math.Pi / 180
-	N := meeus.Horner(T, []float64{
+	N := hints.Horner(T, []float64{
 		134.96298, 477198.867398, 0.0086972, 1. / 5620}) * math.Pi / 180
-	F := meeus.Horner(T, []float64{
+	F := hints.Horner(T, []float64{
 		93.27191, 483202.017538, -0.0036825, 1. / 327270}) * math.Pi / 180
-	Ω := meeus.Horner(T, []float64{
+	Ω := hints.Horner(T, []float64{
 		125.04452, -1934.136261, 0.0020708, 1. / 450000}) * math.Pi / 180
 	// sum in reverse order to accumulate smaller terms first
 	for i := len(table22A) - 1; i >= 0; i-- {
@@ -51,7 +52,7 @@ func Nutation(jde float64) (Δψ, Δε float64) {
 //
 // Result units are radians.
 func ApproxNutation(jde float64) (Δψ, Δε float64) {
-	T := (jde - meeus.J2000) / 36525
+	T := (jde - common.J2000) / 36525
 	Ω := (125.04452 - 1934.136261*T) * math.Pi / 180
 	L := (280.4665 + 36000.7698*T) * math.Pi / 180
 	N := (218.3165 + 481267.8813*T) * math.Pi / 180
@@ -72,8 +73,8 @@ func ApproxNutation(jde float64) (Δψ, Δε float64) {
 //
 // Result unit is radians.
 func MeanObliquity(jde float64) float64 {
-	return meeus.Horner(c2000(jde), []float64{
-		meeus.NewAngle(false, 23, 26, 21.448).Rad(),
+	return hints.Horner(c2000(jde), []float64{
+		common.NewAngle(false, 23, 26, 21.448).Rad(),
 		-46.815 / 3600 * (math.Pi / 180),
 		-0.00059 / 3600 * (math.Pi / 180),
 		0.001813 / 3600 * (math.Pi / 180),
@@ -90,8 +91,8 @@ func MeanObliquity(jde float64) float64 {
 //
 // Result unit is radians.
 func MeanObliquityLaskar(jde float64) float64 {
-	return meeus.Horner(c2000(jde)*.01, []float64{
-		meeus.NewAngle(false, 23, 26, 21.448).Rad(),
+	return hints.Horner(c2000(jde)*.01, []float64{
+		common.NewAngle(false, 23, 26, 21.448).Rad(),
 		-4680.93 / 3600 * (math.Pi / 180),
 		-1.55 / 3600 * (math.Pi / 180),
 		1999.25 / 3600 * (math.Pi / 180),

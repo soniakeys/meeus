@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/common"
 	"github.com/soniakeys/meeus/interp"
 )
 
@@ -18,7 +18,7 @@ func ExampleLen3Interpolate() {
 		.877366,
 		.870531,
 	}
-	x := 8 + meeus.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
+	x := 8 + common.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
 	y, err := interp.Len3Interpolate(x, x1, x3, yTable, false)
 	if err != nil {
 		fmt.Println(err)
@@ -59,9 +59,9 @@ func ExampleLen3Zero() {
 	x3 := 28.
 	// the y unit doesn't matter.  working in degrees is fine
 	yTable := []float64{
-		meeus.DMSToDeg(true, 0, 28, 13.4),
-		meeus.DMSToDeg(false, 0, 6, 46.3),
-		meeus.DMSToDeg(false, 0, 38, 23.2),
+		common.DMSToDeg(true, 0, 28, 13.4),
+		common.DMSToDeg(false, 0, 6, 46.3),
+		common.DMSToDeg(false, 0, 38, 23.2),
 	}
 	x, err := interp.Len3Zero(x1, x3, yTable, false)
 	if err != nil {
@@ -94,11 +94,11 @@ func ExampleLen5Interpolate() {
 	x5 := 29.
 	// work in radians to get answer in radians
 	yTable := []float64{
-		meeus.NewAngle(false, 0, 54, 36.125).Rad(),
-		meeus.NewAngle(false, 0, 54, 24.606).Rad(),
-		meeus.NewAngle(false, 0, 54, 15.486).Rad(),
-		meeus.NewAngle(false, 0, 54, 08.694).Rad(),
-		meeus.NewAngle(false, 0, 54, 04.133).Rad(),
+		common.NewAngle(false, 0, 54, 36.125).Rad(),
+		common.NewAngle(false, 0, 54, 24.606).Rad(),
+		common.NewAngle(false, 0, 54, 15.486).Rad(),
+		common.NewAngle(false, 0, 54, 08.694).Rad(),
+		common.NewAngle(false, 0, 54, 04.133).Rad(),
 	}
 	x := 28 + (3+20./60)/24
 	y, err := interp.Len5Interpolate(x, x1, x5, yTable, false)
@@ -107,7 +107,7 @@ func ExampleLen5Interpolate() {
 		return
 	}
 	// radians easy to format
-	fmt.Printf("%.3d", meeus.NewFmtAngle(y))
+	fmt.Printf("%.3d", common.NewFmtAngle(y))
 	// Output:
 	// 54′13″.369
 }
@@ -117,11 +117,11 @@ func TestLen5Zero(t *testing.T) {
 	x1 := 25.
 	x5 := 29.
 	yTable := []float64{
-		meeus.DMSToDeg(true, 1, 11, 21.23),
-		meeus.DMSToDeg(true, 0, 28, 12.31),
-		meeus.DMSToDeg(false, 0, 16, 07.02),
-		meeus.DMSToDeg(false, 1, 01, 00.13),
-		meeus.DMSToDeg(false, 1, 45, 46.33),
+		common.DMSToDeg(true, 1, 11, 21.23),
+		common.DMSToDeg(true, 0, 28, 12.31),
+		common.DMSToDeg(false, 0, 16, 07.02),
+		common.DMSToDeg(false, 1, 01, 00.13),
+		common.DMSToDeg(false, 1, 45, 46.33),
 	}
 	z, err := interp.Len5Zero(x1, x5, yTable, false)
 	if err != nil {
@@ -143,16 +143,16 @@ func TestLen5Zero(t *testing.T) {
 func ExampleLen4Half() {
 	// Example 3.f, p. 32.
 	half, err := interp.Len4Half([]float64{
-		meeus.NewRA(10, 18, 48.732).Rad(),
-		meeus.NewRA(10, 23, 22.835).Rad(),
-		meeus.NewRA(10, 27, 57.247).Rad(),
-		meeus.NewRA(10, 32, 31.983).Rad(),
+		common.NewRA(10, 18, 48.732).Rad(),
+		common.NewRA(10, 23, 22.835).Rad(),
+		common.NewRA(10, 27, 57.247).Rad(),
+		common.NewRA(10, 32, 31.983).Rad(),
 	})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("%.3d", meeus.NewFmtRA(half))
+	fmt.Printf("%.3d", common.NewFmtRA(half))
 	// Output:
 	// 10ʰ25ᵐ40ˢ.001
 }

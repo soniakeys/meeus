@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/common"
 	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/meeus/greenwich"
@@ -16,13 +16,13 @@ import (
 func ExampleEcliptic_EqToEcl() {
 	// Example 13.a, p. 95.
 	eq := &coord.Equatorial{
-		meeus.NewRA(7, 45, 18.946).Rad(),
-		meeus.NewAngle(false, 28, 1, 34.26).Rad(),
+		common.NewRA(7, 45, 18.946).Rad(),
+		common.NewAngle(false, 28, 1, 34.26).Rad(),
 	}
 	sε, cε := math.Sincos(23.4392911 * math.Pi / 180)
 	ecl := new(coord.Ecliptic).EqToEcl(eq, sε, cε)
-	λStr := meeus.DecSymAdd(fmt.Sprintf("%.5f", ecl.Lon*180/math.Pi), '°')
-	βStr := meeus.DecSymAdd(fmt.Sprintf("%+.6f", ecl.Lat*180/math.Pi), '°')
+	λStr := common.DecSymAdd(fmt.Sprintf("%.5f", ecl.Lon*180/math.Pi), '°')
+	βStr := common.DecSymAdd(fmt.Sprintf("%+.6f", ecl.Lat*180/math.Pi), '°')
 	fmt.Println("λ =", λStr)
 	fmt.Println("β =", βStr)
 	// Output:
@@ -33,8 +33,8 @@ func ExampleEcliptic_EqToEcl() {
 func TestEquatorial_EclToEq(t *testing.T) {
 	// repeat example above
 	eq0 := &coord.Equatorial{
-		meeus.NewRA(7, 45, 18.946).Rad(),
-		meeus.NewAngle(false, 28, 1, 34.26).Rad(),
+		common.NewRA(7, 45, 18.946).Rad(),
+		common.NewAngle(false, 28, 1, 34.26).Rad(),
 	}
 	sε, cε := math.Sincos(23.4392911 * math.Pi / 180)
 	ecl := new(coord.Ecliptic).EqToEcl(eq0, sε, cε)
@@ -52,18 +52,18 @@ func TestEquatorial_EclToEq(t *testing.T) {
 func ExampleHorizontal_EqToHz() {
 	// Example 13.b, p. 95.
 	eq := &coord.Equatorial{
-		RA:  meeus.NewRA(23, 9, 16.641).Rad(),
-		Dec: meeus.NewAngle(true, 6, 43, 11.61).Rad(),
+		RA:  common.NewRA(23, 9, 16.641).Rad(),
+		Dec: common.NewAngle(true, 6, 43, 11.61).Rad(),
 	}
 	g := &globe.Coord{
-		Lat: meeus.NewAngle(false, 38, 55, 17).Rad(),
-		Lon: meeus.NewAngle(false, 77, 3, 56).Rad(),
+		Lat: common.NewAngle(false, 38, 55, 17).Rad(),
+		Lon: common.NewAngle(false, 77, 3, 56).Rad(),
 	}
 	jd := julian.TimeToJD(time.Date(1987, 4, 10, 19, 21, 0, 0, time.UTC))
 	st := greenwich.ApparentSidereal(jd)
 	hz := new(coord.Horizontal).EqToHz(eq, g, st)
-	AStr := meeus.DecSymAdd(fmt.Sprintf("%+.3f", hz.Az*180/math.Pi), '°')
-	hStr := meeus.DecSymAdd(fmt.Sprintf("%+.3f", hz.Alt*180/math.Pi), '°')
+	AStr := common.DecSymAdd(fmt.Sprintf("%+.3f", hz.Az*180/math.Pi), '°')
+	hStr := common.DecSymAdd(fmt.Sprintf("%+.3f", hz.Alt*180/math.Pi), '°')
 	fmt.Println("A =", AStr)
 	fmt.Println("h =", hStr)
 	// Output:
@@ -73,8 +73,8 @@ func ExampleHorizontal_EqToHz() {
 
 func TestEqToGal(t *testing.T) {
 	g := new(coord.Galactic).EqToGal(&coord.Equatorial{
-		RA:  meeus.NewRA(17, 48, 59.74).Rad(),
-		Dec: meeus.NewAngle(true, 14, 43, 8.2).Rad(),
+		RA:  common.NewRA(17, 48, 59.74).Rad(),
+		Dec: common.NewAngle(true, 14, 43, 8.2).Rad(),
 	})
 	if s := fmt.Sprintf("%.4f", g.Lon*180/math.Pi); s != "12.9593" {
 		t.Fatal("lon:", s)

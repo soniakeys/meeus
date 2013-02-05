@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/common"
 	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/precess"
@@ -14,20 +14,20 @@ import (
 func ExampleApproxAnnualPrecession() {
 	// Example 21.a, p. 132.
 	eq := &coord.Equatorial{
-		meeus.NewRA(10, 8, 22.3).Rad(),
-		meeus.NewAngle(false, 11, 58, 2).Rad(),
+		common.NewRA(10, 8, 22.3).Rad(),
+		common.NewAngle(false, 11, 58, 2).Rad(),
 	}
 	epochFrom := 2000.0
 	epochTo := 1978.0
 	Δα, Δδ := precess.ApproxAnnualPrecession(eq, epochFrom, epochTo)
-	fmt.Printf("%+.3d\n", meeus.NewFmtHourAngle(Δα))
-	fmt.Printf("%+.2d\n", meeus.NewFmtAngle(Δδ))
+	fmt.Printf("%+.3d\n", common.NewFmtHourAngle(Δα))
+	fmt.Printf("%+.2d\n", common.NewFmtAngle(Δδ))
 
-	mα := meeus.NewHourAngle(true, 0, 0, 0.0169).Rad()
-	mδ := meeus.NewAngle(false, 0, 0, 0.006).Rad()
+	mα := common.NewHourAngle(true, 0, 0, 0.0169).Rad()
+	mδ := common.NewAngle(false, 0, 0, 0.006).Rad()
 	precess.PrecessApprox(eq, eq, epochFrom, epochTo, mα, mδ)
-	fmt.Printf("%0.1d\n", meeus.NewFmtRA(eq.RA))
-	fmt.Printf("%+0d\n", meeus.NewFmtAngle(eq.Dec))
+	fmt.Printf("%0.1d\n", common.NewFmtRA(eq.RA))
+	fmt.Printf("%+0d\n", common.NewFmtAngle(eq.Dec))
 	// Output:
 	// +3ˢ.207
 	// -17″.71
@@ -37,10 +37,10 @@ func ExampleApproxAnnualPrecession() {
 
 // test example epochs on p. 133 that are not constants in meeus/julian.go
 func TestEpoch(t *testing.T) {
-	if math.Abs(meeus.BesselianYearToJDE(1950)-2433282.4235) > 1e-4 {
+	if math.Abs(common.BesselianYearToJDE(1950)-2433282.4235) > 1e-4 {
 		t.Fatal("B1950")
 	}
-	if math.Abs((meeus.JulianYearToJDE(2050)-2469807.5)/2469807.5) > 1e-15 {
+	if math.Abs((common.JulianYearToJDE(2050)-2469807.5)/2469807.5) > 1e-15 {
 		t.Fatal("J2050")
 	}
 }
@@ -48,17 +48,17 @@ func TestEpoch(t *testing.T) {
 func ExamplePrecess() {
 	// Example 21.b, p. 135.
 	eq := &coord.Equatorial{
-		meeus.NewRA(2, 44, 11.986).Rad(),
-		meeus.NewAngle(false, 49, 13, 42.48).Rad(),
+		common.NewRA(2, 44, 11.986).Rad(),
+		common.NewAngle(false, 49, 13, 42.48).Rad(),
 	}
 	epochFrom := 2000.0
 	jdTo := julian.CalendarGregorianToJD(2028, 11, 13.19)
-	epochTo := meeus.JDEToJulianYear(jdTo)
+	epochTo := common.JDEToJulianYear(jdTo)
 	precess.Precess(eq, eq, epochFrom, epochTo,
-		meeus.NewHourAngle(false, 0, 0, 0.03425).Rad(),
-		meeus.NewAngle(true, 0, 0, 0.0895).Rad())
-	fmt.Printf("%0.3d\n", meeus.NewFmtRA(eq.RA))
-	fmt.Printf("%+0.2d\n", meeus.NewFmtAngle(eq.Dec))
+		common.NewHourAngle(false, 0, 0, 0.03425).Rad(),
+		common.NewAngle(true, 0, 0, 0.0895).Rad())
+	fmt.Printf("%0.3d\n", common.NewFmtRA(eq.RA))
+	fmt.Printf("%+0.2d\n", common.NewFmtAngle(eq.Dec))
 	// Output:
 	// 2ʰ46ᵐ11ˢ.331
 	// +49°20′54″.54
@@ -67,24 +67,24 @@ func ExamplePrecess() {
 // Exercise, p. 136.
 func TestPrecess(t *testing.T) {
 	eqFrom := &coord.Equatorial{
-		meeus.NewRA(2, 31, 48.704).Rad(),
-		meeus.NewAngle(false, 89, 15, 50.72).Rad(),
+		common.NewRA(2, 31, 48.704).Rad(),
+		common.NewAngle(false, 89, 15, 50.72).Rad(),
 	}
 	eqTo := &coord.Equatorial{}
-	mα := meeus.NewHourAngle(false, 0, 0, 0.19877).Rad()
-	mδ := meeus.NewAngle(true, 0, 0, 0.0152).Rad()
+	mα := common.NewHourAngle(false, 0, 0, 0.19877).Rad()
+	mδ := common.NewAngle(true, 0, 0, 0.0152).Rad()
 	for _, tc := range []struct {
 		α, δ string
 		jde  float64
 	}{
-		{"1 22 33.90", "88 46 26.18", meeus.BesselianYearToJDE(1900)},
-		{"3 48 16.43", "89 27 15.38", meeus.JulianYearToJDE(2050)},
-		{"5 53 29.17", "89 32 22.18", meeus.JulianYearToJDE(2100)},
+		{"1 22 33.90", "88 46 26.18", common.BesselianYearToJDE(1900)},
+		{"3 48 16.43", "89 27 15.38", common.JulianYearToJDE(2050)},
+		{"5 53 29.17", "89 32 22.18", common.JulianYearToJDE(2100)},
 	} {
-		epochTo := meeus.JDEToJulianYear(tc.jde)
+		epochTo := common.JDEToJulianYear(tc.jde)
 		precess.Precess(eqFrom, eqTo, 2000.0, epochTo, mα, mδ)
-		αStr := fmt.Sprintf("%.2x", meeus.NewFmtRA(eqTo.RA))
-		δStr := fmt.Sprintf("%.2x", meeus.NewFmtAngle(eqTo.Dec))
+		αStr := fmt.Sprintf("%.2x", common.NewFmtRA(eqTo.RA))
+		δStr := fmt.Sprintf("%.2x", common.NewFmtAngle(eqTo.Dec))
 		if αStr != tc.α {
 			t.Fatal(αStr)
 		}
@@ -102,7 +102,7 @@ func ExamplePrecessEcl() {
 	}
 	eclTo := &coord.Ecliptic{}
 	epochFrom := 2000.0
-	epochTo := meeus.JDEToJulianYear(julian.CalendarJulianToJD(-214, 6, 30))
+	epochTo := common.JDEToJulianYear(julian.CalendarJulianToJD(-214, 6, 30))
 	precess.PrecessEcl(eclFrom, eclTo, epochFrom, epochTo, 0, 0)
 	fmt.Printf("%.3f\n", eclTo.Lon*180/math.Pi)
 	fmt.Printf("%+.3f\n", eclTo.Lat*180/math.Pi)
@@ -114,8 +114,8 @@ func ExamplePrecessEcl() {
 func ExampleProperMotion3D() {
 	// Example 21.d, p. 141.
 	eqFrom := &coord.Equatorial{
-		RA:  meeus.NewRA(6, 45, 8.871).Rad(),
-		Dec: meeus.NewAngle(true, 16, 42, 57.99).Rad(),
+		RA:  common.NewRA(6, 45, 8.871).Rad(),
+		Dec: common.NewAngle(true, 16, 42, 57.99).Rad(),
 	}
 	// 13751 (= 3600*180/pi/15) is conversion factor from seconds (of time)
 	// per year to (arc) radians per year.  see top of p. 141.
@@ -127,7 +127,7 @@ func ExampleProperMotion3D() {
 	for _, epoch := range []float64{1000, 0, -1000, -2000, -10000} {
 		precess.ProperMotion3D(eqFrom, eqTo, 2000, epoch, r, mr, mra, mdec)
 		fmt.Printf("%8.1f  %0.2d  %-0.1d\n", epoch,
-			meeus.NewFmtRA(eqTo.RA), meeus.NewFmtAngle(eqTo.Dec))
+			common.NewFmtRA(eqTo.RA), common.NewFmtAngle(eqTo.Dec))
 	}
 	// Output:
 	//   1000.0  6ʰ45ᵐ47ˢ.19  -16°22′57″.5

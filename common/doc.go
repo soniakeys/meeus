@@ -1,13 +1,7 @@
 // Copyright 2012 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Package meeus and all of its subpackages implement algorithms from
-// the book "Astronomical Algorithms" (AA) by Jean Meeus.
-//
-// They follow the second edition, copyright 1998, with corrections as of
-// August 10, 2009.  Each package in a subdirectory implements algorithms
-// of a chapter of the book.  Package meeus itself implements some introductory
-// material.
+// Common: Functions and other definitions useful with multiple packages.
 //
 // AA begins with an unnumbered chapter titled "Some Symbols and
 // Abbreviations."  In addition to a list of symbols and abbreviations
@@ -105,4 +99,4 @@
 // specified width.  Larger values cause overflow.
 //
 // +Inf, -Inf, and NaN always cause overflow.
-package meeus
+package common

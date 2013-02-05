@@ -1,7 +1,7 @@
 // Copyright 2012 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-package meeus
+package common
 
 // Julian and Besselian years described in chapter 21, Precession.
 

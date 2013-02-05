@@ -1,18 +1,18 @@
-package meeus_test
+package common_test
 
 import (
 	"fmt"
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/common"
 )
 
 func ExampleDecSymAdd() {
 	formatted := "1.25"
 	fmt.Println("Standard decimal symbol:", formatted)
 	fmt.Println("Degree units, non combining decimal point: ",
-		meeus.DecSymAdd(formatted, '°'))
+		common.DecSymAdd(formatted, '°'))
 	// Output:
 	// Standard decimal symbol: 1.25
 	// Degree units, non combining decimal point:  1°.25
@@ -24,7 +24,7 @@ func ExampleDecSymCombine() {
 	// Note that some software may not be capable of combining or even
 	// rendering the combining dot.
 	fmt.Println("Degree units, combining form of decimal point:",
-		meeus.DecSymCombine(formatted, '°'))
+		common.DecSymCombine(formatted, '°'))
 	// Output:
 	// Standard decimal symbol: 1.25
 	// Degree units, combining form of decimal point: 1°̣25
@@ -41,22 +41,22 @@ func TestStrip(t *testing.T) {
 		if ad == d {
 			t.Fatalf("%s(%s, %c) had no effect", fName, d, sym)
 		}
-		if sd := meeus.DecSymStrip(ad, sym); sd != d {
+		if sd := common.DecSymStrip(ad, sym); sd != d {
 			t.Fatalf("Strip(%s, %c) returned %s expected %s",
 				ad, sym, sd, d)
 		}
 	}
 	for _, d = range []string{"1.25", "1.", "1", ".25"} {
 		for _, sym = range []rune{'°', '"', 'h', 'ʰ'} {
-			t1("DecSymAdd", meeus.DecSymAdd)
-			t1("DecSymCombine", meeus.DecSymCombine)
+			t1("DecSymAdd", common.DecSymAdd)
+			t1("DecSymCombine", common.DecSymCombine)
 		}
 	}
 }
 
 func TestDMSToDeg(t *testing.T) {
 	// example p. 7
-	a := meeus.DMSToDeg(false, 23, 26, 49)
+	a := common.DMSToDeg(false, 23, 26, 49)
 	if math.Abs(a-23.44694444) > 1e-8 {
 		t.Fatal("DMSToRad")
 	}
@@ -64,7 +64,7 @@ func TestDMSToDeg(t *testing.T) {
 
 func ExampleRA_SetHMS() {
 	// Example 1.a, p. 8.
-	a := meeus.NewRA(9, 14, 55.8)
+	a := common.NewRA(9, 14, 55.8)
 	fmt.Printf("%.6f\n", math.Tan(a.Rad()))
 	// Output:
 	// -0.877517
@@ -72,7 +72,7 @@ func ExampleRA_SetHMS() {
 
 func TestAngle_SetDMS(t *testing.T) {
 	// examples p. 9
-	a := new(meeus.FmtAngle).SetDMS(true, 13, 47, 22) // negative angle
+	a := new(common.FmtAngle).SetDMS(true, 13, 47, 22) // negative angle
 	if a.String() != "-13°47′22″" {
 		t.Fatal(a.String())
 	}
@@ -84,7 +84,7 @@ func TestAngle_SetDMS(t *testing.T) {
 
 // example p. 6
 func TestAngle_Format(t *testing.T) {
-	a := new(meeus.FmtAngle).SetDMS(false, 23, 26, 44)
+	a := new(common.FmtAngle).SetDMS(false, 23, 26, 44)
 	if f := a.String(); f != "23°26′44″" {
 		t.Fatal(f)
 	}
@@ -92,14 +92,14 @@ func TestAngle_Format(t *testing.T) {
 
 // example p. 6
 func TestHourAngle_Format(t *testing.T) {
-	a := new(meeus.FmtHourAngle).SetHMS(false, 15, 22, 7)
+	a := new(common.FmtHourAngle).SetHMS(false, 15, 22, 7)
 	if f := fmt.Sprintf("%0s", a); f != "15ʰ22ᵐ07ˢ" {
 		t.Fatalf(f)
 	}
 }
 
 func TestOverflow(t *testing.T) {
-	a := new(meeus.FmtAngle).SetDMS(false, 23, 26, 44)
+	a := new(common.FmtAngle).SetDMS(false, 23, 26, 44)
 	if f := fmt.Sprintf("%03s", a); f != "023°26′44″" {
 		t.Fatal(f)
 	}
@@ -110,7 +110,7 @@ func TestOverflow(t *testing.T) {
 }
 
 func ExampleSplit60() {
-	neg, x60, seg, err := meeus.Split60(-123.456, 2, true)
+	neg, x60, seg, err := common.Split60(-123.456, 2, true)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -138,14 +138,14 @@ func TestSplit60(t *testing.T) {
 		{75, 1, false, 1, "15.0", nil},
 		// smallest valid with prec = 15 is about 4.5 seconds.
 		{4.500000123456789, 15, false, 0, "4.500000123456789", nil},
-		{9, 16, false, 0, "9", meeus.WidthErrorInvalidPrecision},
-		{10, 15, false, 0, "10", meeus.WidthErrorLossOfPrecision},
+		{9, 16, false, 0, "9", common.WidthErrorInvalidPrecision},
+		{10, 15, false, 0, "10", common.WidthErrorLossOfPrecision},
 		// one degree can have 12 digits of precision without loss.
 		{3600, 12, false, 60, "0.000000000000", nil},
 		// 360 degrees (21600 minutes) can have 9.
 		{360 * 3600, 9, false, 21600, "0.000000000", nil},
 	} {
-		neg, quo, rem, err := meeus.Split60(tc.x, tc.prec, false)
+		neg, quo, rem, err := common.Split60(tc.x, tc.prec, false)
 		if err != tc.err {
 			t.Logf("%#v", tc)
 			t.Fatal("err", err)

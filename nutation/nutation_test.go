@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/common"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/nutation"
 )
@@ -16,10 +16,10 @@ func ExampleNutation() {
 	Δψ, Δε := nutation.Nutation(jd)
 	ε0 := nutation.MeanObliquity(jd)
 	ε := ε0 + Δε
-	fmt.Printf("%+.3d\n", meeus.NewFmtAngle(Δψ))
-	fmt.Printf("%+.3d\n", meeus.NewFmtAngle(Δε))
-	fmt.Printf("%.3d\n", meeus.NewFmtAngle(ε0))
-	fmt.Printf("%.3d\n", meeus.NewFmtAngle(ε))
+	fmt.Printf("%+.3d\n", common.NewFmtAngle(Δψ))
+	fmt.Printf("%+.3d\n", common.NewFmtAngle(Δε))
+	fmt.Printf("%.3d\n", common.NewFmtAngle(ε0))
+	fmt.Printf("%.3d\n", common.NewFmtAngle(ε))
 	// Output:
 	// -3″.788
 	// +9″.443

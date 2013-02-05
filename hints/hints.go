@@ -1,9 +1,8 @@
 // Copyright 2012 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-package meeus
-
 // Hints: Chapter 1, Hints and Tips.
+package hints
 
 // Horner evaluates a polynomal with coefficients c at x.  The constant
 // term is c[0].  The function panics with an empty coefficient list.

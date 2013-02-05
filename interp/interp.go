@@ -27,7 +27,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/hints"
 )
 
 // Error values returned by functions in this package.  Defined here to help
@@ -248,7 +248,7 @@ func Len5Extremum(x1, x5 float64, yTable []float64) (x, y float64, err error) {
 	}
 	den := l5.K - 12*l5.F
 	n0, ok := iterate(0, func(n0 float64) float64 {
-		return meeus.Horner(n0, nCoeff) / den
+		return hints.Horner(n0, nCoeff) / den
 	})
 	if !ok {
 		return 0, 0, ErrorNoConverge
@@ -282,7 +282,7 @@ func newLen5diffs(y []float64) *len5diffs {
 }
 
 func (l5 *len5diffs) eval(n float64) float64 {
-	return meeus.Horner(n, []float64{
+	return hints.Horner(n, []float64{
 		l5.y3,
 		(l5.B+l5.C)/2 - (l5.H+l5.J)/12,
 		l5.F/2 - l5.K/24,
@@ -322,7 +322,7 @@ func Len5Zero(x1, x5 float64, yTable []float64, strong bool) (x float64, err err
 		numCoeff := []float64{l5.y3, Q, P, N, M}
 		denCoeff := []float64{Q, 2 * P, 3 * N, 4 * M}
 		f = func(n0 float64) float64 {
-			return n0 - meeus.Horner(n0, numCoeff)/meeus.Horner(n0, denCoeff)
+			return n0 - hints.Horner(n0, numCoeff)/hints.Horner(n0, denCoeff)
 		}
 	} else {
 		numCoeff := []float64{
@@ -334,7 +334,7 @@ func Len5Zero(x1, x5 float64, yTable []float64, strong bool) (x float64, err err
 		}
 		den := 12*(l5.B+l5.C) - 2*(l5.H+l5.J)
 		f = func(n0 float64) float64 {
-			return meeus.Horner(n0, numCoeff) / den
+			return hints.Horner(n0, numCoeff) / den
 		}
 	}
 	n0, ok := iterate(0, f)
@@ -378,7 +378,7 @@ func Lagrange(x float64, table []struct{ X, Y float64 }) (y float64) {
 // have to be in order.  They must however, be distinct.
 //
 // The returned polynomial will be of degree n-1 where n is the number of rows
-// in the table.  It can be evaluated for x using meeus.Horner.
+// in the table.  It can be evaluated for x using hints.Horner.
 func LagrangePoly(table []struct{ X, Y float64 }) []float64 {
 	// Method not fully described by Meeus, but needed for numerical solution
 	// to Example 3.g.

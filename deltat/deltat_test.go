@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/common"
 	"github.com/soniakeys/meeus/deltat"
 	"github.com/soniakeys/meeus/interp"
 	"github.com/soniakeys/meeus/julian"
@@ -32,7 +32,7 @@ func ExampleDeltaT1900to1997_table() {
 func ExampleDeltaT1900to1997_polynomial() {
 	// Example 10.a, p. 78.
 	jd := julian.TimeToJD(time.Date(1977, 2, 18, 3, 37, 40, 0, time.UTC))
-	year := meeus.JDEToJulianYear(jd)
+	year := common.JDEToJulianYear(jd)
 	fmt.Printf("julian year %.1f\n", year)
 	fmt.Printf("%+.1f seconds\n", deltat.DeltaT1900to1997(jd))
 	// Output:

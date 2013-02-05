@@ -4,7 +4,8 @@ package greenwich
 import (
 	"math"
 
-	"github.com/soniakeys/meeus"
+	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/hints"
 	"github.com/soniakeys/meeus/nutation"
 )
 
@@ -16,7 +17,7 @@ import (
 // final value of sidereal time.
 func jdToCFrac(jd float64) (cen, dayFrac float64) {
 	j0, f := math.Modf(jd + .5)
-	return (j0 - .5 - meeus.J2000) / 36525, f
+	return (j0 - .5 - common.J2000) / 36525, f
 }
 
 // iau82 is a polynomial giving mean sidereal time at Greenwich at 0h UT.
@@ -32,7 +33,7 @@ var iau82 = []float64{24110.54841, 8640184.812866, 0.093104, 0.0000062}
 // time and is in the range [0,86400).
 func MeanSidereal(jd float64) float64 {
 	cen, dayFrac := jdToCFrac(jd)
-	s := math.Mod(meeus.Horner(cen, iau82)+dayFrac*1.00273790935*86400, 86400)
+	s := math.Mod(hints.Horner(cen, iau82)+dayFrac*1.00273790935*86400, 86400)
 	if s < 0 {
 		s += 86400
 	}
