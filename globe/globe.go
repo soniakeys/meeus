@@ -30,11 +30,11 @@ func (e Ellipsoid) Eccentricity() float64 {
 	return math.Sqrt((2 - e.Fl) * e.Fl)
 }
 
-// Parallax computes parallax constants ρ sin φ′ and ρ cos φ′.
+// ParallaxConstants computes parallax constants ρ sin φ′ and ρ cos φ′.
 //
 // Arguments are geographic latitude φ in radians and height h
 // in meters above the ellipsoid.
-func (e Ellipsoid) Parallax(φ, h float64) (s, c float64) {
+func (e Ellipsoid) ParallaxConstants(φ, h float64) (s, c float64) {
 	boa := 1 - e.Fl
 	su, cu := math.Sincos(math.Atan(boa * math.Tan(φ)))
 	s, c = math.Sincos(φ)
@@ -130,8 +130,7 @@ func ApproxLinearDistance(d float64) float64 {
 // of an ellipsoid.
 //
 // Accuracy is much better than that of ApproxAngularDistance or
-// ApproxLinearDistance, with relative error on the order of the square
-// of the flattening.
+// ApproxLinearDistance.
 //
 // Result unit is Km.
 func (e Ellipsoid) Distance(c1, c2 Coord) float64 {

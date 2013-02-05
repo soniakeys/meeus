@@ -13,7 +13,7 @@ func ExampleEllipsoid_Parallax() {
 	// Example 11.a, p 82.
 	// phi = geographic latitude of Palomar
 	φ := meeus.NewAngle(false, 33, 21, 22).Rad()
-	s, c := globe.Earth76.Parallax(φ, 1706)
+	s, c := globe.Earth76.ParallaxConstants(φ, 1706)
 	fmt.Printf("ρ sin φ′ = %+.6f\n", s)
 	fmt.Printf("ρ cos φ′ = %+.6f\n", c)
 	// Output:
