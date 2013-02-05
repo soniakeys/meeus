@@ -26,9 +26,9 @@ func jdToCFrac(jd float64) (cen, dayFrac float64) {
 // Union.
 var iau82 = []float64{24110.54841, 8640184.812866, 0.093104, 0.0000062}
 
-// MeanSidereal returns mean sidereal time at Greenwich for the given JD.
+// MeanSidereal returns mean sidereal time at Greenwich for a given JD.
 //
-// Computation is by IAU 1982 coefficients.  The results is in seconds of
+// Computation is by IAU 1982 coefficients.  The result is in seconds of
 // time and is in the range [0,86400).
 func MeanSidereal(jd float64) float64 {
 	cen, dayFrac := jdToCFrac(jd)
@@ -39,9 +39,19 @@ func MeanSidereal(jd float64) float64 {
 	return s
 }
 
+// ApparentSidereal returns apparent sidereal time at Greenwich for the given
+// JD.
+//
+// Apparent is mean plus the nutation in right ascension.
+//
+// The result is in seconds of time and is in the range [0,86400).
 func ApparentSidereal(jd float64) float64 {
 	s := MeanSidereal(jd)               // seconds of time
 	n := nutation.NutationInRA(jd)      // angle (radians) of RA
 	ns := n * 3600 * 180 / math.Pi / 15 // convert RA to time in seconds
-	return s + ns
+	s = math.Mod(s+ns, 86400)
+	if s < 0 {
+		s += 86400
+	}
+	return s
 }
