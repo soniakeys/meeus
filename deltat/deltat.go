@@ -1,4 +1,8 @@
 // DeltaT: Chapter 10, Dynamical Time and Universal Time
+//
+// Functions in this package compute ΔT for various ranges of dates.
+//
+// The return value for all functions is ΔT in seconds.
 package deltat
 
 import (
@@ -46,10 +50,8 @@ func c2000(y float64) float64 {
 	return (y - 2000) * .01
 }
 
-// DeltaTBefore948 returns a polynomial approximation valid for years
-// before 948.
-//
-// Apparently year should be calendar year.  It's not exactly clear.
+// DeltaTBefore948 returns a polynomial approximation valid for calendar
+// years before 948.
 func DeltaTBefore948(year float64) float64 {
 	return meeus.Horner(c2000(year), []float64{2177, 497, 44.1})
 }
