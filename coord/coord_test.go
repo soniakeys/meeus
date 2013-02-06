@@ -9,8 +9,8 @@ import (
 	"github.com/soniakeys/meeus/common"
 	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/globe"
-	"github.com/soniakeys/meeus/greenwich"
 	"github.com/soniakeys/meeus/julian"
+	"github.com/soniakeys/meeus/sidereal"
 )
 
 func ExampleEcliptic_EqToEcl() {
@@ -60,7 +60,7 @@ func ExampleHorizontal_EqToHz() {
 		Lon: common.NewAngle(false, 77, 3, 56).Rad(),
 	}
 	jd := julian.TimeToJD(time.Date(1987, 4, 10, 19, 21, 0, 0, time.UTC))
-	st := greenwich.ApparentSidereal(jd)
+	st := sidereal.Apparent(jd)
 	hz := new(coord.Horizontal).EqToHz(eq, g, st)
 	AStr := common.DecSymAdd(fmt.Sprintf("%+.3f", hz.Az*180/math.Pi), '°')
 	hStr := common.DecSymAdd(fmt.Sprintf("%+.3f", hz.Alt*180/math.Pi), '°')
