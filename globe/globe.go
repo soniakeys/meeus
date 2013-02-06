@@ -103,10 +103,12 @@ func GeocentricLatitudeDifference(φ float64) float64 {
 	return (692.73*math.Sin(2*φ) - 1.16*math.Sin(4*φ)) * math.Pi / (180 * 3600)
 }
 
-// Coord represents a coordinate or vector relative to the Earth's globe.
+// Coord represents geographic coordinates on the Earth.
+//
+// Longitude is measured positively westward from the Greenwich meridian.
 type Coord struct {
 	Lat float64 // latitude (φ) in radians
-	Lon float64 // longitude (ψ) in radians
+	Lon float64 // longitude (ψ, or L) in radians
 }
 
 // ApproxAngularDistance returns the cosine of the angle between two points.
