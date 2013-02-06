@@ -24,5 +24,5 @@ Cross reference from chapters to package names
     <tr><td>14. The Parallactic Angle, and three other Topics.</td><td>parallactic</td><td>complete</td></tr>
     <tr><td>21. Precession</td><td>precess</td><td>complete</td></tr>
     <tr><td>22. Nutation and the Obliquity of the Ecliptic</td><td>nutation</td><td>complete</td></tr>
-    <tr><td>Non-Meeus useful functions</td><td>common</td></td></td></tr>
+    <tr><td>Non-Meeus useful functions</td><td>common</td><td></td></tr>
 </table>
