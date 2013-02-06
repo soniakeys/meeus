@@ -24,13 +24,14 @@ func ParallacticAngleOnHorizon(φ, δ float64) float64 {
 }
 
 // EclipticAtHorizon computes how the plane of the ecliptic intersects
-// the horizon.
+// the horizon at a given local sidereal time as observed from a given
+// geographic latitude.
 //
 //	ε is obliquity of the ecliptic.
 //	φ is geographic latitude of observer.
 //	θ is local sidereal time expressed as an hour angle.
 //
-//	λ1 and λ2 are azimuths on the horizon where the ecliptic intersects.
+//	λ1 and λ2 are ecliptic longitudes where the ecliptic intersects the horizon.
 //	I is the angle at which the ecliptic intersects the horizon.
 //
 // All angles, arguments and results, are in radians.
@@ -45,9 +46,13 @@ func EclipticAtHorizon(ε, φ, θ float64) (λ1, λ2, I float64) {
 	return λ, λ + math.Pi, math.Acos(cε*sφ - sε*cφ*sθ)
 }
 
-// EclipticAtEquator is useful for lunar eclipse diagrams.  (See AA.)
+// EclipticAtEquator computes the angle between the ecliptic and the parallels
+// of ecliptic latitude at a given ecliptic longitude.
 //
-//	λ is geographic longitude.
+// (The function name EclipticAtEquator is for consistency with the Meeus text,
+// and works if you consider the equator a nominal parallel of latitude.)
+//
+//	λ is ecliptic longitude.
 //	ε is obliquity of the ecliptic.
 //
 // All angles in radians.
@@ -55,8 +60,8 @@ func EclipticAtEquator(λ, ε float64) float64 {
 	return math.Atan(-math.Cos(λ) * math.Tan(ε))
 }
 
-// DiurnalPathAtHorizon computes the angle of a celestial object relative to
-// the horizon at the time of its rising or setting.
+// DiurnalPathAtHorizon computes the angle of the path a celestial object
+// relative to the horizon at the time of its rising or setting.
 //
 //	δ is declination of the object.
 //	φ is geographic latitude of observer.
