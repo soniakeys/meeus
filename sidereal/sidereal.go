@@ -1,4 +1,4 @@
-// Sidereal: Chapter 12, Sidereal Time at Greenwich
+// Sidereal: Chapter 12, Sidereal Time at Greenwich.
 package sidereal
 
 import (

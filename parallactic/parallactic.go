@@ -1,4 +1,4 @@
-// Parallactic: Chapter 14, The Parallactic Angle, and three other Topics
+// Parallactic: Chapter 14, The Parallactic Angle, and three other Topics.
 package parallactic
 
 import "math"

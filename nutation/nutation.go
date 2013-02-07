@@ -1,4 +1,4 @@
-// Nutation: Chapter 22, Nutation and the Obliquity of the Ecliptic
+// Nutation: Chapter 22, Nutation and the Obliquity of the Ecliptic.
 package nutation
 
 import (

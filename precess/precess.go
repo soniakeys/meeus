@@ -1,4 +1,4 @@
-// Precession: Chapter 21, Precession
+// Precession: Chapter 21, Precession.
 //
 // Functions in this package take Julian epoch argurments rather than Julian
 // days.  Use common.JDEToJulianYear() to convert.

@@ -1,4 +1,4 @@
-// Fit: Chapter 4, Curve Fitting
+// Fit: Chapter 4, Curve Fitting.
 package fit
 
 import (

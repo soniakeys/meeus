@@ -1,4 +1,4 @@
-// DeltaT: Chapter 10, Dynamical Time and Universal Time
+// DeltaT: Chapter 10, Dynamical Time and Universal Time.
 //
 // Functions in this package compute ΔT for various ranges of dates.
 //

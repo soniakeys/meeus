@@ -1,4 +1,4 @@
-// Coord: Chapter 13, Transformation of Coordinates
+// Coord: Chapter 13, Transformation of Coordinates.
 package coord
 
 import (
