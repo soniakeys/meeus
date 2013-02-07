@@ -32,12 +32,25 @@ var iau82 = []float64{24110.54841, 8640184.812866, 0.093104, 0.0000062}
 // Computation is by IAU 1982 coefficients.  The result is in seconds of
 // time and is in the range [0,86400).
 func Mean(jd float64) float64 {
-	cen, dayFrac := jdToCFrac(jd)
-	s := math.Mod(hints.Horner(cen, iau82)+dayFrac*1.00273790935*86400, 86400)
-	if s < 0 {
-		s += 86400
-	}
-	return s
+	return common.PMod(mean(jd), 86400)
+}
+
+func mean(jd float64) float64 {
+	s, f := mean0UT(jd)
+	return s + f*1.00273790935*86400
+}
+
+// Mean0UT returns mean sidereal time at Greenwich at 0h UT on the given JD.
+//
+// The result is in seconds of time and is in the range [0,86400).
+func Mean0UT(jd float64) float64 {
+	s, _ := mean0UT(jd)
+	return common.PMod(s, 86400)
+}
+
+func mean0UT(jd float64) (sidereal, dayFrac float64) {
+	cen, f := jdToCFrac(jd)
+	return hints.Horner(cen, iau82), f
 }
 
 // Apparent returns apparent sidereal time at Greenwich for the given JD.
@@ -46,12 +59,21 @@ func Mean(jd float64) float64 {
 //
 // The result is in seconds of time and is in the range [0,86400).
 func Apparent(jd float64) float64 {
-	s := Mean(jd)                       // seconds of time
+	s := mean(jd)                       // seconds of time
 	n := nutation.NutationInRA(jd)      // angle (radians) of RA
 	ns := n * 3600 * 180 / math.Pi / 15 // convert RA to time in seconds
-	s = math.Mod(s+ns, 86400)
-	if s < 0 {
-		s += 86400
-	}
-	return s
+	return common.PMod(s+ns, 86400)
+}
+
+// Apparent0UT returns apparent sidereal time at Greenwich at 0h UT
+// on the given JD.
+//
+// The result is in seconds of time and is in the range [0,86400).
+func Apparent0UT(jd float64) float64 {
+	j0, f := math.Modf(jd + .5)
+	cen := (j0 - .5 - common.J2000) / 36525
+	s := hints.Horner(cen, iau82) + f*1.00273790935*86400
+	n := nutation.NutationInRA(j0)      // angle (radians) of RA
+	ns := n * 3600 * 180 / math.Pi / 15 // convert RA to time in seconds
+	return common.PMod(s+ns, 86400)
 }

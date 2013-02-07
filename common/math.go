@@ -3,6 +3,8 @@
 
 package common
 
+import "math"
+
 // FloorDiv returns the floor of x / y.
 //
 // It uses integer math only, so is more efficient than using floating point
@@ -40,4 +42,17 @@ func Cmp(a, b float64) int {
 		return 1
 	}
 	return 0
+}
+
+// PMod returns a positive floating-point x mod y.
+//
+// For a positive argument y, it returns a value in the range [0,y).
+//
+// The result may not be useful if y is negative.
+func PMod(x, y float64) float64 {
+	r := math.Mod(x, y)
+	if r < 0 {
+		r += y
+	}
+	return r
 }
