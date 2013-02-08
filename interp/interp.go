@@ -101,7 +101,7 @@ func Len3Interpolate(x, x1, x3 float64, yTable []float64, allowExtrapolate bool)
 	a := yTable[1] - yTable[0]
 	b := yTable[2] - yTable[1]
 	c := b - a
-	n := x - (x1+x3)*.5
+	n := (2*x - x1 - x3) / (x3 - x1)
 	return yTable[1] + n*.5*(a+b+n*c), nil
 }
 
