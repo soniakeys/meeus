@@ -54,9 +54,13 @@ func Interp10A(jde float64) float64 {
 	}
 	yf := float64(y) + float64(julian.DayOfYear(y, m, int(d+.5), l))/yl
 	x1, x3, yTable := interp.Slice(yf, tableYear1, tableYearN, table10A, 3)
-	dt, err := interp.Len3Interpolate(yf, x1, x3, yTable, false)
+	d3, err := interp.NewLen3(x1, x3, yTable)
 	if err != nil {
-		panic(err)
+		panic(err) // error would indicate a bug in interp.Slice.
+	}
+	dt, err := d3.InterpolateX(yf, false)
+	if err != nil {
+		panic(err) // error would indicate a bug in InterpolateX.
 	}
 	return dt
 }

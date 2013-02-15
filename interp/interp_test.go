@@ -9,17 +9,19 @@ import (
 	"github.com/soniakeys/meeus/interp"
 )
 
-func ExampleLen3Interpolate() {
+func ExampleLen3_InterpolateN() {
 	// Example 3.a, p. 25.
-	x1 := 7.
-	x3 := 9.
-	yTable := []float64{
+	d3, err := interp.NewLen3(7, 9, []float64{
 		.884226,
 		.877366,
 		.870531,
+	})
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
-	x := 8 + common.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
-	y, err := interp.Len3Interpolate(x, x1, x3, yTable, false)
+	n := 4.35 / 24
+	y, err := d3.InterpolateN(n, false)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -29,16 +31,40 @@ func ExampleLen3Interpolate() {
 	// 0.876125
 }
 
-func ExampleLen3Extremum() {
+func ExampleLen3_InterpolateX() {
+	// Example 3.a, p. 25.
+	d3, err := interp.NewLen3(7, 9, []float64{
+		.884226,
+		.877366,
+		.870531,
+	})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	x := 8 + common.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
+	y, err := d3.InterpolateX(x, false)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("%.6f\n", y)
+	// Output:
+	// 0.876125
+}
+
+func ExampleLen3_Extremum() {
 	// Example 3.b, p. 26.
-	x1 := 12.
-	x3 := 20.
-	yTable := []float64{
+	d3, err := interp.NewLen3(12, 20, []float64{
 		1.3814294,
 		1.3812213,
 		1.3812453,
+	})
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
-	x, y, err := interp.Len3Extremum(x1, x3, yTable)
+	x, y, err := d3.Extremum()
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -50,10 +76,7 @@ func ExampleLen3Extremum() {
 	// date:     17.5864
 }
 
-// (Note on 17.5864, just above:  Meeus looses a decimal place by rounding nm
-// before multiplying by dx.)
-
-func ExampleLen3Zero() {
+func ExampleLen3_Zero() {
 	// Example 3.c, p. 26.
 	x1 := 26.
 	x3 := 28.
@@ -63,7 +86,12 @@ func ExampleLen3Zero() {
 		common.DMSToDeg(false, 0, 6, 46.3),
 		common.DMSToDeg(false, 0, 38, 23.2),
 	}
-	x, err := interp.Len3Zero(x1, x3, yTable, false)
+	d3, err := interp.NewLen3(x1, x3, yTable)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	x, err := d3.Zero(false)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -73,12 +101,17 @@ func ExampleLen3Zero() {
 	// 26.79873
 }
 
-func ExampleLen3Zero_strong() {
+func ExampleLen3_Zero_strong() {
 	// Example 3.d, p. 27.
 	x1 := -1.
 	x3 := 1.
 	yTable := []float64{-2, 3, 2}
-	x, err := interp.Len3Zero(x1, x3, yTable, true)
+	d3, err := interp.NewLen3(x1, x3, yTable)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	x, err := d3.Zero(true)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -88,7 +121,7 @@ func ExampleLen3Zero_strong() {
 	// -0.720759220056
 }
 
-func ExampleLen5Interpolate() {
+func ExampleLen5_InterpolateX() {
 	// Example 3.e, p. 28.
 	x1 := 27.
 	x5 := 29.
@@ -101,7 +134,12 @@ func ExampleLen5Interpolate() {
 		common.NewAngle(false, 0, 54, 04.133).Rad(),
 	}
 	x := 28 + (3+20./60)/24
-	y, err := interp.Len5Interpolate(x, x1, x5, yTable, false)
+	d5, err := interp.NewLen5(x1, x5, yTable)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	y, err := d5.InterpolateX(x, false)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -123,15 +161,23 @@ func TestLen5Zero(t *testing.T) {
 		common.DMSToDeg(false, 1, 01, 00.13),
 		common.DMSToDeg(false, 1, 45, 46.33),
 	}
-	z, err := interp.Len5Zero(x1, x5, yTable, false)
+	d5, err := interp.NewLen5(x1, x5, yTable)
+	if err != nil {
+		t.Fatal(err)
+	}
+	z, err := d5.Zero(false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if math.Abs(z-26.638587) > 1e-6 {
 		t.Fatal(z)
 	}
-	// using three central values
-	z, err = interp.Len3Zero(26, 28, yTable[1:4], false)
+	// compare result to that from just three central values
+	d3, err := interp.NewLen3(26, 28, yTable[1:4])
+	if err != nil {
+		t.Fatal(err)
+	}
+	z, err = d3.Zero(false)
 	if err != nil {
 		t.Fatal(err)
 	}

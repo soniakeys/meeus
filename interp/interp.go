@@ -8,11 +8,9 @@
 // These functions interpolate from a table of equidistant x values
 // and corresponding y values.  Since the x values are equidistant,
 // only the first and last values are supplied as arguments.  The interior
-// x values are implicit.
-//
-// All y values must be supplied however.  They are passed as a slice,
-// and the length of y is fixed.  For Len3 functions it must be 3 and for
-// Len5 functions it must be 5.
+// x values are implicit.  All y values must be supplied however.
+// They are passed as a slice, and the length of y is fixed.  For Len3
+// functions it must be 3 and for Len5 functions it must be 5.
 //
 // For these Len3 and Len5 functions, Meeus notes the importance of choosing
 // the 3 or 5 rows of a larger table that will minimize the interpolating
@@ -37,6 +35,7 @@ var (
 	ErrorNot4        = errors.New("Argument yTable must be length 4")
 	ErrorNot5        = errors.New("Argument yTable must be length 5")
 	ErrorNoXRange    = errors.New("Argument x3 (or x5) cannot equal x1")
+	ErrorNOutOfRange = errors.New("Interpolating factor n must be in range -1 to 1")
 	ErrorXOutOfRange = errors.New("Argument x outside of range x1 to x3 (or x5)")
 	ErrorNoExtremum  = errors.New("No extremum in table")
 	ErrorZeroOutside = errors.New("Zero falls outside of table")
@@ -72,68 +71,83 @@ func Slice(x, x1, xn float64, y []float64, n int) (sx1, sxn float64, s []float64
 		y[start : start+n]
 }
 
-// Len3Interpolate interpolates from a table of three rows
-// by taking second differences.
-//
-// Function returns interpolated y value for argument x, as long as x is
-// within the table.
-func Len3Interpolate(x, x1, x3 float64, yTable []float64, allowExtrapolate bool) (y float64, err error) {
-	// AA p. 24.
-	if len(yTable) != 3 {
-		return 0, ErrorNot3
-	}
-	if x3 == x1 {
-		return 0, ErrorNoXRange
-	}
-	if !allowExtrapolate {
-		if x3 > x1 {
-			// increasing x
-			if x < x1 || x > x3 {
-				return 0, ErrorXOutOfRange
-			}
-		} else {
-			// decreasing x
-			if x > x1 || x < x3 {
-				return 0, ErrorXOutOfRange
-			}
-		}
-	}
-	a := yTable[1] - yTable[0]
-	b := yTable[2] - yTable[1]
-	c := b - a
-	n := (2*x - x1 - x3) / (x3 - x1)
-	return yTable[1] + n*.5*(a+b+n*c), nil
+// Len3 allows second difference interpolation.
+type Len3 struct {
+	x1, x3             float64
+	y                  []float64
+	a, b, c            float64
+	abSum, xSum, xDiff float64
 }
 
-// Len3Extremum finds the extremum in a table of 3 rows, interpolating
-// by second differences.
+// NewLen3 prepares a Len3 object from a table of three rows of x and y values.
 //
-// It returns the x and y values at the extremum.
-func Len3Extremum(x1, x3 float64, yTable []float64) (x, y float64, err error) {
-	// AA p. 25.
-	if len(yTable) != 3 {
-		return 0, 0, ErrorNot3
+// X values must be equally spaced, so only the first and last are supplied.
+// X1 must not equal x3.  Y must be a slice of three y values.
+func NewLen3(x1, x3 float64, y []float64) (*Len3, error) {
+	if len(y) != 3 {
+		return nil, ErrorNot3
 	}
 	if x3 == x1 {
-		return 0, 0, ErrorNoXRange
+		return nil, ErrorNoXRange
 	}
-	a := yTable[1] - yTable[0]
-	b := yTable[2] - yTable[1]
-	c := b - a
-	if c == 0 {
+	d := &Len3{
+		x1: x1,
+		x3: x3,
+		y:  append([]float64{}, y...),
+	}
+	// differences
+	d.a = y[1] - y[0]
+	d.b = y[2] - y[1]
+	d.c = d.b - d.a
+	// other intermediate values
+	d.abSum = d.a + d.b
+	d.xSum = x3 + x1
+	d.xDiff = x3 - x1
+	return d, nil
+}
+
+// InterpolateX interpolates for a given x value.
+//
+// If allowExtrapolate is false, x must be in the range x1 to x3 given to the
+// the constructor NewLen3.
+func (d *Len3) InterpolateX(x float64, allowExtrapolate bool) (y float64, err error) {
+	n := (2*x - d.xSum) / d.xDiff
+	y, err = d.InterpolateN(n, allowExtrapolate)
+	if err == ErrorNOutOfRange {
+		err = ErrorXOutOfRange
+	}
+	return
+}
+
+// InterpolateN interpolates for a given interpolating factor n.
+//
+// The interpolation factor n is x-x2 in units of the tabular x interval.
+// (See Meeus p. 24.)
+//
+// If allowExtrapolate is false, x must be in the range x1 to x3 given to the
+// the constructor NewLen3.
+func (d *Len3) InterpolateN(n float64, allowExtrapolate bool) (y float64, err error) {
+	if !allowExtrapolate && (n < -1 || n > 1) {
+		return 0, ErrorNOutOfRange
+	}
+	// interpolation formula (3.3) p. 24.
+	return d.y[1] + n*.5*(d.abSum+n*d.c), nil
+}
+
+// Extremum returns the x and y values at the extremum.
+func (d *Len3) Extremum() (x, y float64, err error) {
+	if d.c == 0 {
 		return 0, 0, ErrorNoExtremum
 	}
-	apb := a + b
-	y = yTable[1] - (apb*apb)/(8*c)
-	n := apb / (-2 * c)
-	x = .5 * ((x3 + x1) + (x3-x1)*n)
+	y = d.y[1] - (d.abSum*d.abSum)/(8*d.c)
+	n := d.abSum / (-2 * d.c)
+	x = .5 * (d.xSum + d.xDiff*n)
 	return x, y, nil
 }
 
-// Len3Zero finds the first zero in a table of three rows, interpolating
-// by second differences.
+// Len3Zero finds the first zero.
 //
-// It returns the x value that yields y=0.
+// That is, it returns the x value that yields y=0.
 //
 // Argument strong switches between two strategies for the estimation step.
 // when iterating to converge on the zero.
@@ -143,25 +157,15 @@ func Len3Extremum(x1, x3 float64, yTable []float64) (x, y float64, err error) {
 // Strong=true specifies a more sophisticated and thus somewhat more
 // expensive estimate.  However, if the curve has quick changes, This estimate
 // will converge more reliably and in fewer steps, making it a better choice.
-func Len3Zero(x1, x3 float64, yTable []float64, strong bool) (x float64, err error) {
-	// AA p. 26.
-	if len(yTable) != 3 {
-		return 0, ErrorNot3
-	}
-	if x3 == x1 {
-		return 0, ErrorNoXRange
-	}
-	a := yTable[1] - yTable[0]
-	b := yTable[2] - yTable[1]
-	c := b - a
-	var f func(n0 float64) (n1 float64)
+func (d *Len3) Zero(strong bool) (x float64, err error) {
+	var f iterFunc
 	if strong {
 		f = func(n0 float64) float64 {
-			return n0 - (2*yTable[1]+n0*(a+b+c*n0))/(a+b+2*c*n0)
+			return n0 - (2*d.y[1]+n0*(d.abSum+d.c*n0))/(d.abSum+2*d.c*n0)
 		}
 	} else {
 		f = func(n0 float64) float64 {
-			return -2 * yTable[1] / (a + b + c*n0)
+			return -2 * d.y[1] / (d.abSum + d.c*n0)
 		}
 	}
 	n0, ok := iterate(0, f)
@@ -171,10 +175,12 @@ func Len3Zero(x1, x3 float64, yTable []float64, strong bool) (x float64, err err
 	if n0 > 1 || n0 < -1 {
 		return 0, ErrorZeroOutside
 	}
-	return .5 * ((x3 + x1) + (x3-x1)*n0), nil // success
+	return .5 * (d.xSum + d.xDiff*n0), nil // success
 }
 
-func iterate(n0 float64, f func(n0 float64) (n1 float64)) (n1 float64, ok bool) {
+type iterFunc func(n0 float64) (n1 float64)
+
+func iterate(n0 float64, f iterFunc) (n1 float64, ok bool) {
 	for limit := 0; limit < 50; limit++ {
 		n1 = f(n0)
 		if math.IsInf(n1, 0) || math.IsNaN(n1) {
@@ -189,112 +195,119 @@ func iterate(n0 float64, f func(n0 float64) (n1 float64)) (n1 float64, ok bool) 
 }
 
 // Len4Half interpolates a center value from a table of four rows.
-func Len4Half(yTable []float64) (float64, error) {
-	if len(yTable) != 4 {
+func Len4Half(y []float64) (float64, error) {
+	if len(y) != 4 {
 		return 0, ErrorNot4
 	}
-	return (9*(yTable[1]+yTable[2]) - yTable[0] - yTable[3]) / 16, nil
+	return (9*(y[1]+y[2]) - y[0] - y[3]) / 16, nil
 }
 
-// Len5Interpolate interpolates from a table of five rows
-// by taking fouth differences.
-//
-// Function returns interpolated y value for argument x, as long as x is
-// within the table.
-func Len5Interpolate(x, x1, x5 float64, yTable []float64, allowExtrapolate bool) (y float64, err error) {
-	// AA p. 28.
-	if len(yTable) != 5 {
-		return 0, ErrorNot5
-	}
-	if x5 == x1 {
-		return 0, ErrorNoXRange
-	}
-	if !allowExtrapolate {
-		if x5 > x1 {
-			// increasing x
-			if x < x1 || x > x5 {
-				return 0, ErrorXOutOfRange
-			}
-		} else {
-			// decreasing x
-			if x > x1 || x < x5 {
-				return 0, ErrorXOutOfRange
-			}
-		}
-	}
-	l5 := newLen5diffs(yTable)
-	n := (4*x - 2*(x1+x5)) / (x5 - x1)
-	return l5.eval(n), nil
+// Len5 allows fourth difference interpolation.
+type Len5 struct {
+	x1, x5      float64
+	y           []float64
+	a, b, c, d  float64
+	e, f, g     float64
+	h, j, k     float64
+	y3          float64
+	xSum, xDiff float64
+	interpCoeff []float64
 }
 
-// Len5Extremum finds the extremum in a table of 5 rows, interpolating
-// by second differences.
+// NewLen5 prepares a Len5 object from a table of five rows of x and y values.
 //
-// It returns the x and y values at the extremum.
-func Len5Extremum(x1, x5 float64, yTable []float64) (x, y float64, err error) {
-	// AA p. 29.
-	if len(yTable) != 5 {
-		return 0, 0, ErrorNot5
+// X values must be equally spaced, so only the first and last are supplied.
+// X1 must not equal x5.  Y must be a slice of five y values.
+func NewLen5(x1, x5 float64, y []float64) (*Len5, error) {
+	if len(y) != 5 {
+		return nil, ErrorNot5
 	}
 	if x5 == x1 {
-		return 0, 0, ErrorNoXRange
+		return nil, ErrorNoXRange
 	}
-	l5 := newLen5diffs(yTable)
+	d := &Len5{
+		x1: x1,
+		x5: x5,
+		y:  append([]float64{}, y...),
+		y3: y[2],
+	}
+	// differences
+	d.a = y[1] - y[0]
+	d.b = y[2] - y[1]
+	d.c = y[3] - y[2]
+	d.d = y[4] - y[3]
+
+	d.e = d.b - d.a
+	d.f = d.c - d.b
+	d.g = d.d - d.c
+
+	d.h = d.f - d.e
+	d.j = d.g - d.f
+
+	d.k = d.j - d.h
+	// other intermediate values
+	d.xSum = x5 + x1
+	d.xDiff = x5 - x1
+	d.interpCoeff = []float64{
+		d.y3,
+		(d.b+d.c)/2 - (d.h+d.j)/12,
+		d.f/2 - d.k/24,
+		(d.h + d.j) / 12,
+		d.k / 24,
+	}
+	return d, nil
+}
+
+// InterpolateX interpolates for a given x value.
+//
+// If allowExtrapolate is false, x must be in the range x1 to x5 given to the
+// the constructor NewLen5.
+func (d *Len5) InterpolateX(x float64, allowExtrapolate bool) (y float64, err error) {
+	n := (4*x - 2*d.xSum) / d.xDiff
+	y, err = d.InterpolateN(n, allowExtrapolate)
+	if err == ErrorNOutOfRange {
+		err = ErrorXOutOfRange
+	}
+	return
+}
+
+// InterpolateN interpolates for a given interpolating factor n.
+//
+// The interpolation factor n is x-x2 in units of the tabular x interval.
+// (See Meeus p. 24.)
+//
+// If allowExtrapolate is false, x must be in the range x1 to x5 given to the
+// the constructor NewLen5.
+func (d *Len5) InterpolateN(n float64, allowExtrapolate bool) (y float64, err error) {
+	if !allowExtrapolate && (n < -1 || n > 1) {
+		return 0, ErrorNOutOfRange
+	}
+	return hints.Horner(n, d.interpCoeff), nil
+}
+
+// Extremum returns the x and y values at the extremum.
+func (d *Len5) Extremum() (x, y float64, err error) {
 	nCoeff := []float64{
-		6*(l5.B+l5.C) - l5.H - l5.J,
+		6*(d.b+d.c) - d.h - d.j,
 		0,
-		3 * (l5.H + l5.K),
-		2 * l5.K,
+		3 * (d.h + d.k),
+		2 * d.k,
 	}
-	den := l5.K - 12*l5.F
+	den := d.k - 12*d.f
 	n0, ok := iterate(0, func(n0 float64) float64 {
 		return hints.Horner(n0, nCoeff) / den
 	})
 	if !ok {
 		return 0, 0, ErrorNoConverge
 	}
-	x = .5*(x5+x1) + .25*(x5-x1)*n0
-	return x, l5.eval(n0), nil
+	x = .5*d.xSum + .25*d.xDiff*n0
+	y = hints.Horner(n0, d.interpCoeff)
+	return x, y, nil
 }
 
-type len5diffs struct {
-	y3, A, B, C, D, E, F, G, H, J, K float64
-}
-
-func newLen5diffs(y []float64) *len5diffs {
-	l5 := new(len5diffs)
-	l5.y3 = y[2]
-
-	l5.A = y[1] - y[0]
-	l5.B = y[2] - y[1]
-	l5.C = y[3] - y[2]
-	l5.D = y[4] - y[3]
-
-	l5.E = l5.B - l5.A
-	l5.F = l5.C - l5.B
-	l5.G = l5.D - l5.C
-
-	l5.H = l5.F - l5.E
-	l5.J = l5.G - l5.F
-
-	l5.K = l5.J - l5.H
-	return l5
-}
-
-func (l5 *len5diffs) eval(n float64) float64 {
-	return hints.Horner(n, []float64{
-		l5.y3,
-		(l5.B+l5.C)/2 - (l5.H+l5.J)/12,
-		l5.F/2 - l5.K/24,
-		(l5.H + l5.J) / 12,
-		l5.K / 24,
-	})
-}
-
-// Len5Zero finds the first zero in a table of five rows, interpolating
-// by fourth differences.
+// Len5Zero finds the first zero.
 //
-// It returns the x value that yields y=0.
+// That is, it returns the x value that yields y=0.
 //
 // Argument strong switches between two strategies for the estimation step.
 // when iterating to converge on the zero.
@@ -304,35 +317,27 @@ func (l5 *len5diffs) eval(n float64) float64 {
 // Strong=true specifies a more sophisticated and thus somewhat more
 // expensive estimate.  However, if the curve has quick changes, This estimate
 // will converge more reliably and in fewer steps, making it a better choice.
-func Len5Zero(x1, x5 float64, yTable []float64, strong bool) (x float64, err error) {
-	// AA p. 29.
-	if len(yTable) != 5 {
-		return 0, ErrorNot5
-	}
-	if x5 == x1 {
-		return 0, ErrorNoXRange
-	}
-	l5 := newLen5diffs(yTable)
-	var f func(n0 float64) (n1 float64)
+func (d *Len5) Zero(strong bool) (x float64, err error) {
+	var f iterFunc
 	if strong {
-		M := l5.K / 24
-		N := (l5.H + l5.J) / 12
-		P := l5.F/2 - M
-		Q := (l5.B+l5.C)/2 - N
-		numCoeff := []float64{l5.y3, Q, P, N, M}
+		M := d.k / 24
+		N := (d.h + d.j) / 12
+		P := d.f/2 - M
+		Q := (d.b+d.c)/2 - N
+		numCoeff := []float64{d.y3, Q, P, N, M}
 		denCoeff := []float64{Q, 2 * P, 3 * N, 4 * M}
 		f = func(n0 float64) float64 {
 			return n0 - hints.Horner(n0, numCoeff)/hints.Horner(n0, denCoeff)
 		}
 	} else {
 		numCoeff := []float64{
-			-24 * l5.y3,
+			-24 * d.y3,
 			0,
-			l5.K - 12*l5.F,
-			-2 * (l5.H + l5.J),
-			-l5.K,
+			d.k - 12*d.f,
+			-2 * (d.h + d.j),
+			-d.k,
 		}
-		den := 12*(l5.B+l5.C) - 2*(l5.H+l5.J)
+		den := 12*(d.b+d.c) - 2*(d.h+d.j)
 		f = func(n0 float64) float64 {
 			return hints.Horner(n0, numCoeff) / den
 		}
@@ -344,7 +349,7 @@ func Len5Zero(x1, x5 float64, yTable []float64, strong bool) (x float64, err err
 	if n0 > 2 || n0 < -2 {
 		return 0, ErrorZeroOutside
 	}
-	x = .5*(x5+x1) + .25*(x5-x1)*n0
+	x = .5*d.xSum + .25*d.xDiff*n0
 	return x, nil
 }
 

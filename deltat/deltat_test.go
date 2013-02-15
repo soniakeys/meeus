@@ -16,7 +16,7 @@ func ExampleInterp10A() {
 	dt := deltat.Interp10A(julian.CalendarGregorianToJD(1977, 2, 18))
 	fmt.Printf("%+.1f seconds\n", dt)
 	// Output:
-	// +46.8 seconds
+	// +47.6 seconds
 }
 
 func ExamplePoly1900to1997() {

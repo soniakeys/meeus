@@ -102,11 +102,20 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 	if err != nil {
 		return
 	}
+	var d3α, d3δ *interp.Len3
+	d3α, err = interp.NewLen3(-86400, 86400, α3)
+	if err != nil {
+		return
+	}
+	d3δ, err = interp.NewLen3(-86400, 86400, δ3)
+	if err != nil {
+		return
+	}
 	// adjust mTransit
 	{
 		th0 := common.PMod(Th0+mTransit*360.985647/360, 86400)
 		var α float64
-		α, err = interp.Len3Interpolate(mTransit+ΔT, -86400, 86400, α3, false)
+		α, err = d3α.InterpolateX(mTransit+ΔT, false)
 		if err != nil {
 			return
 		}
@@ -118,11 +127,11 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 	adjustRS := func(m float64) (float64, error) {
 		th0 := common.PMod(Th0+m*360.985647/360, 86400)
 		ut := m + ΔT
-		α, err := interp.Len3Interpolate(ut, -86400, 86400, α3, false)
+		α, err := d3α.InterpolateX(ut, false)
 		if err != nil {
 			return 0, err
 		}
-		δ, err := interp.Len3Interpolate(ut, -86400, 86400, δ3, false)
+		δ, err := d3δ.InterpolateX(ut, false)
 		if err != nil {
 			return 0, err
 		}
