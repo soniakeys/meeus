@@ -3,22 +3,21 @@
 
 // Interp: Chapter 3, Interpolation.
 //
-// Len3 and Len5 functions
+// Len3 and Len5 types
 //
-// These functions interpolate from a table of equidistant x values
+// These types allow interpolation from a table of equidistant x values
 // and corresponding y values.  Since the x values are equidistant,
-// only the first and last values are supplied as arguments.  The interior
-// x values are implicit.  All y values must be supplied however.
-// They are passed as a slice, and the length of y is fixed.  For Len3
-// functions it must be 3 and for Len5 functions it must be 5.
+// only the first and last values are supplied as arguments to the
+// constructors.  The interior x values are implicit.  All y values must be
+// supplied however.  They are passed as a slice, and the length of y is fixed.
+// For Len3 it must be 3 and for Len5 it must be 5.
 //
 // For these Len3 and Len5 functions, Meeus notes the importance of choosing
 // the 3 or 5 rows of a larger table that will minimize the interpolating
 // factor n.  He does not provide algorithms for doing this however.
-// For Interpolate, see the Slice function.  For Extremum and Zero,
-// this package offers no solution yet.  You must use your own algorithm to
-// select 3 or 5 rows that will have a middle row with x value closest to
-// the expected result.
+//
+// For an example of a selection function, see Len3ForInterpolateX.  This
+// was useful for computing Delta T.
 package interp
 
 import (
@@ -28,12 +27,12 @@ import (
 	"github.com/soniakeys/meeus/hints"
 )
 
-// Error values returned by functions in this package.  Defined here to help
-// testing for specific errors.
+// Error values returned by functions and methods in this package.
+// Defined here to help testing for specific errors.
 var (
-	ErrorNot3        = errors.New("Argument yTable must be length 3")
-	ErrorNot4        = errors.New("Argument yTable must be length 4")
-	ErrorNot5        = errors.New("Argument yTable must be length 5")
+	ErrorNot3        = errors.New("Argument y must be length 3")
+	ErrorNot4        = errors.New("Argument y must be length 4")
+	ErrorNot5        = errors.New("Argument y must be length 5")
 	ErrorNoXRange    = errors.New("Argument x3 (or x5) cannot equal x1")
 	ErrorNOutOfRange = errors.New("Interpolating factor n must be in range -1 to 1")
 	ErrorXOutOfRange = errors.New("Argument x outside of range x1 to x3 (or x5)")
@@ -41,35 +40,6 @@ var (
 	ErrorZeroOutside = errors.New("Zero falls outside of table")
 	ErrorNoConverge  = errors.New("Failure to converge")
 )
-
-// Slice finds the slice of an interpolation table that minimizes the
-// interplation factor.
-//
-// It is applicable when interpolating on tables with equadistant x values.
-//
-// Argument x is the x value to interpolate, x1 and xn are the first and last
-// x values of the table, y is the table of y values, n is the length of the
-// slice to return, typically 3 or 5.
-//
-// Return values are the first and last x values corresponding to the slice
-// and the slice itself.
-func Slice(x, x1, xn float64, y []float64, n int) (sx1, sxn float64, s []float64) {
-	if n >= len(y) {
-		return x1, xn, y
-	}
-	interval := (xn - x1) / float64(len(y)-1)
-	nearestX := int((x-x1)/interval + .5)
-	span := (n - 1) / 2
-	switch {
-	case nearestX < span:
-		nearestX = span
-	case nearestX > len(y)-1-span:
-		nearestX = span
-	}
-	start := nearestX - span
-	return x1 + float64(start)*interval, x1 + float64(start+n-1)*interval,
-		y[start : start+n]
-}
 
 // Len3 allows second difference interpolation.
 type Len3 struct {
@@ -104,6 +74,37 @@ func NewLen3(x1, x3 float64, y []float64) (*Len3, error) {
 	d.xSum = x3 + x1
 	d.xDiff = x3 - x1
 	return d, nil
+}
+
+// Len3ForInterpolateX is a special purpose Len3 constructor.
+//
+// Like NewLen3, it takes a table of x and y values, but it is not limited
+// to tables of 3 rows.  An X value is also passed that represents the
+// interpolation target x value.  Len3ForInterpolateX will locate the
+// appropriate three rows of the table for interpolating for x, and initialize
+// the Len3 object for those rows.
+//
+//	x is the target for interpolation
+//	x1 is the x value corresponding to the first y value of the table.
+//	xn is the x value corresponding to the last y value of the table.
+//	y is all y values in the table.  len(y) should be >= 3.
+func Len3ForInterpolateX(x, x1, xn float64, y []float64) (*Len3, error) {
+	if len(y) > 3 {
+		interval := (xn - x1) / float64(len(y)-1)
+		if interval == 0 {
+			return nil, ErrorNoXRange
+		}
+		nearestX := int((x-x1)/interval + .5)
+		if nearestX < 1 {
+			nearestX = 1
+		} else if nearestX > len(y)-2 {
+			nearestX = len(y) - 2
+		}
+		y = y[nearestX-1 : nearestX+2]
+		xn = x1 + float64(nearestX+1)*interval
+		x1 = x1 + float64(nearestX-1)*interval
+	}
+	return NewLen3(x1, xn, y)
 }
 
 // InterpolateX interpolates for a given x value.
