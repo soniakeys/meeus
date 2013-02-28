@@ -1,7 +1,7 @@
 // Copyright 2012 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Angle: Chapter 17: Angular Separation
+// Angle: Chapter 17: Angular Separation.
 //
 // Functions in this package are useful for Ecliptic, Equatorial, or any
 // similar coordinate frame.  To avoid suggestion of a particular frame,
