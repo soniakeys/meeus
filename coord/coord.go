@@ -1,3 +1,6 @@
+// Copyright 2013 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
 // Coord: Chapter 13, Transformation of Coordinates.
 package coord
 

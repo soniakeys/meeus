@@ -1,3 +1,6 @@
+// Copyright 2013 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
 // Refraction: Chapter 16: Atmospheric Refraction.
 //
 // Functions here assume atmospheric pressure of 1010 mb, temperature of

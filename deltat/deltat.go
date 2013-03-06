@@ -1,6 +1,20 @@
+// Copyright 2013 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
 // DeltaT: Chapter 10, Dynamical Time and Universal Time.
 //
 // Functions in this package compute ΔT for various ranges of dates.
+//
+// ΔT = TD - UT.
+//
+// TD = "Dynamical Time", which is related to:
+//	ET "Ephermis Time", an older term.
+//	TDB "Barycentric Dynamical Time", very close to TD.
+//	TDT "Terrestrial Dynamical Time", a more correct term.
+//	TT "Terrestrial Time", a newer and more correct term.
+//
+// UT = "Universal Time", which is related (if ambiguously) to GMT "Greenwich
+// Mean Time".
 //
 // The return value for all functions is ΔT in seconds.
 package deltat
@@ -12,8 +26,7 @@ import (
 	"github.com/soniakeys/meeus/julian"
 )
 
-// table10A encodes ΔT = TD - UT for the range of years tableYear1 to
-// tableYearN.
+// Table10A encodes ΔT for the range of years tableYear1 to tableYearN.
 var (
 	tableYear1 = 1620.
 	tableYearN = 2010.
@@ -45,7 +58,8 @@ var (
 )
 
 func Interp10A(jde float64) float64 {
-	// kind of crazy, working in calendar years.
+	// kind of crazy, working in calendar years, but it seems that's what
+	// we're supposed to do.
 	y, m, d := julian.JDToCalendar(jde)
 	l := julian.LeapYearGregorian(y)
 	yl := 365.

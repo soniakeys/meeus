@@ -1,4 +1,4 @@
-// Copyright 2012 Sonia Keys
+// Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Common: Functions and other definitions useful with multiple packages.
@@ -68,10 +68,12 @@
 //
 // Width specifies the number of digits in the most significant segment,
 // degrees or hours (not the total width of all three segments.)
-// Precision specifies the number of places past the decimal point
-// of the last (seconds) segment.
 //
-// Precision specifies the number of places to display past the decimal point.
+// Precision specifies the number of places past the decimal point
+// of the last (seconds) segment.  There are two magic numbers for precision
+// however:  62 means to round to the nearest minute and not show seconds
+// at all.  64 means to round to the nearest degree or hour and not show
+// minutes or seconds at all.
 //
 // To ensure fixed width output, use one of the + or ' ' (space) flags,
 // use the 0 flag, and use a width.

@@ -1,3 +1,6 @@
+// Copyright 2012 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
 package interp_test
 
 import (
@@ -150,8 +153,8 @@ func ExampleLen5_InterpolateX() {
 	// 54′13″.369
 }
 
-// Exercise, p. 30.
-func TestLen5Zero(t *testing.T) {
+func ExampleLen5_Zero() {
+	// Exercise, p. 30.
 	x1 := 25.
 	x5 := 29.
 	yTable := []float64{
@@ -163,27 +166,38 @@ func TestLen5Zero(t *testing.T) {
 	}
 	d5, err := interp.NewLen5(x1, x5, yTable)
 	if err != nil {
-		t.Fatal(err)
+		fmt.Println(err)
+		return
 	}
 	z, err := d5.Zero(false)
 	if err != nil {
-		t.Fatal(err)
+		fmt.Println(err)
+		return
 	}
-	if math.Abs(z-26.638587) > 1e-6 {
-		t.Fatal(z)
-	}
+	fmt.Printf("1988 January %.6f\n", z)
+	zInt, zFrac := math.Modf(z)
+	fmt.Printf("1988 January %d at %s TD\n", int(zInt),
+		common.NewFmtTime(zFrac*24*3600))
+
 	// compare result to that from just three central values
 	d3, err := interp.NewLen3(26, 28, yTable[1:4])
 	if err != nil {
-		t.Fatal(err)
+		fmt.Println(err)
+		return
 	}
-	z, err = d3.Zero(false)
+	z3, err := d3.Zero(false)
 	if err != nil {
-		t.Fatal(err)
+		fmt.Println(err)
+		return
 	}
-	if math.Abs(z-(26.638587-.000753)) > 1e-6 {
-		t.Fatal(z)
-	}
+	dz := z - z3
+	fmt.Printf("%.6f day\n", dz)
+	fmt.Printf("%.1f minute\n", dz*24*60)
+	// Output:
+	// 1988 January 26.638587
+	// 1988 January 26 at 15ʰ19ᵐ34ˢ TD
+	// 0.000753 day
+	// 1.1 minute
 }
 
 func ExampleLen4Half() {

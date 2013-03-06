@@ -1,3 +1,6 @@
+// Copyright 2013 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
 package common_test
 
 import (
@@ -54,15 +57,26 @@ func TestStrip(t *testing.T) {
 	}
 }
 
-func TestDMSToDeg(t *testing.T) {
-	// example p. 7
-	a := common.DMSToDeg(false, 23, 26, 49)
-	if math.Abs(a-23.44694444) > 1e-8 {
-		t.Fatal("DMSToRad")
-	}
+func ExampleDMSToDeg() {
+	// Example p. 7.
+	fmt.Printf("%.8f\n", common.DMSToDeg(false, 23, 26, 49))
+	// Output:
+	// 23.44694444
 }
 
-func ExampleRA_SetHMS() {
+func ExampleNewAngle() {
+	// Example negative values, p. 9.
+	a := common.NewAngle(true, 13, 47, 22)
+	fmt.Println(common.NewFmtAngle(a.Rad()))
+	a = common.NewAngle(true, 0, 32, 41)
+	// use # flag to force output of all three components
+	fmt.Printf("%#s\n", common.NewFmtAngle(a.Rad()))
+	// Output:
+	// -13°47′22″
+	// -0°32′41″
+}
+
+func ExampleNewRA() {
 	// Example 1.a, p. 8.
 	a := common.NewRA(9, 14, 55.8)
 	fmt.Printf("%.6f\n", math.Tan(a.Rad()))
@@ -70,32 +84,20 @@ func ExampleRA_SetHMS() {
 	// -0.877517
 }
 
-func TestAngle_SetDMS(t *testing.T) {
-	// examples p. 9
-	a := new(common.FmtAngle).SetDMS(true, 13, 47, 22) // negative angle
-	if a.String() != "-13°47′22″" {
-		t.Fatal(a.String())
-	}
-	a.SetDMS(true, 0, 32, 41) // negative, < 1 degree
-	if f := a.String(); f != "-32′41″" {
-		t.Fatal(f)
-	}
-}
-
-// example p. 6
-func TestAngle_Format(t *testing.T) {
+func ExampleFmtAngle() {
+	// Example p. 6
 	a := new(common.FmtAngle).SetDMS(false, 23, 26, 44)
-	if f := a.String(); f != "23°26′44″" {
-		t.Fatal(f)
-	}
+	fmt.Println(a)
+	// Output:
+	// 23°26′44″
 }
 
-// example p. 6
-func TestHourAngle_Format(t *testing.T) {
-	a := new(common.FmtHourAngle).SetHMS(false, 15, 22, 7)
-	if f := fmt.Sprintf("%0s", a); f != "15ʰ22ᵐ07ˢ" {
-		t.Fatalf(f)
-	}
+func ExampleFmtTime() {
+	// Example p. 6
+	a := new(common.FmtTime).SetHMS(false, 15, 22, 7)
+	fmt.Printf("%0s\n", a)
+	// Output:
+	// 15ʰ22ᵐ07ˢ
 }
 
 func TestOverflow(t *testing.T) {

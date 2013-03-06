@@ -1,3 +1,6 @@
+// Copyright 2013 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
 // Nutation: Chapter 22, Nutation and the Obliquity of the Ecliptic.
 package nutation
 

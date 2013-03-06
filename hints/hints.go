@@ -2,6 +2,9 @@
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Hints: Chapter 1, Hints and Tips.
+//
+// The only function here is Horner.
+// For Example 1.a, see NewRA in the package common.
 package hints
 
 // Horner evaluates a polynomal with coefficients c at x.  The constant

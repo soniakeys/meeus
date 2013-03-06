@@ -1,4 +1,4 @@
-// Copyright 2012 Sonia Keys
+// Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Angle: Chapter 17: Angular Separation.
