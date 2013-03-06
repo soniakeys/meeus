@@ -1,4 +1,4 @@
-// Copyright 2012 Sonia Keys
+// Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
 package common
@@ -428,22 +428,20 @@ func formatSex(x float64, caller int, mock *string, f fmt.State, c rune) error {
 	}
 	// declare some variables ahead of goto
 	var (
-		d, m     int64
-		s1       string
-		sexRune  UnitSymbols
-		wid1     int
-		wid1Spec bool
+		r          string // formatted result, ultimately
+		err        error
+		x60        int64
+		degHr, min int64
+		s1         string
+		sexRune    UnitSymbols
+		wid1       int
+		wid1Spec   bool
 	)
-	// get meaningful precision
-	prec, ok := f.Precision()
-	if !ok {
-		prec = 0
+	neg := x < 0
+	if neg {
+		x = -x
 	}
-	neg, x60, r, err := Split60(x, prec, f.Flag('0'))
-	if err != nil {
-		goto Overflow
-	}
-	// add seconds unit symbol
+	// determine unit symbols
 	switch {
 	case c == 'x':
 		sexRune = UnitSymbols{' ', ' ', ' '}
@@ -452,18 +450,44 @@ func formatSex(x float64, caller int, mock *string, f fmt.State, c rune) error {
 	default:
 		sexRune = HMSRunes
 	}
-	switch c {
-	case 's', 'v':
-		r += string(sexRune.S)
-	case 'd':
-		r = DecSymAdd(r, sexRune.S)
-	case 'c':
-		r = DecSymCombine(r, sexRune.S)
+	// get meaningful precision
+	prec, ok := f.Precision()
+	if !ok {
+		prec = 0
 	}
-	// add degrees, minutes to partial result
-	d = x60 / 60
-	m = x60 % 60
-	s1 = strconv.FormatInt(d, 10)
+	if prec == 64 {
+		degHr = int64(.5 + x/3600)
+	} else {
+		if prec == 62 {
+			x60 = int64(.5 + x/60)
+		} else {
+			// format seconds into r
+			_, x60, r, err = Split60(x, prec, f.Flag('0'))
+			if err != nil {
+				goto Overflow
+			}
+			// add seconds unit symbol
+			switch c {
+			case 's', 'v':
+				r += string(sexRune.S)
+			case 'd':
+				r = DecSymAdd(r, sexRune.S)
+			case 'c':
+				r = DecSymCombine(r, sexRune.S)
+			}
+		}
+		degHr = x60 / 60
+		min = x60 % 60
+		// format minutes into r
+		if f.Flag('#') || x60 > 0 {
+			if f.Flag('0') {
+				r = fmt.Sprintf("%02d%c%s", min, sexRune.M, r)
+			} else {
+				r = fmt.Sprintf("%d%c%s", min, sexRune.M, r)
+			}
+		}
+	}
+	s1 = strconv.FormatInt(degHr, 10)
 	wid1, wid1Spec = f.Width()
 	if wid1Spec {
 		// simple rule applies in all cases where width is specified:
@@ -476,19 +500,12 @@ func formatSex(x float64, caller int, mock *string, f fmt.State, c rune) error {
 			goto Overflow
 		}
 	}
-	if f.Flag('#') || d > 0 {
+	// format degrees or hours into r
+	if f.Flag('#') || degHr > 0 {
 		if f.Flag('0') {
-			r = fmt.Sprintf("%0*s%c%02d%c%s",
-				wid1, s1, sexRune.First, m, sexRune.M, r)
+			r = fmt.Sprintf("%0*s%c%s", wid1, s1, sexRune.First, r)
 		} else {
-			r = fmt.Sprintf("%s%c%d%c%s",
-				s1, sexRune.First, m, sexRune.M, r)
-		}
-	} else if m > 0 {
-		if f.Flag('0') {
-			r = fmt.Sprintf("%02d%c%s", m, sexRune.M, r)
-		} else {
-			r = fmt.Sprintf("%d%c%s", m, sexRune.M, r)
+			r = fmt.Sprintf("%s%c%s", s1, sexRune.First, r)
 		}
 	}
 	// add leading sign
