@@ -113,7 +113,6 @@ func TestFunc3(t *testing.T) {
 
 func ExampleFunc3() {
 	// Example 4.c, p. 44.
-	// Provided without results.
 	data := []struct{ X, Y float64 }{
 		{3, .0433},
 		{20, .2532},
@@ -136,11 +135,18 @@ func ExampleFunc3() {
 		{320, -.3508},
 		{344, -.2126},
 	}
+	// fix up data to have X in radians
+	for i := range data {
+		data[i].X *= math.Pi / 180
+	}
 	f0 := math.Sin
 	f1 := func(x float64) float64 { return math.Sin(2 * x) }
 	f2 := func(x float64) float64 { return math.Sin(3 * x) }
 	a, b, c := fit.Func3(data, f0, f1, f2)
-	fmt.Println(a, b, c)
+	// output four decimal places corresponding to precision of Y values.
+	fmt.Printf("%.4f, %.4f, %.4f\n", a, b, c)
+	// Output:
+	// 1.2000, -0.7700, 0.3900
 }
 
 func ExampleFunc1() {
