@@ -17,6 +17,7 @@ Cross reference from chapters to package names
     <tr><td>3.  Interpolation</td><td>interp</td><td>under renovation</td></tr>
     <tr><td>4.  Curve Fitting</td><td>fit</td><td>complete</td></tr>
     <tr><td>7.  Julian Day</td><td>julian</td><td>complete</td></tr>
+    <tr><td>8.  Date of Easter</td><td>easter</td><td>complete</td></tr>
     <tr><td>10. Dynamical Time and Universal Time</td><td>deltat</td><td>complete</td></tr>
     <tr><td>11. The Earth's Globe</td><td>globe</td><td>complete</td></tr>
     <tr><td>12. Sidereal Time at Greenwich</td><td>sidereal</td><td>complete</td></tr>
