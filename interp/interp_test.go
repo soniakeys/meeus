@@ -6,7 +6,6 @@ package interp_test
 import (
 	"fmt"
 	"math"
-	"testing"
 
 	"github.com/soniakeys/meeus/common"
 	"github.com/soniakeys/meeus/interp"
@@ -72,11 +71,15 @@ func ExampleLen3_Extremum() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("distance:  %.7f\n", y)
+	fmt.Printf("distance:  %.7f AU\n", y)
 	fmt.Printf("date:     %.4f\n", x)
+	i, frac := math.Modf(x)
+	fmt.Printf("1992 May %d, at %.64s TD",
+		int(i), common.NewFmtTime(frac*24*3600))
 	// Output:
-	// distance:  1.3812030
+	// distance:  1.3812030 AU
 	// date:     17.5864
+	// 1992 May 17, at 14ʰ TD
 }
 
 func ExampleLen3_Zero() {
@@ -99,9 +102,13 @@ func ExampleLen3_Zero() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("%.5f\n", x)
+	fmt.Printf("February %.5f\n", x)
+	i, frac := math.Modf(x)
+	fmt.Printf("February %d, at %.62s TD",
+		int(i), common.NewFmtTime(frac*24*3600))
 	// Output:
-	// 26.79873
+	// February 26.79873
+	// February 26, at 19ʰ10ᵐ TD
 }
 
 func ExampleLen3_Zero_strong() {
@@ -176,7 +183,7 @@ func ExampleLen5_Zero() {
 	}
 	fmt.Printf("1988 January %.6f\n", z)
 	zInt, zFrac := math.Modf(z)
-	fmt.Printf("1988 January %d at %s TD\n", int(zInt),
+	fmt.Printf("1988 January %d at %.62s TD\n", int(zInt),
 		common.NewFmtTime(zFrac*24*3600))
 
 	// compare result to that from just three central values
@@ -195,7 +202,7 @@ func ExampleLen5_Zero() {
 	fmt.Printf("%.1f minute\n", dz*24*60)
 	// Output:
 	// 1988 January 26.638587
-	// 1988 January 26 at 15ʰ19ᵐ34ˢ TD
+	// 1988 January 26 at 15ʰ20ᵐ TD
 	// 0.000753 day
 	// 1.1 minute
 }
@@ -218,7 +225,7 @@ func ExampleLen4Half() {
 }
 
 // exercise, p. 34.
-func TestLagrange(t *testing.T) {
+func ExampleLagrange() {
 	table := []struct{ X, Y float64 }{
 		{29.43, .4913598528},
 		{30.97, .5145891926},
@@ -227,15 +234,14 @@ func TestLagrange(t *testing.T) {
 		{31.58, .5236885653},
 		{33.05, .5453707057},
 	}
-	if math.Abs(interp.Lagrange(30, table)-.5) > 1e-5 {
-		t.Fatal(30)
-	}
-	if math.Abs(interp.Lagrange(0, table)) > 1e-4 {
-		t.Fatal(0)
-	}
-	if math.Abs(interp.Lagrange(90, table)-1) > 1e-4 {
-		t.Fatal(90)
-	}
+	// 10 significant digits in input, no more than 10 expected in output
+	fmt.Printf("30: %.10f\n", interp.Lagrange(30, table))
+	fmt.Printf("0:  %.10f\n", interp.Lagrange(0, table))
+	fmt.Printf("90: %.10f\n", interp.Lagrange(90, table))
+	// Output:
+	// 30: 0.5000000000
+	// 0:  0.0000512249
+	// 90: 0.9999648100
 }
 
 func ExampleLagrangePoly() {
@@ -247,6 +253,7 @@ func ExampleLagrangePoly() {
 		{6, 15},
 	}
 	p := interp.LagrangePoly(table)
+	// output format contrived to fit expected result
 	for _, c := range p {
 		fmt.Printf("%.0f\n", c*5)
 	}
