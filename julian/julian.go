@@ -2,6 +2,14 @@
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Julian: Chapter 7, Julian day.
+//
+// Under "General remarks", Meeus describes the INT function as used in the
+// book.  In some contexts, math.Floor might be suitable, but I think more
+// often, the functions common.FloorDiv or common.FloorDiv64 will be more
+// appropriate.  See documentation in package common.
+//
+// On p. 63, Modified Julian Day is defined.  See constant JMod in package
+// common.
 package julian
 
 import (

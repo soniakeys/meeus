@@ -24,9 +24,9 @@ func ExampleCalendarGregorianToJD_halley() {
 	// Example 7.c, p. 64.
 	jd1 := julian.CalendarGregorianToJD(1910, 4, 20)
 	jd2 := julian.CalendarGregorianToJD(1986, 2, 9)
-	fmt.Printf("%.0f\n", jd2-jd1)
+	fmt.Printf("%.0f days\n", jd2-jd1)
 	// Output:
-	// 27689
+	// 27689 days
 }
 
 func TestGreg(t *testing.T) {
@@ -121,9 +121,9 @@ func TestGregLeap(t *testing.T) {
 func ExampleJDToCalendar() {
 	// Example 7.c, p. 64.
 	y, m, d := julian.JDToCalendar(2436116.31)
-	fmt.Println("%d %d %.2f\n", y, m, d)
-	// Output
-	// 1957 10 4.81
+	fmt.Printf("%d %s %.2f\n", y, time.Month(m), d)
+	// Output:
+	// 1957 October 4.81
 }
 
 func TestYMD(t *testing.T) {
@@ -145,9 +145,9 @@ func TestYMD(t *testing.T) {
 
 func ExampleDayOWeek() {
 	// Example 7.e, p. 65.
-	fmt.Println(julian.DayOfWeek(2434923.5))
+	fmt.Println(time.Weekday(julian.DayOfWeek(2434923.5)))
 	// Output:
-	// 3
+	// Wednesday
 }
 
 func ExampleDayOfYear_f() {

@@ -30,7 +30,7 @@ func Horner(x float64, c []float64) float64 {
 	return y
 }
 
-// FloorDiv returns the floor of x / y.
+// FloorDiv returns the integer floor of the fractional value (x / y).
 //
 // It uses integer math only, so is more efficient than using floating point
 // intermediate values.  This function can be used in many places where INT()
@@ -42,7 +42,7 @@ func FloorDiv(x, y int) int {
 	return x/y - 1
 }
 
-// FloorDiv64 returns the floor of x / y.
+// FloorDiv64 returns the integer floor of the fractional value (x / y).
 //
 // It uses integer math only, so is more efficient than using floating point
 // intermediate values.  This function can be used in many places where INT()
