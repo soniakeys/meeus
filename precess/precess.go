@@ -12,7 +12,6 @@ import (
 
 	"github.com/soniakeys/meeus/common"
 	"github.com/soniakeys/meeus/coord"
-	"github.com/soniakeys/meeus/hints"
 	"github.com/soniakeys/meeus/nutation"
 )
 
@@ -83,22 +82,22 @@ func Precess(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, mα, mδ float6
 	if epochFrom != 2000 {
 		T := (epochFrom - 2000) * .01
 		ζCoeff = []float64{0,
-			hints.Horner(T, ζT),
+			common.Horner(T, ζT),
 			0.30188 - 0.000344*T,
 			0.017998}
 		zCoeff = []float64{0,
-			hints.Horner(T, zT),
+			common.Horner(T, zT),
 			1.09468 - 0.000066*T,
 			0.018203}
 		θCoeff = []float64{0,
-			hints.Horner(T, θT),
+			common.Horner(T, θT),
 			-0.42665 - 0.000217*T,
 			-0.041833}
 	}
 	t := (epochTo - epochFrom) * .01
-	ζ := common.NewAngle(false, 0, 0, hints.Horner(t, ζCoeff)).Rad()
-	z := common.NewAngle(false, 0, 0, hints.Horner(t, zCoeff)).Rad()
-	θ := common.NewAngle(false, 0, 0, hints.Horner(t, θCoeff)).Rad()
+	ζ := common.NewAngle(false, 0, 0, common.Horner(t, ζCoeff)).Rad()
+	z := common.NewAngle(false, 0, 0, common.Horner(t, zCoeff)).Rad()
+	θ := common.NewAngle(false, 0, 0, common.Horner(t, θCoeff)).Rad()
 
 	α := eqFrom.RA + mα*t*100
 	δ := eqFrom.Dec + mδ*t*100
@@ -140,22 +139,22 @@ func PrecessEcl(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo, mα, mδ flo
 	if epochFrom != 2000 {
 		T := (epochFrom - 2000) * .01
 		ηCoeff = []float64{0,
-			hints.Horner(T, ηT),
+			common.Horner(T, ηT),
 			-0.03302 + 0.000598*T,
 			0.000060}
 		πCoeff = []float64{
-			hints.Horner(T, πT),
+			common.Horner(T, πT),
 			-869.8089 - 0.50491*T,
 			0.03536}
 		pCoeff = []float64{0,
-			hints.Horner(T, pT),
+			common.Horner(T, pT),
 			1.11113 - 0.000042*T,
 			-0.000006}
 	}
 	t := (epochTo - epochFrom) * .01
-	η := common.NewAngle(false, 0, 0, hints.Horner(t, ηCoeff)).Rad()
-	π := common.NewAngle(false, 0, 0, hints.Horner(t, πCoeff)).Rad()
-	p := common.NewAngle(false, 0, 0, hints.Horner(t, pCoeff)).Rad()
+	η := common.NewAngle(false, 0, 0, common.Horner(t, ηCoeff)).Rad()
+	π := common.NewAngle(false, 0, 0, common.Horner(t, πCoeff)).Rad()
+	p := common.NewAngle(false, 0, 0, common.Horner(t, pCoeff)).Rad()
 
 	β := eclFrom.Lat
 	λ := eclFrom.Lon

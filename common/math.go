@@ -5,6 +5,31 @@ package common
 
 import "math"
 
+// PMod returns a positive floating-point x mod y.
+//
+// For a positive argument y, it returns a value in the range [0,y).
+//  
+// The result may not be useful if y is negative.
+func PMod(x, y float64) float64 {
+	r := math.Mod(x, y)
+	if r < 0 {
+		r += y
+	}
+	return r
+}
+
+// Horner evaluates a polynomal with coefficients c at x.  The constant
+// term is c[0].  The function panics with an empty coefficient list.
+func Horner(x float64, c []float64) float64 {
+	i := len(c) - 1
+	y := c[i]
+	for i > 0 {
+		i--
+		y = y*x + c[i] // sorry, no fused multiply-add in Go
+	}
+	return y
+}
+
 // FloorDiv returns the floor of x / y.
 //
 // It uses integer math only, so is more efficient than using floating point
@@ -42,17 +67,4 @@ func Cmp(a, b float64) int {
 		return 1
 	}
 	return 0
-}
-
-// PMod returns a positive floating-point x mod y.
-//
-// For a positive argument y, it returns a value in the range [0,y).
-//
-// The result may not be useful if y is negative.
-func PMod(x, y float64) float64 {
-	r := math.Mod(x, y)
-	if r < 0 {
-		r += y
-	}
-	return r
 }
