@@ -87,6 +87,7 @@
 //	4. Curve Fitting                                     fit
 //	7. Julian Day                                        julian
 //	8. Date of Easter                                    easter
+//	9. Jewish and Moslem Calendars                       jm
 //	10. Dynamical Time and Universal Time                deltat
 //	11. The Earth's Globe                                globe
 //	12. Sidereal Time at Greenwich                       sidereal

@@ -10,6 +10,9 @@
 //
 // On p. 63, Modified Julian Day is defined.  See constant JMod in package
 // common.
+//
+// See also related functions JulianToGregorian and GregorianToJulian in
+// package jm.
 package julian
 
 import (
