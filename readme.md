@@ -14,6 +14,7 @@ Cross reference from chapters to package names
 <table>
 	<tr><th>Chapter</th><th>Package name</th><th>Status</th></tr>
 	<tr><td>1.  Hints and Tips</td><td>hints</td><td>complete</td></tr>
+	<tr><td>2.  About Accuracy</td><td>accuracy</td><td>complete</td></tr>
     <tr><td>3.  Interpolation</td><td>interp</td><td>under renovation</td></tr>
     <tr><td>4.  Curve Fitting</td><td>fit</td><td>complete</td></tr>
     <tr><td>7.  Julian Day</td><td>julian</td><td>complete</td></tr>

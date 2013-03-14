@@ -83,6 +83,7 @@
 //	Chapter                                              Package
 //
 //	1. Hints and Tips                                    hints
+//	2. About Accuracy                                    accuracy
 //	3. Interpolation                                     interp
 //	4. Curve Fitting                                     fit
 //	7. Julian Day                                        julian

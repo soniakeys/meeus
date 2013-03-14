@@ -17,4 +17,8 @@
 // in a sexagesimal quantity, there is a feature by which output can be
 // rounded and display of the insignificant sexagesimal components is
 // suppressed.  Again, see package documentation for more details.
+//
+// In general, packages use the Go float64 type throughout.  Float64 implements
+// IEEE-754 64 bit floating point numbers fairly closely.  See the Go
+// programming language reference and the IEEE-754 reference for more details.
 package accuracy
