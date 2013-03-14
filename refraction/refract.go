@@ -10,14 +10,14 @@ package refraction
 import (
 	"math"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 )
 
 var (
-	gt15true1 = common.NewAngle(false, 0, 0, 58.294).Rad()
-	gt15true2 = common.NewAngle(false, 0, 0, 0.0668).Rad()
-	gt15app1  = common.NewAngle(false, 0, 0, 58.276).Rad()
-	gt15app2  = common.NewAngle(false, 0, 0, 0.0824).Rad()
+	gt15true1 = base.NewAngle(false, 0, 0, 58.294).Rad()
+	gt15true2 = base.NewAngle(false, 0, 0, 0.0668).Rad()
+	gt15app1  = base.NewAngle(false, 0, 0, 58.276).Rad()
+	gt15app2  = base.NewAngle(false, 0, 0, 0.0824).Rad()
 )
 
 // Gt15True returns refraction for obtaining true altitude when altitude

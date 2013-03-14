@@ -5,11 +5,11 @@
 //
 // Under "General remarks", Meeus describes the INT function as used in the
 // book.  In some contexts, math.Floor might be suitable, but I think more
-// often, the functions common.FloorDiv or common.FloorDiv64 will be more
-// appropriate.  See documentation in package common.
+// often, the functions base.FloorDiv or base.FloorDiv64 will be more
+// appropriate.  See documentation in package base.
 //
 // On p. 63, Modified Julian Day is defined.  See constant JMod in package
-// common.
+// base.
 //
 // See also related functions JulianToGregorian and GregorianToJulian in
 // package jm.
@@ -19,7 +19,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 )
 
 // CalendarGregorianToJD converts a Gregorian year, month, and day of month
@@ -33,10 +33,10 @@ func CalendarGregorianToJD(y, m int, d float64) float64 {
 		y--
 		m += 12
 	}
-	a := common.FloorDiv(y, 100)
-	b := 2 - a + common.FloorDiv(a, 4)
-	return float64(common.FloorDiv64(36525*(int64(y+4716)), 100)) +
-		float64(common.FloorDiv(306*(m+1), 10)+b) + d - 1524.5
+	a := base.FloorDiv(y, 100)
+	b := 2 - a + base.FloorDiv(a, 4)
+	return float64(base.FloorDiv64(36525*(int64(y+4716)), 100)) +
+		float64(base.FloorDiv(306*(m+1), 10)+b) + d - 1524.5
 }
 
 // CalendarJulianToJD converts a Julian year, month, and day of month to Julian day.
@@ -49,8 +49,8 @@ func CalendarJulianToJD(y, m int, d float64) float64 {
 		y--
 		m += 12
 	}
-	return float64(common.FloorDiv64(36525*(int64(y+4716)), 100)) +
-		float64(common.FloorDiv(306*(m+1), 10)) + d - 1524.5
+	return float64(base.FloorDiv64(36525*(int64(y+4716)), 100)) +
+		float64(base.FloorDiv(306*(m+1), 10)) + d - 1524.5
 }
 
 // LeapYearJulian returns true if year y in the Julian calendar is a leap year.
@@ -72,15 +72,15 @@ func JDToCalendar(jd float64) (year, month int, day float64) {
 	z := int64(zf)
 	a := z
 	if z >= 2299151 {
-		α := common.FloorDiv64(z*100-186721625, 3652425)
-		a = z + 1 + α - common.FloorDiv64(α, 4)
+		α := base.FloorDiv64(z*100-186721625, 3652425)
+		a = z + 1 + α - base.FloorDiv64(α, 4)
 	}
 	b := a + 1524
-	c := common.FloorDiv64(b*100-12210, 36525)
-	d := common.FloorDiv64(36525*c, 100)
-	e := int(common.FloorDiv64((b-d)*1e4, 306001))
+	c := base.FloorDiv64(b*100-12210, 36525)
+	d := base.FloorDiv64(36525*c, 100)
+	e := int(base.FloorDiv64((b-d)*1e4, 306001))
 	// compute return values
-	day = float64(int(b-d)-common.FloorDiv(306001*e, 1e4)) + f
+	day = float64(int(b-d)-base.FloorDiv(306001*e, 1e4)) + f
 	switch e {
 	default:
 		month = e - 1
@@ -104,14 +104,14 @@ func JDToCalendar(jd float64) (year, month int, day float64) {
 func jdToCalendarGregorian(jd float64) (year, month int, day float64) {
 	zf, f := math.Modf(jd + .5)
 	z := int64(zf)
-	α := common.FloorDiv64(z*100-186721625, 3652425)
-	a := z + 1 + α - common.FloorDiv64(α, 4)
+	α := base.FloorDiv64(z*100-186721625, 3652425)
+	a := z + 1 + α - base.FloorDiv64(α, 4)
 	b := a + 1524
-	c := common.FloorDiv64(b*100-12210, 36525)
-	d := common.FloorDiv64(36525*c, 100)
-	e := int(common.FloorDiv64((b-d)*1e4, 306001))
+	c := base.FloorDiv64(b*100-12210, 36525)
+	d := base.FloorDiv64(36525*c, 100)
+	e := int(base.FloorDiv64((b-d)*1e4, 306001))
 	// compute return values
-	day = float64(int(b-d)-common.FloorDiv(306001*e, 1e4)) + f
+	day = float64(int(b-d)-base.FloorDiv(306001*e, 1e4)) + f
 	switch e {
 	default:
 		month = e - 1

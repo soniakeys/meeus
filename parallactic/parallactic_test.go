@@ -8,7 +8,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/parallactic"
 )
 
@@ -17,9 +17,9 @@ func ExampleEclipticAtHorizon() {
 	φ := 51 * math.Pi / 180
 	θ := 75 * math.Pi / 180
 	λ1, λ2, I := parallactic.EclipticAtHorizon(ε, φ, θ)
-	fmt.Println(common.NewFmtAngle(λ1))
-	fmt.Println(common.NewFmtAngle(λ2))
-	fmt.Println(common.NewFmtAngle(I))
+	fmt.Println(base.NewFmtAngle(λ1))
+	fmt.Println(base.NewFmtAngle(λ2))
+	fmt.Println(base.NewFmtAngle(I))
 	// Output:
 	// 169°21′30″
 	// 349°21′30″
@@ -32,11 +32,11 @@ func TestDiurnalPathAtHorizon(t *testing.T) {
 	J := parallactic.DiurnalPathAtHorizon(0, φ)
 	Jexp := math.Pi/2 - φ
 	if math.Abs((J-Jexp)/Jexp) > 1e-15 {
-		t.Fatal("0 dec:", common.NewFmtAngle(J))
+		t.Fatal("0 dec:", base.NewFmtAngle(J))
 	}
 	J = parallactic.DiurnalPathAtHorizon(ε, φ)
-	Jexp = common.NewAngle(false, 45, 31, 0).Rad()
+	Jexp = base.NewAngle(false, 45, 31, 0).Rad()
 	if math.Abs((J-Jexp)/Jexp) > 1e-3 {
-		t.Fatal("solstace:", common.NewFmtAngle(J))
+		t.Fatal("solstace:", base.NewFmtAngle(J))
 	}
 }

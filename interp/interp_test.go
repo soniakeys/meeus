@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/interp"
 )
 
@@ -44,7 +44,7 @@ func ExampleLen3_InterpolateX() {
 		fmt.Println(err)
 		return
 	}
-	x := 8 + common.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
+	x := 8 + base.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
 	y, err := d3.InterpolateX(x, false)
 	if err != nil {
 		fmt.Println(err)
@@ -75,7 +75,7 @@ func ExampleLen3_Extremum() {
 	fmt.Printf("date:     %.4f\n", x)
 	i, frac := math.Modf(x)
 	fmt.Printf("1992 May %d, at %.64s TD",
-		int(i), common.NewFmtTime(frac*24*3600))
+		int(i), base.NewFmtTime(frac*24*3600))
 	// Output:
 	// distance:  1.3812030 AU
 	// date:     17.5864
@@ -88,9 +88,9 @@ func ExampleLen3_Zero() {
 	x3 := 28.
 	// the y unit doesn't matter.  working in degrees is fine
 	yTable := []float64{
-		common.DMSToDeg(true, 0, 28, 13.4),
-		common.DMSToDeg(false, 0, 6, 46.3),
-		common.DMSToDeg(false, 0, 38, 23.2),
+		base.DMSToDeg(true, 0, 28, 13.4),
+		base.DMSToDeg(false, 0, 6, 46.3),
+		base.DMSToDeg(false, 0, 38, 23.2),
 	}
 	d3, err := interp.NewLen3(x1, x3, yTable)
 	if err != nil {
@@ -105,7 +105,7 @@ func ExampleLen3_Zero() {
 	fmt.Printf("February %.5f\n", x)
 	i, frac := math.Modf(x)
 	fmt.Printf("February %d, at %.62s TD",
-		int(i), common.NewFmtTime(frac*24*3600))
+		int(i), base.NewFmtTime(frac*24*3600))
 	// Output:
 	// February 26.79873
 	// February 26, at 19ʰ10ᵐ TD
@@ -137,11 +137,11 @@ func ExampleLen5_InterpolateX() {
 	x5 := 29.
 	// work in radians to get answer in radians
 	yTable := []float64{
-		common.NewAngle(false, 0, 54, 36.125).Rad(),
-		common.NewAngle(false, 0, 54, 24.606).Rad(),
-		common.NewAngle(false, 0, 54, 15.486).Rad(),
-		common.NewAngle(false, 0, 54, 08.694).Rad(),
-		common.NewAngle(false, 0, 54, 04.133).Rad(),
+		base.NewAngle(false, 0, 54, 36.125).Rad(),
+		base.NewAngle(false, 0, 54, 24.606).Rad(),
+		base.NewAngle(false, 0, 54, 15.486).Rad(),
+		base.NewAngle(false, 0, 54, 08.694).Rad(),
+		base.NewAngle(false, 0, 54, 04.133).Rad(),
 	}
 	x := 28 + (3+20./60)/24
 	d5, err := interp.NewLen5(x1, x5, yTable)
@@ -155,7 +155,7 @@ func ExampleLen5_InterpolateX() {
 		return
 	}
 	// radians easy to format
-	fmt.Printf("%.3d", common.NewFmtAngle(y))
+	fmt.Printf("%.3d", base.NewFmtAngle(y))
 	// Output:
 	// 54′13″.369
 }
@@ -165,11 +165,11 @@ func ExampleLen5_Zero() {
 	x1 := 25.
 	x5 := 29.
 	yTable := []float64{
-		common.DMSToDeg(true, 1, 11, 21.23),
-		common.DMSToDeg(true, 0, 28, 12.31),
-		common.DMSToDeg(false, 0, 16, 07.02),
-		common.DMSToDeg(false, 1, 01, 00.13),
-		common.DMSToDeg(false, 1, 45, 46.33),
+		base.DMSToDeg(true, 1, 11, 21.23),
+		base.DMSToDeg(true, 0, 28, 12.31),
+		base.DMSToDeg(false, 0, 16, 07.02),
+		base.DMSToDeg(false, 1, 01, 00.13),
+		base.DMSToDeg(false, 1, 45, 46.33),
 	}
 	d5, err := interp.NewLen5(x1, x5, yTable)
 	if err != nil {
@@ -184,7 +184,7 @@ func ExampleLen5_Zero() {
 	fmt.Printf("1988 January %.6f\n", z)
 	zInt, zFrac := math.Modf(z)
 	fmt.Printf("1988 January %d at %.62s TD\n", int(zInt),
-		common.NewFmtTime(zFrac*24*3600))
+		base.NewFmtTime(zFrac*24*3600))
 
 	// compare result to that from just three central values
 	d3, err := interp.NewLen3(26, 28, yTable[1:4])
@@ -210,16 +210,16 @@ func ExampleLen5_Zero() {
 func ExampleLen4Half() {
 	// Example 3.f, p. 32.
 	half, err := interp.Len4Half([]float64{
-		common.NewRA(10, 18, 48.732).Rad(),
-		common.NewRA(10, 23, 22.835).Rad(),
-		common.NewRA(10, 27, 57.247).Rad(),
-		common.NewRA(10, 32, 31.983).Rad(),
+		base.NewRA(10, 18, 48.732).Rad(),
+		base.NewRA(10, 23, 22.835).Rad(),
+		base.NewRA(10, 27, 57.247).Rad(),
+		base.NewRA(10, 32, 31.983).Rad(),
 	})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("%.3d", common.NewFmtRA(half))
+	fmt.Printf("%.3d", base.NewFmtRA(half))
 	// Output:
 	// 10ʰ25ᵐ40ˢ.001
 }

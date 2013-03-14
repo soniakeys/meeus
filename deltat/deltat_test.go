@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/deltat"
 	"github.com/soniakeys/meeus/julian"
 )
@@ -25,7 +25,7 @@ func ExampleInterp10A() {
 func ExamplePoly1900to1997() {
 	// Example 10.a, p. 78.
 	jd := julian.TimeToJD(time.Date(1977, 2, 18, 3, 37, 40, 0, time.UTC))
-	year := common.JDEToJulianYear(jd)
+	year := base.JDEToJulianYear(jd)
 	fmt.Printf("julian year %.1f\n", year)
 	fmt.Printf("%+.1f seconds\n", deltat.Poly1900to1997(jd))
 	// Output:
@@ -36,10 +36,10 @@ func ExamplePoly1900to1997() {
 func ExamplePolyBefore948() {
 	// Example 10.b, p. 80.
 	ΔT := deltat.PolyBefore948(333.1)
-	UT := common.NewTime(false, 6, 0, 0).Sec()
+	UT := base.NewTime(false, 6, 0, 0).Sec()
 	TD := UT + ΔT
 	fmt.Printf("%+.0f seconds\n", ΔT)
-	fmt.Printf("333 February 6 at %.62s TD", common.NewFmtTime(TD))
+	fmt.Printf("333 February 6 at %.62s TD", base.NewFmtTime(TD))
 	// Output:
 	// +6146 seconds
 	// 333 February 6 at 7ʰ42ᵐ TD

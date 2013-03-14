@@ -7,7 +7,7 @@ package coord
 import (
 	"math"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
 )
 
@@ -62,7 +62,7 @@ func (eq *Equatorial) EclToEq(ecl *Ecliptic, sε, cε float64) *Equatorial {
 // Sidereal time must be consistent with the equatorial coordinates.
 // If coordinates are apparent, sidereal time must be apparent as well.
 func (hz *Horizontal) EqToHz(eq *Equatorial, g *globe.Coord, st float64) *Horizontal {
-	H := common.Time(st).Rad() - g.Lon - eq.RA
+	H := base.Time(st).Rad() - g.Lon - eq.RA
 	sH, cH := math.Sincos(H)
 	sφ, cφ := math.Sincos(g.Lat)
 	sδ, cδ := math.Sincos(eq.Dec)
@@ -72,7 +72,7 @@ func (hz *Horizontal) EqToHz(eq *Equatorial, g *globe.Coord, st float64) *Horizo
 }
 
 var galacticNorth = &Equatorial{
-	RA:  common.NewRA(12, 49, 0).Rad(),
+	RA:  base.NewRA(12, 49, 0).Rad(),
 	Dec: 27.4 * math.Pi / 180,
 }
 

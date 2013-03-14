@@ -1,14 +1,14 @@
 // Copyright 2012 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-package common_test
+package base_test
 
 import (
 	"fmt"
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 )
 
 // Section "Trigonometric functions of large angles":
@@ -37,11 +37,11 @@ func ExamplePMod_integer() {
 	fmt.Println("Sin Mod:   ", math.Sin(math.Mod(large, 360)*math.Pi/180))
 
 	// Use of PMod on integer constants produces results identical to above.
-	fmt.Println("PMod int:  ", math.Sin(common.PMod(large, 360)*math.Pi/180))
+	fmt.Println("PMod int:  ", math.Sin(base.PMod(large, 360)*math.Pi/180))
 
 	// As soon as the large integer is scaled to a non-integer value though,
 	// precision is lost and PMod is of no help recovering at this point.
-	fmt.Println("PMod float:", math.Sin(common.PMod(large*math.Pi/180, 2*math.Pi)))
+	fmt.Println("PMod float:", math.Sin(base.PMod(large*math.Pi/180, 2*math.Pi)))
 	// Output:
 	// Direct:     0.49999999995724154
 	// Integer 30: 0.5
@@ -70,8 +70,8 @@ func ExamplePMod_mars() {
 
 	// Accordingly, PMod cannot rescue any precision, whether done on degrees
 	// or radians.
-	fmt.Println("PMod deg:", math.Sin(common.PMod(W, 360)*math.Pi/180))
-	fmt.Println("PMod rad:", math.Sin(common.PMod(W*math.Pi/180, 2*math.Pi)))
+	fmt.Println("PMod deg:", math.Sin(base.PMod(W, 360)*math.Pi/180))
+	fmt.Println("PMod rad:", math.Sin(base.PMod(W*math.Pi/180, 2*math.Pi)))
 	// Output:
 	// Direct:   0.04290970350270464
 	// Reduced:  0.04290970350923273
@@ -82,7 +82,7 @@ func ExamplePMod_mars() {
 // Meeus gives no test case.
 // The test case here is from Wikipedia's entry on Horner's method.
 func TestHorner(t *testing.T) {
-	y := common.Horner(3, []float64{-1, 2, -6, 2})
+	y := base.Horner(3, []float64{-1, 2, -6, 2})
 	if y != 5 {
 		t.Fatal("Horner")
 	}

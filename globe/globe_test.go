@@ -8,14 +8,14 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
 )
 
 func ExampleEllipsoid_Parallax() {
 	// Example 11.a, p 82.
 	// phi = geographic latitude of Palomar
-	φ := common.NewAngle(false, 33, 21, 22).Rad()
+	φ := base.NewAngle(false, 33, 21, 22).Rad()
 	s, c := globe.Earth76.ParallaxConstants(φ, 1706)
 	fmt.Printf("ρ sin φ′ = %+.6f\n", s)
 	fmt.Printf("ρ cos φ′ = %+.6f\n", c)
@@ -26,8 +26,8 @@ func ExampleEllipsoid_Parallax() {
 
 // p. 83
 func TestLatDiff(t *testing.T) {
-	φ0 := common.NewAngle(false, 45, 5, 46.36).Rad()
-	diff := common.NewFmtAngle(globe.GeocentricLatitudeDifference(φ0))
+	φ0 := base.NewAngle(false, 45, 5, 46.36).Rad()
+	diff := base.NewFmtAngle(globe.GeocentricLatitudeDifference(φ0))
 	if f := fmt.Sprintf("%.2d", diff); f != "11′32″.73" {
 		t.Fatal(f)
 	}
@@ -55,19 +55,19 @@ func ExampleEllipsoid_RadiusAtLatitude() {
 func ExampleEllipsoid_Distance() {
 	// Example 11.c p 85.
 	c1 := globe.Coord{
-		common.NewAngle(false, 48, 50, 11).Rad(), // geographic latitude
-		common.NewAngle(true, 2, 20, 14).Rad(),   // geographic longitude
+		base.NewAngle(false, 48, 50, 11).Rad(), // geographic latitude
+		base.NewAngle(true, 2, 20, 14).Rad(),   // geographic longitude
 	}
 	c2 := globe.Coord{
-		common.NewAngle(false, 38, 55, 17).Rad(),
-		common.NewAngle(false, 77, 3, 56).Rad(),
+		base.NewAngle(false, 38, 55, 17).Rad(),
+		base.NewAngle(false, 77, 3, 56).Rad(),
 	}
 	fmt.Printf("%.2f km\n", globe.Earth76.Distance(c1, c2))
 	cos := globe.ApproxAngularDistance(c1, c2)
 	fmt.Printf("cos d = %.6f\n", cos)
 	d := math.Acos(cos)
 	fmt.Println("    d =",
-		common.DecSymAdd(fmt.Sprintf("%.5f", d*180/math.Pi), '°'))
+		base.DecSymAdd(fmt.Sprintf("%.5f", d*180/math.Pi), '°'))
 	fmt.Printf("    s = %.0f km\n", globe.ApproxLinearDistance(d))
 	// Output:
 	// 6181.63 km

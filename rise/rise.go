@@ -8,27 +8,27 @@ import (
 	"errors"
 	"math"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/meeus/interp"
 )
 
-var meanRefraction = common.NewAngle(false, 0, 34, 0).Rad()
+var meanRefraction = base.NewAngle(false, 0, 34, 0).Rad()
 
 // "Standard altitudes" for various bodies.
 //
 // The standard altitude is the geometric altitude of the center of body
 // at the time of apparent rising or setting.
 var (
-	Stdh0Stellar   = common.NewAngle(true, 0, 34, 0).Rad()
-	Stdh0Solar     = common.NewAngle(true, 0, 50, 0).Rad()
-	Stdh0LunarMean = common.NewAngle(false, 0, 0, .125).Rad()
+	Stdh0Stellar   = base.NewAngle(true, 0, 34, 0).Rad()
+	Stdh0Solar     = base.NewAngle(true, 0, 50, 0).Rad()
+	Stdh0LunarMean = base.NewAngle(false, 0, 0, .125).Rad()
 )
 
 // Stdh0Lunar is the standard altitude of the Moon considering π, the
 // Moon's horizontal parallax.
 func Stdh0Lunar(π float64) float64 {
-	return common.NewAngle(false, 0, 0, .7275).Rad()*π - meanRefraction
+	return base.NewAngle(false, 0, 0, .7275).Rad()*π - meanRefraction
 }
 
 // ErrorCircumpolar returned by Times when the object does not rise and
@@ -71,9 +71,9 @@ func ApproxTimes(p globe.Coord, h0, Th0 float64, α, δ float64) (mRise, mTransi
 
 	// approximate transit, rise, set times
 	mt := (α+p.Lon)*43200/math.Pi - Th0
-	mTransit = common.PMod(mt, 86400)
-	mRise = common.PMod(mt-H0, 86400)
-	mSet = common.PMod(mt+H0, 86400)
+	mTransit = base.PMod(mt, 86400)
+	mRise = base.PMod(mt-H0, 86400)
+	mSet = base.PMod(mt+H0, 86400)
 	return
 }
 
@@ -116,7 +116,7 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 	}
 	// adjust mTransit
 	{
-		th0 := common.PMod(Th0+mTransit*360.985647/360, 86400)
+		th0 := base.PMod(Th0+mTransit*360.985647/360, 86400)
 		var α float64
 		α, err = d3α.InterpolateX(mTransit+ΔT, false)
 		if err != nil {
@@ -128,7 +128,7 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 	// adjust mRise, mSet
 	sLat, cLat := math.Sincos(p.Lat)
 	adjustRS := func(m float64) (float64, error) {
-		th0 := common.PMod(Th0+m*360.985647/360, 86400)
+		th0 := base.PMod(Th0+m*360.985647/360, 86400)
 		ut := m + ΔT
 		α, err := d3α.InterpolateX(ut, false)
 		if err != nil {

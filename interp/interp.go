@@ -24,7 +24,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 )
 
 // Error values returned by functions and methods in this package.
@@ -283,7 +283,7 @@ func (d *Len5) InterpolateN(n float64, allowExtrapolate bool) (y float64, err er
 	if !allowExtrapolate && (n < -1 || n > 1) {
 		return 0, ErrorNOutOfRange
 	}
-	return common.Horner(n, d.interpCoeff), nil
+	return base.Horner(n, d.interpCoeff), nil
 }
 
 // Extremum returns the x and y values at the extremum.
@@ -296,13 +296,13 @@ func (d *Len5) Extremum() (x, y float64, err error) {
 	}
 	den := d.k - 12*d.f
 	n0, ok := iterate(0, func(n0 float64) float64 {
-		return common.Horner(n0, nCoeff) / den
+		return base.Horner(n0, nCoeff) / den
 	})
 	if !ok {
 		return 0, 0, ErrorNoConverge
 	}
 	x = .5*d.xSum + .25*d.xDiff*n0
-	y = common.Horner(n0, d.interpCoeff)
+	y = base.Horner(n0, d.interpCoeff)
 	return x, y, nil
 }
 
@@ -328,7 +328,7 @@ func (d *Len5) Zero(strong bool) (x float64, err error) {
 		numCoeff := []float64{d.y3, Q, P, N, M}
 		denCoeff := []float64{Q, 2 * P, 3 * N, 4 * M}
 		f = func(n0 float64) float64 {
-			return n0 - common.Horner(n0, numCoeff)/common.Horner(n0, denCoeff)
+			return n0 - base.Horner(n0, numCoeff)/base.Horner(n0, denCoeff)
 		}
 	} else {
 		numCoeff := []float64{
@@ -340,7 +340,7 @@ func (d *Len5) Zero(strong bool) (x float64, err error) {
 		}
 		den := 12*(d.b+d.c) - 2*(d.h+d.j)
 		f = func(n0 float64) float64 {
-			return common.Horner(n0, numCoeff) / den
+			return base.Horner(n0, numCoeff) / den
 		}
 	}
 	n0, ok := iterate(0, f)

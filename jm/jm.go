@@ -12,7 +12,7 @@
 // Included in these are two functions that convert between Gregorian and
 // Julian calendar days without going through Julian day (JD).  As such,
 // I suppose, these or similar routines are not in chapter 7, Julian Day.
-// Package common might also be a suitable place for these, but I'm not sure
+// Package base might also be a suitable place for these, but I'm not sure
 // they are used anywhere else in the book.  Anyway, they have the quirk
 // that they are not direct inverses:  JulianToGregorian returns the day number
 // of the day of the Gregorian year, but GregorianToJulian wants the Gregorian
@@ -22,7 +22,7 @@ package jm
 import (
 	"math"
 
-	"github.com/soniakeys/meeus/common"
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 )
 
@@ -81,10 +81,10 @@ func JewishCalendar(y int) (A, mP, dP, mNY, dNY, months, days int) {
 }
 
 func bigD(y int) int {
-	C := common.FloorDiv(y, 100)
+	C := base.FloorDiv(y, 100)
 	var S int
 	if y >= 1583 {
-		S = common.FloorDiv(3*C-5, 4)
+		S = base.FloorDiv(3*C-5, 4)
 	}
 	a := (12*y + 12) % 19
 	b := y % 4
@@ -110,16 +110,16 @@ func bigD(y int) int {
 
 // MoslemToJulian converts a Moslem calandar date to a Julian year and day number.
 func MoslemToJulian(y, m, d int) (jY, jDN int) {
-	N := d + common.FloorDiv(295001*(m-1)+9900, 10000)
-	Q := common.FloorDiv(y, 30)
+	N := d + base.FloorDiv(295001*(m-1)+9900, 10000)
+	Q := base.FloorDiv(y, 30)
 	R := y % 30
-	A := common.FloorDiv(11*R+3, 30)
+	A := base.FloorDiv(11*R+3, 30)
 	W := 404*Q + 354*R + 208 + A
-	Q1 := common.FloorDiv(W, 1461)
+	Q1 := base.FloorDiv(W, 1461)
 	Q2 := W % 1461
 	G := 621 + 28*Q + 4*Q1
-	K := common.FloorDiv(Q2*10000, 3652422)
-	E := common.FloorDiv(3652422*K, 10000)
+	K := base.FloorDiv(Q2*10000, 3652422)
+	E := base.FloorDiv(3652422*K, 10000)
 	J := Q2 - E + N - 1
 	X := G + K
 	switch {
@@ -135,22 +135,22 @@ func MoslemToJulian(y, m, d int) (jY, jDN int) {
 
 // JulianToGregorian converts a Julian calendar year and day number to a year, month, and day in the Gregorian calendar.
 func JulianToGregorian(y, dn int) (gY, gM, gD int) {
-	JD := common.FloorDiv(36525*(y-1), 100) + 1721423 + dn
-	α := common.FloorDiv(JD*100-186721625, 3652425)
+	JD := base.FloorDiv(36525*(y-1), 100) + 1721423 + dn
+	α := base.FloorDiv(JD*100-186721625, 3652425)
 	β := JD
 	if JD >= 2299161 {
-		β += 1 + α - common.FloorDiv(α, 4)
+		β += 1 + α - base.FloorDiv(α, 4)
 	}
 	b := β + 1524
 	return ymd(b)
 }
 
 func ymd(b int) (y, m, d int) {
-	c := common.FloorDiv(b*100-12210, 36525)
-	d = common.FloorDiv(36525*c, 100) // borrow the variable
-	e := common.FloorDiv((b-d)*10000, 306001)
+	c := base.FloorDiv(b*100-12210, 36525)
+	d = base.FloorDiv(36525*c, 100) // borrow the variable
+	e := base.FloorDiv((b-d)*10000, 306001)
 	// compute named return values
-	d = b - d - common.FloorDiv(306001*e, 10000)
+	d = b - d - base.FloorDiv(306001*e, 10000)
 	if e < 14 {
 		m = e - 1
 	} else {
@@ -176,10 +176,10 @@ func GregorianToJulian(y, m, d int) (jy, jm, jd int) {
 		y--
 		m += 12
 	}
-	α := common.FloorDiv(y, 100)
-	β := 2 - α + common.FloorDiv(α, 4)
-	b := common.FloorDiv(36525*y, 100) +
-		common.FloorDiv(306001*(m+1), 10000) +
+	α := base.FloorDiv(y, 100)
+	β := 2 - α + base.FloorDiv(α, 4)
+	b := base.FloorDiv(36525*y, 100) +
+		base.FloorDiv(306001*(m+1), 10000) +
 		d + 1722519 + β
 	return ymd(b)
 }
@@ -190,9 +190,9 @@ func JulianToMoslem(y, m, d int) (my, mm, md int) {
 	if y%4 == 0 {
 		W = 1
 	}
-	N := common.FloorDiv(275*m, 9) - W*common.FloorDiv(m+9, 12) + d - 30
+	N := base.FloorDiv(275*m, 9) - W*base.FloorDiv(m+9, 12) + d - 30
 	A := y - 623
-	B := common.FloorDiv(A, 4)
+	B := base.FloorDiv(A, 4)
 	C2 := func(A int) int {
 		C := A % 4
 		C1 := 365.25001 * float64(C)
@@ -203,11 +203,11 @@ func JulianToMoslem(y, m, d int) (my, mm, md int) {
 		return int(C2)
 	}(A)
 	Dp := 1461*B + 170 + C2
-	Q := common.FloorDiv(Dp, 10631)
+	Q := base.FloorDiv(Dp, 10631)
 	R := Dp % 10631
-	J := common.FloorDiv(R, 354)
+	J := base.FloorDiv(R, 354)
 	K := R % 354
-	O := common.FloorDiv(11*J+14, 30)
+	O := base.FloorDiv(11*J+14, 30)
 	H := 30*Q + J + 1
 	JJ := K - O + N - 1
 	days := 354
@@ -222,9 +222,9 @@ func JulianToMoslem(y, m, d int) (my, mm, md int) {
 		mm = 12
 		md = 30
 	} else {
-		S := common.FloorDiv((JJ-1)*10, 295)
+		S := base.FloorDiv((JJ-1)*10, 295)
 		mm = 1 + S
-		md = common.FloorDiv(10*JJ-295*S, 10)
+		md = base.FloorDiv(10*JJ-295*S, 10)
 	}
 	return H, mm, md
 }

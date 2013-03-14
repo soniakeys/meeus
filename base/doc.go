@@ -1,7 +1,7 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Common: Functions and other definitions useful with multiple packages.
+// Base: Functions and other definitions useful with multiple packages.
 //
 // AA begins with an unnumbered chapter titled "Some Symbols and
 // Abbreviations."  In addition to a list of symbols and abbreviations
@@ -101,4 +101,4 @@
 // specified width.  Larger values cause overflow.
 //
 // +Inf, -Inf, and NaN always cause overflow.
-package common
+package base

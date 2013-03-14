@@ -68,10 +68,10 @@
 // of the API code.  Relevant "exercises" from the book are also often
 // implemented as Go examples.
 //
-// In addition to the chapter packages, there is a package called "common".
+// In addition to the chapter packages, there is a package called "base".
 // This contains a few definitions that are provided by Meeus but are of such
 // general use that they really don't belong with any one chapter.  The much
-// greater bulk of common however, are functions which Meeus does not explicity
+// greater bulk of base however, are functions which Meeus does not explicity
 // provide, but again are of general use.  The nature of these functions is
 // as helper subroutines or IO subroutines.  The functions do not offer
 // additional astronomy algorithms beyond those provided by Meeus.
