@@ -87,6 +87,7 @@
 //	3. Interpolation                                     interp
 //	4. Curve Fitting                                     fit
 //	5. Iteration                                         iterate
+//	6. Sorting Numbers                                   sort
 //	7. Julian Day                                        julian
 //	8. Date of Easter                                    easter
 //	9. Jewish and Moslem Calendars                       jm
