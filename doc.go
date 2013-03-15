@@ -100,6 +100,7 @@
 //	16. Atmospheric Refraction                           refraction
 //	17. Angular Separation                               angle
 //	18. Planetary Conjunctions                           conjunction
+//	19. Bodies in Straight Line                          line
 //	21. Precession                                       precess
 //	22. Nutation and the Obliquity of the Ecliptic       nutation
 package meeus

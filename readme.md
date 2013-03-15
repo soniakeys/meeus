@@ -31,6 +31,7 @@ Cross reference from chapters to package names
     <tr><td>16. Atmospheric Refraction</td><td>refraction</td><td>complete</td></tr>
     <tr><td>17. Angular Separation</td><td>angle</td><td>complete</td></tr>
     <tr><td>18. Planetary Conjunctions</td><td>conjunction</td><td>complete</td></tr>
+    <tr><td>19. Bodies in Straight Line</td><td>line</td><td>complete</td></tr>
     <tr><td>21. Precession</td><td>precess</td><td>complete</td></tr>
     <tr><td>22. Nutation and the Obliquity of the Ecliptic</td><td>nutation</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>common</td><td></td></tr>
