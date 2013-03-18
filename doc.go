@@ -80,27 +80,28 @@
 //
 // .
 //
-//	Chapter                                              Package
+//	Chapter                                                 Package
 //
-//	1. Hints and Tips                                    hints
-//	2. About Accuracy                                    accuracy
-//	3. Interpolation                                     interp
-//	4. Curve Fitting                                     fit
-//	5. Iteration                                         iterate
-//	6. Sorting Numbers                                   sort
-//	7. Julian Day                                        julian
-//	8. Date of Easter                                    easter
-//	9. Jewish and Moslem Calendars                       jm
-//	10. Dynamical Time and Universal Time                deltat
-//	11. The Earth's Globe                                globe
-//	12. Sidereal Time at Greenwich                       sidereal
-//	13. Transformation of Coordinates                    coord
-//	14. The Parallactic Angle, and three other Topics    parallactic
-//	15. Rising, Transit, and Setting                     rise
-//	16. Atmospheric Refraction                           refraction
-//	17. Angular Separation                               angle
-//	18. Planetary Conjunctions                           conjunction
-//	19. Bodies in Straight Line                          line
-//	21. Precession                                       precess
-//	22. Nutation and the Obliquity of the Ecliptic       nutation
+//	1. Hints and Tips                                       hints
+//	2. About Accuracy                                       accuracy
+//	3. Interpolation                                        interp
+//	4. Curve Fitting                                        fit
+//	5. Iteration                                            iterate
+//	6. Sorting Numbers                                      sort
+//	7. Julian Day                                           julian
+//	8. Date of Easter                                       easter
+//	9. Jewish and Moslem Calendars                          jm
+//	10. Dynamical Time and Universal Time                   deltat
+//	11. The Earth's Globe                                   globe
+//	12. Sidereal Time at Greenwich                          sidereal
+//	13. Transformation of Coordinates                       coord
+//	14. The Parallactic Angle, and three other Topics       parallactic
+//	15. Rising, Transit, and Setting                        rise
+//	16. Atmospheric Refraction                              refraction
+//	17. Angular Separation                                  angle
+//	18. Planetary Conjunctions                              conjunction
+//	19. Bodies in Straight Line                             line
+//	20. Smallest Circle containing three Celestial Bodies   circle
+//	21. Precession                                          precess
+//	22. Nutation and the Obliquity of the Ecliptic          nutation
 package meeus
