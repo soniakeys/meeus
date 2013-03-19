@@ -3,12 +3,12 @@
 
 // Base: Functions and other definitions useful with multiple packages.
 //
-// AA begins with an unnumbered chapter titled "Some Symbols and
-// Abbreviations."  In addition to a list of symbols and abbreviations
-// are a few paragraphs introducing sexagesimal notation.  Chapter 1,
-// Hints and Tips contains additional information about sexagesimal
+// The book Astrononomical Algorithsms begins with an unnumbered chapter
+// titled "Some Symbols and Abbreviations."  In addition to a list of symbols
+// and abbreviations are a few paragraphs introducing sexagesimal notation.
+// Chapter 1, Hints and Tips contains additional information about sexagesimal
 // numbers.  It made sense to combine these in one package.  Also here
-// are support functions useful in multiple chapters.
+// are various definitions and support functions useful in multiple chapters.
 //
 // Decimal Symbols
 //
@@ -101,4 +101,20 @@
 // specified width.  Larger values cause overflow.
 //
 // +Inf, -Inf, and NaN always cause overflow.
+//
+// Bessellian and Julian Year
+//
+// Chapter 21, Precision actually contains these defintions.  They are moved
+// here because of their general utility.
+//
+// General purpose math functions
+//
+// PMod addresses the issue on p. 7, chapter 1, in the section "Trigonometric
+// functions of large angles", but the function is not written to be specific
+// to angles and so has more general utility.
+//
+// Horner is described on p. 10, chapter 1.
+//
+// FloorDiv and FloorDiv64 are optimizations for the INT function described
+// on p. 60, chapter 7.
 package base

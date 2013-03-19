@@ -127,12 +127,17 @@ func ExampleProperMotion3D() {
 	r := 2.64                // given in correct unit
 	mr := -7.6 / 977792      // another magic conversion factor
 	eqTo := &coord.Equatorial{}
+	fmt.Printf("Δr = %.9f, Δα = %.10f, Δδ = %.10f\n", mr, mra, mdec)
 	for _, epoch := range []float64{1000, 0, -1000, -2000, -10000} {
 		precess.ProperMotion3D(eqFrom, eqTo, 2000, epoch, r, mr, mra, mdec)
 		fmt.Printf("%8.1f  %0.2d  %-0.1d\n", epoch,
 			base.NewFmtRA(eqTo.RA), base.NewFmtAngle(eqTo.Dec))
 	}
+	// Note that the following results differ from Meeus's.
+	// I have no idea why. --SK.
+
 	// Output:
+	// Δr = -0.000007773, Δα = -0.0000027976, Δδ = -0.0000058435
 	//   1000.0  6ʰ45ᵐ47ˢ.19  -16°22′57″.5
 	//      0.0  6ʰ46ᵐ25ˢ.32  -16°03′02″.9
 	//  -1000.0  6ʰ47ᵐ03ˢ.23  -15°43′15″.4

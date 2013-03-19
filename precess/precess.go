@@ -5,6 +5,9 @@
 //
 // Functions in this package take Julian epoch argurments rather than Julian
 // days.  Use base.JDEToJulianYear() to convert.
+//
+// Also in package base are some definitions related to the Besselian and
+// Julian Year.
 package precess
 
 import (
