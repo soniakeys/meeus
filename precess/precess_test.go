@@ -25,15 +25,25 @@ func ExampleApproxAnnualPrecession() {
 	Δα, Δδ := precess.ApproxAnnualPrecession(eq, epochFrom, epochTo)
 	fmt.Printf("%+.3d\n", base.NewFmtHourAngle(Δα))
 	fmt.Printf("%+.2d\n", base.NewFmtAngle(Δδ))
-
-	mα := base.NewHourAngle(true, 0, 0, 0.0169).Rad()
-	mδ := base.NewAngle(false, 0, 0, 0.006).Rad()
-	precess.PrecessApprox(eq, eq, epochFrom, epochTo, mα, mδ)
-	fmt.Printf("%0.1d\n", base.NewFmtRA(eq.RA))
-	fmt.Printf("%+0d\n", base.NewFmtAngle(eq.Dec))
 	// Output:
 	// +3ˢ.207
 	// -17″.71
+}
+
+func ExampleApproxPosition() {
+	// Example 21.a, p. 132.
+	eq := &coord.Equatorial{
+		base.NewRA(10, 8, 22.3).Rad(),
+		base.NewAngle(false, 11, 58, 2).Rad(),
+	}
+	epochFrom := 2000.0
+	epochTo := 1978.0
+	mα := base.NewHourAngle(true, 0, 0, 0.0169).Rad()
+	mδ := base.NewAngle(false, 0, 0, 0.006).Rad()
+	precess.ApproxPosition(eq, eq, epochFrom, epochTo, mα, mδ)
+	fmt.Printf("%0.1d\n", base.NewFmtRA(eq.RA))
+	fmt.Printf("%+0d\n", base.NewFmtAngle(eq.Dec))
+	// Output:
 	// 10ʰ07ᵐ12ˢ.1
 	// +12°04′32″
 }
@@ -48,7 +58,7 @@ func TestEpoch(t *testing.T) {
 	}
 }
 
-func ExamplePrecess() {
+func ExamplePosition() {
 	// Example 21.b, p. 135.
 	eq := &coord.Equatorial{
 		base.NewRA(2, 44, 11.986).Rad(),
@@ -57,7 +67,7 @@ func ExamplePrecess() {
 	epochFrom := 2000.0
 	jdTo := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	epochTo := base.JDEToJulianYear(jdTo)
-	precess.Precess(eq, eq, epochFrom, epochTo,
+	precess.Position(eq, eq, epochFrom, epochTo,
 		base.NewHourAngle(false, 0, 0, 0.03425).Rad(),
 		base.NewAngle(true, 0, 0, 0.0895).Rad())
 	fmt.Printf("%0.3d\n", base.NewFmtRA(eq.RA))
@@ -68,7 +78,7 @@ func ExamplePrecess() {
 }
 
 // Exercise, p. 136.
-func TestPrecess(t *testing.T) {
+func TestPosition(t *testing.T) {
 	eqFrom := &coord.Equatorial{
 		base.NewRA(2, 31, 48.704).Rad(),
 		base.NewAngle(false, 89, 15, 50.72).Rad(),
@@ -85,7 +95,7 @@ func TestPrecess(t *testing.T) {
 		{"5 53 29.17", "89 32 22.18", base.JulianYearToJDE(2100)},
 	} {
 		epochTo := base.JDEToJulianYear(tc.jde)
-		precess.Precess(eqFrom, eqTo, 2000.0, epochTo, mα, mδ)
+		precess.Position(eqFrom, eqTo, 2000.0, epochTo, mα, mδ)
 		αStr := fmt.Sprintf("%.2x", base.NewFmtRA(eqTo.RA))
 		δStr := fmt.Sprintf("%.2x", base.NewFmtAngle(eqTo.Dec))
 		if αStr != tc.α {
@@ -97,7 +107,7 @@ func TestPrecess(t *testing.T) {
 	}
 }
 
-func ExamplePrecessEcl() {
+func ExampleEclipticPosition() {
 	// Example 21.c, p. 137.
 	eclFrom := &coord.Ecliptic{
 		Lat: 1.76549 * math.Pi / 180,
@@ -106,7 +116,7 @@ func ExamplePrecessEcl() {
 	eclTo := &coord.Ecliptic{}
 	epochFrom := 2000.0
 	epochTo := base.JDEToJulianYear(julian.CalendarJulianToJD(-214, 6, 30))
-	precess.PrecessEcl(eclFrom, eclTo, epochFrom, epochTo, 0, 0)
+	precess.EclipticPosition(eclFrom, eclTo, epochFrom, epochTo, 0, 0)
 	fmt.Printf("%.3f\n", eclTo.Lon*180/math.Pi)
 	fmt.Printf("%+.3f\n", eclTo.Lat*180/math.Pi)
 	// Output:

@@ -30,12 +30,7 @@ func ApproxAnnualPrecession(eq *coord.Equatorial, epochFrom, epochTo float64) (�
 	sa, ca := math.Sincos(eq.RA)
 	Δαs := m + na*sa*math.Tan(eq.Dec) // seconds of time
 	Δδs := nd * ca                    // seconds of arc
-	neg := false
-	if Δδs < 0 {
-		neg = true
-		Δδs = -Δδs
-	}
-	return base.Time(Δαs).Rad(), base.NewAngle(neg, 0, 0, Δδs).Rad()
+	return base.Time(Δαs).Rad(), Δδs * math.Pi / 180 / 3600
 }
 
 // mn as separate function for testing purposes
@@ -47,14 +42,14 @@ func mn(epochFrom, epochTo float64) (m, na, nd float64) {
 	return
 }
 
-// PrecessApprox uses ApproxAnnualPrecession to perform a simple and quick
+// ApproxPosition uses ApproxAnnualPrecession to compute a simple and quick
 // precession while still considering proper motion.
 //
 // Proper motions mα and mδ must be in arc radians per year.
 //
 // Both eqFrom and eqTo must be non-nil, although they may point to the same
 // struct.  EqTo is returned for convenience.
-func PrecessApprox(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, mα, mδ float64) *coord.Equatorial {
+func ApproxPosition(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, mα, mδ float64) *coord.Equatorial {
 	Δα, Δδ := ApproxAnnualPrecession(eqFrom, epochFrom, epochTo)
 	dy := epochTo - epochFrom
 	eqTo.RA = eqFrom.RA + (Δα+mα)*dy
@@ -70,7 +65,7 @@ var ζT = []float64{2306.2181, 1.39656, -0.000139}
 var zT = []float64{2306.2181, 1.39656, -0.000139}
 var θT = []float64{2004.3109, -0.8533, -0.000217}
 
-// Precess precesses equatorial coordinates from one epoch to another,
+// Position precesses equatorial coordinates from one epoch to another,
 // including proper motions.
 //
 // Proper motions must be in arc radians per year.  Pass 0 if proper motions
@@ -78,7 +73,7 @@ var θT = []float64{2004.3109, -0.8533, -0.000217}
 //
 // Both eqFrom and eqTo must be non-nil, although they may point to the same
 // struct.  EqTo is returned for convenience.
-func Precess(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, mα, mδ float64) *coord.Equatorial {
+func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, mα, mδ float64) *coord.Equatorial {
 	ζCoeff := ζt
 	zCoeff := zt
 	θCoeff := θt
@@ -127,7 +122,7 @@ var ηT = []float64{74.0029, -0.06603, 0.000598}
 var πT = []float64{3600 * 174.876384, 3289.4789, 0.60622}
 var pT = []float64{5029.0966, 2.22226, -0.000042}
 
-// PrecessEcl precesses ecliptic coordinates from one epoch to another,
+// EclipticPosition precesses ecliptic coordinates from one epoch to another,
 // including proper motions.
 //
 // Proper motions must be in arc radians per year.  Pass 0 if proper motions
@@ -135,7 +130,7 @@ var pT = []float64{5029.0966, 2.22226, -0.000042}
 //
 // Both eqFrom and eqTo must be non-nil, although they may point to the same
 // struct.  EqTo is returned for convenience.
-func PrecessEcl(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo, mα, mδ float64) *coord.Ecliptic {
+func EclipticPosition(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo, mα, mδ float64) *coord.Ecliptic {
 	ηCoeff := ηt
 	πCoeff := πt
 	pCoeff := pt
