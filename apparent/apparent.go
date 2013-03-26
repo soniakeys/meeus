@@ -27,7 +27,7 @@ func Nutation(α, δ, jd float64) (Δα1, Δδ1 float64) {
 const κ = 20.49552 * math.Pi / 180 / 3600
 
 func perihelion(T float64) float64 {
-	return base.Horner(T, []float64{102.93735, 1.71946, .00046}) * math.Pi / 180
+	return base.Horner(T, 102.93735, 1.71946, .00046) * math.Pi / 180
 }
 
 func EclipticAbberation(λ, β, jd float64) (Δλ, Δβ float64) {

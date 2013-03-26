@@ -20,7 +20,7 @@ func PMod(x, y float64) float64 {
 
 // Horner evaluates a polynomal with coefficients c at x.  The constant
 // term is c[0].  The function panics with an empty coefficient list.
-func Horner(x float64, c []float64) float64 {
+func Horner(x float64, c ...float64) float64 {
 	i := len(c) - 1
 	y := c[i]
 	for i > 0 {

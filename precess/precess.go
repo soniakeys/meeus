@@ -85,22 +85,22 @@ func Precess(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, mα, mδ float6
 	if epochFrom != 2000 {
 		T := (epochFrom - 2000) * .01
 		ζCoeff = []float64{0,
-			base.Horner(T, ζT),
+			base.Horner(T, ζT...),
 			0.30188 - 0.000344*T,
 			0.017998}
 		zCoeff = []float64{0,
-			base.Horner(T, zT),
+			base.Horner(T, zT...),
 			1.09468 - 0.000066*T,
 			0.018203}
 		θCoeff = []float64{0,
-			base.Horner(T, θT),
+			base.Horner(T, θT...),
 			-0.42665 - 0.000217*T,
 			-0.041833}
 	}
 	t := (epochTo - epochFrom) * .01
-	ζ := base.NewAngle(false, 0, 0, base.Horner(t, ζCoeff)).Rad()
-	z := base.NewAngle(false, 0, 0, base.Horner(t, zCoeff)).Rad()
-	θ := base.NewAngle(false, 0, 0, base.Horner(t, θCoeff)).Rad()
+	ζ := base.NewAngle(false, 0, 0, base.Horner(t, ζCoeff...)).Rad()
+	z := base.NewAngle(false, 0, 0, base.Horner(t, zCoeff...)).Rad()
+	θ := base.NewAngle(false, 0, 0, base.Horner(t, θCoeff...)).Rad()
 
 	α := eqFrom.RA + mα*t*100
 	δ := eqFrom.Dec + mδ*t*100
@@ -142,22 +142,22 @@ func PrecessEcl(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo, mα, mδ flo
 	if epochFrom != 2000 {
 		T := (epochFrom - 2000) * .01
 		ηCoeff = []float64{0,
-			base.Horner(T, ηT),
+			base.Horner(T, ηT...),
 			-0.03302 + 0.000598*T,
 			0.000060}
 		πCoeff = []float64{
-			base.Horner(T, πT),
+			base.Horner(T, πT...),
 			-869.8089 - 0.50491*T,
 			0.03536}
 		pCoeff = []float64{0,
-			base.Horner(T, pT),
+			base.Horner(T, pT...),
 			1.11113 - 0.000042*T,
 			-0.000006}
 	}
 	t := (epochTo - epochFrom) * .01
-	η := base.NewAngle(false, 0, 0, base.Horner(t, ηCoeff)).Rad()
-	π := base.NewAngle(false, 0, 0, base.Horner(t, πCoeff)).Rad()
-	p := base.NewAngle(false, 0, 0, base.Horner(t, pCoeff)).Rad()
+	η := base.NewAngle(false, 0, 0, base.Horner(t, ηCoeff...)).Rad()
+	π := base.NewAngle(false, 0, 0, base.Horner(t, πCoeff...)).Rad()
+	p := base.NewAngle(false, 0, 0, base.Horner(t, pCoeff...)).Rad()
 
 	β := eclFrom.Lat
 	λ := eclFrom.Lon

@@ -52,7 +52,7 @@ func Mean0UT(jd float64) float64 {
 
 func mean0UT(jd float64) (sidereal, dayFrac float64) {
 	cen, f := jdToCFrac(jd)
-	return base.Horner(cen, iau82), f
+	return base.Horner(cen, iau82...), f
 }
 
 // Apparent returns apparent sidereal time at Greenwich for the given JD.
@@ -74,7 +74,7 @@ func Apparent(jd float64) float64 {
 func Apparent0UT(jd float64) float64 {
 	j0, f := math.Modf(jd + .5)
 	cen := (j0 - .5 - base.J2000) / 36525
-	s := base.Horner(cen, iau82) + f*1.00273790935*86400
+	s := base.Horner(cen, iau82...) + f*1.00273790935*86400
 	n := nutation.NutationInRA(j0)      // angle (radians) of RA
 	ns := n * 3600 * 180 / math.Pi / 15 // convert RA to time in seconds
 	return base.PMod(s+ns, 86400)
