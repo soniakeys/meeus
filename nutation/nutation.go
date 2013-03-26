@@ -10,10 +10,6 @@ import (
 	"github.com/soniakeys/meeus/base"
 )
 
-func c2000(jd float64) float64 {
-	return (jd - base.J2000) / 36525
-}
-
 // Nutation returns nutation in longitude (Δψ) and nutation in obliquity (Δε)
 // for a given JDE.
 //
@@ -23,7 +19,7 @@ func c2000(jd float64) float64 {
 //
 // Result units are radians.
 func Nutation(jde float64) (Δψ, Δε float64) {
-	T := c2000(jde)
+	T := base.J2000Century(jde)
 	D := base.Horner(T,
 		297.85036, 445267.11148, -0.0019142, 1./189474) * math.Pi / 180
 	M := base.Horner(T,
@@ -75,7 +71,7 @@ func ApproxNutation(jde float64) (Δψ, Δε float64) {
 //
 // Result unit is radians.
 func MeanObliquity(jde float64) float64 {
-	return base.Horner(c2000(jde),
+	return base.Horner(base.J2000Century(jde),
 		base.NewAngle(false, 23, 26, 21.448).Rad(),
 		-46.815/3600*(math.Pi/180),
 		-0.00059/3600*(math.Pi/180),
@@ -92,7 +88,7 @@ func MeanObliquity(jde float64) float64 {
 //
 // Result unit is radians.
 func MeanObliquityLaskar(jde float64) float64 {
-	return base.Horner(c2000(jde)*.01,
+	return base.Horner(base.J2000Century(jde)*.01,
 		base.NewAngle(false, 23, 26, 21.448).Rad(),
 		-4680.93/3600*(math.Pi/180),
 		-1.55/3600*(math.Pi/180),
