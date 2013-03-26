@@ -8,7 +8,9 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/nutation"
+	"github.com/soniakeys/meeus/precess"
 	"github.com/soniakeys/meeus/solar"
 )
 
@@ -26,6 +28,7 @@ func Nutation(α, δ, jd float64) (Δα1, Δδ1 float64) {
 // κ is the constnt of abberation in radians.
 const κ = 20.49552 * math.Pi / 180 / 3600
 
+// longitude of perihelian of Earth's orbit.
 func perihelion(T float64) float64 {
 	return base.Horner(T, 102.93735, 1.71946, .00046) * math.Pi / 180
 }
@@ -43,7 +46,7 @@ func EclipticAbberation(λ, β, jd float64) (Δλ, Δβ float64) {
 	return
 }
 
-func EquatorialAbberation(α, δ, jd float64) (Δα2, Δδ2 float64) {
+func Abberation(α, δ, jd float64) (Δα2, Δδ2 float64) {
 	ε := nutation.MeanObliquity(jd)
 	T := base.J2000Century(jd)
 	s, _ := solar.True(T)
@@ -61,4 +64,14 @@ func EquatorialAbberation(α, δ, jd float64) (Δα2, Δδ2 float64) {
 	q3 := cα * sδ
 	Δδ2 = κ * (e*(cπ*q2+sπ*q3) - (cs*q2 + ss*q3))
 	return
+}
+
+func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, mα, mδ float64) *coord.Equatorial {
+	precess.Precess(eqFrom, eqTo, epochFrom, epochTo, mα, mδ)
+	jd := base.JulianYearToJDE(epochTo)
+	Δα1, Δδ1 := Nutation(eqTo.RA, eqTo.Dec, jd)
+	Δα2, Δδ2 := Abberation(eqTo.RA, eqTo.Dec, jd)
+	eqTo.RA += Δα1 + Δα2
+	eqTo.Dec += Δδ1 + Δδ2
+	return eqTo
 }
