@@ -5,6 +5,15 @@ package base
 
 import "math"
 
+// SmallAngle is threshold used by various routines for switching between
+// trigonometric functions and Pythagorean approximations.
+//
+// In chapter 17, p. 109, Meeus recommends 10′.
+var (
+	SmallAngle    = 10 * math.Pi / 180 / 60 // about .003 radians
+	CosSmallAngle = math.Cos(SmallAngle)    // about .999996
+)
+
 // PMod returns a positive floating-point x mod y.
 //
 // For a positive argument y, it returns a value in the range [0,y).

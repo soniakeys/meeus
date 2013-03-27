@@ -8,6 +8,9 @@
 // function parameters are specified simply as "r1, d1" to correspond to a
 // right ascenscion, declination pair or to a longitude, latitude pair.
 //
+// In function Sep, Meeus recommends 10 arc min as a threshold.  This
+// value is in package base as base.SmallAngle because it has general utility.
+//
 // All angles are in radians.
 package angle
 
@@ -15,6 +18,7 @@ import (
 	"errors"
 	"math"
 
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/interp"
 )
 
@@ -25,10 +29,9 @@ import (
 func Sep(r1, d1, r2, d2 float64) float64 {
 	sd1, cd1 := math.Sincos(d1)
 	sd2, cd2 := math.Sincos(d2)
-	d := math.Acos(sd1*sd2 + cd1*cd2*math.Cos(r1-r2))
-	// Meeus recommends 10 arc min as crossover.  0.003 rad is close.
-	if d > .003 {
-		return d
+	cd := sd1*sd2 + cd1*cd2*math.Cos(r1-r2)
+	if cd < base.CosSmallAngle {
+		return math.Acos(cd)
 	}
 	return math.Hypot((r2-r1)*cd1, d2-d1)
 }

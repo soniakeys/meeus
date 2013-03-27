@@ -111,6 +111,8 @@
 //
 // General purpose math functions
 //
+// SmallAngle is recommended in chapter 17, p. 109.
+//
 // PMod addresses the issue on p. 7, chapter 1, in the section "Trigonometric
 // functions of large angles", but the function is not written to be specific
 // to angles and so has more general utility.
