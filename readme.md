@@ -35,5 +35,6 @@ Cross reference from chapters to package names
     <tr><td>20. Smallest Circle containing three Celestial Bodies</td><td>circle</td><td>complete</td></tr>
     <tr><td>21. Precession</td><td>precess</td><td>partial</td></tr>
     <tr><td>22. Nutation and the Obliquity of the Ecliptic</td><td>nutation</td><td>complete</td></tr>
+    <tr><td>23. Apparent Place of a Star</td><td>apparent</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>
