@@ -23,8 +23,8 @@ func ExampleApproxAnnualPrecession() {
 	epochFrom := 2000.0
 	epochTo := 1978.0
 	Δα, Δδ := precess.ApproxAnnualPrecession(eq, epochFrom, epochTo)
-	fmt.Printf("%+.3d\n", base.NewFmtHourAngle(Δα))
-	fmt.Printf("%+.2d\n", base.NewFmtAngle(Δδ))
+	fmt.Printf("%+.3d\n", base.NewFmtHourAngle(Δα.Rad()))
+	fmt.Printf("%+.2d\n", base.NewFmtAngle(Δδ.Rad()))
 	// Output:
 	// +3ˢ.207
 	// -17″.71
@@ -38,8 +38,8 @@ func ExampleApproxPosition() {
 	}
 	epochFrom := 2000.0
 	epochTo := 1978.0
-	mα := base.NewHourAngle(true, 0, 0, 0.0169).Rad()
-	mδ := base.NewAngle(false, 0, 0, 0.006).Rad()
+	mα := base.NewHourAngle(true, 0, 0, 0.0169)
+	mδ := base.NewAngle(false, 0, 0, 0.006)
 	precess.ApproxPosition(eq, eq, epochFrom, epochTo, mα, mδ)
 	fmt.Printf("%0.1d\n", base.NewFmtRA(eq.RA))
 	fmt.Printf("%+0d\n", base.NewFmtAngle(eq.Dec))
@@ -68,8 +68,8 @@ func ExamplePosition() {
 	jdTo := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	epochTo := base.JDEToJulianYear(jdTo)
 	precess.Position(eq, eq, epochFrom, epochTo,
-		base.NewHourAngle(false, 0, 0, 0.03425).Rad(),
-		base.NewAngle(true, 0, 0, 0.0895).Rad())
+		base.NewHourAngle(false, 0, 0, 0.03425),
+		base.NewAngle(true, 0, 0, 0.0895))
 	fmt.Printf("%0.3d\n", base.NewFmtRA(eq.RA))
 	fmt.Printf("%+0.2d\n", base.NewFmtAngle(eq.Dec))
 	// Output:
@@ -84,8 +84,8 @@ func TestPosition(t *testing.T) {
 		base.NewAngle(false, 89, 15, 50.72).Rad(),
 	}
 	eqTo := &coord.Equatorial{}
-	mα := base.NewHourAngle(false, 0, 0, 0.19877).Rad()
-	mδ := base.NewAngle(true, 0, 0, 0.0152).Rad()
+	mα := base.NewHourAngle(false, 0, 0, 0.19877)
+	mδ := base.NewAngle(true, 0, 0, 0.0152)
 	for _, tc := range []struct {
 		α, δ string
 		jde  float64
@@ -99,7 +99,7 @@ func TestPosition(t *testing.T) {
 		αStr := fmt.Sprintf("%.2x", base.NewFmtRA(eqTo.RA))
 		δStr := fmt.Sprintf("%.2x", base.NewFmtAngle(eqTo.Dec))
 		if αStr != tc.α {
-			t.Fatal(αStr)
+			t.Fatal("got:", αStr, "want:", tc.α)
 		}
 		if δStr != tc.δ {
 			t.Fatal(δStr)
@@ -130,12 +130,10 @@ func ExampleProperMotion3D() {
 		RA:  base.NewRA(6, 45, 8.871).Rad(),
 		Dec: base.NewAngle(true, 16, 42, 57.99).Rad(),
 	}
-	// 13751 (= 3600*180/pi/15) is conversion factor from seconds (of time)
-	// per year to (arc) radians per year.  see top of p. 141.
-	mra := -0.03847 / 13751
-	mdec := -1.2053 / 206265 // 206265 = 3600*180/pi
-	r := 2.64                // given in correct unit
-	mr := -7.6 / 977792      // another magic conversion factor
+	mra := base.NewHourAngle(false, 0, 0, -0.03847)
+	mdec := base.NewAngle(false, 0, 0, -1.2053)
+	r := 2.64           // given in correct unit
+	mr := -7.6 / 977792 // magic conversion factor
 	eqTo := &coord.Equatorial{}
 	fmt.Printf("Δr = %.9f, Δα = %.10f, Δδ = %.10f\n", mr, mra, mdec)
 	for _, epoch := range []float64{1000, 0, -1000, -2000, -10000} {
