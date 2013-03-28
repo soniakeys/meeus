@@ -145,7 +145,7 @@ func (p *Precessor) Precess(eqFrom, eqTo *coord.Equatorial) *coord.Equatorial {
 	if C < base.CosSmallAngle {
 		eqTo.Dec = math.Asin(C)
 	} else {
-		eqTo.Dec = math.Acos(math.Sqrt(A*A + B*B)) // near pole
+		eqTo.Dec = math.Acos(math.Hypot(A, B)) // near pole
 	}
 	return eqTo
 }
@@ -230,7 +230,7 @@ func (p *EclipticPrecessor) Precess(eclFrom, eclTo *coord.Ecliptic) *coord.Eclip
 	if C < base.CosSmallAngle {
 		eclTo.Lat = math.Asin(C)
 	} else {
-		eclTo.Lat = math.Acos(math.Sqrt(A*A + B*B)) // near pole
+		eclTo.Lat = math.Acos(math.Hypot(A, B)) // near pole
 	}
 	return eclTo
 }
