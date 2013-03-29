@@ -105,4 +105,6 @@
 //	21. Precession                                          precess
 //	22. Nutation and the Obliquity of the Ecliptic          nutation
 //	23. Apparent Place of a Star                            apparent
+//	24. Reduction of Ecliptical Elements from one Equinox   elementequinox
+//      to another one
 package meeus

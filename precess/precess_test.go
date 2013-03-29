@@ -10,6 +10,7 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/coord"
+	"github.com/soniakeys/meeus/elementequinox"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/precess"
 )
@@ -107,6 +108,34 @@ func TestPosition(t *testing.T) {
 	}
 }
 
+func TestPrecessor_Precess(t *testing.T) {
+	// Exercise, p. 136.
+	eqFrom := &coord.Equatorial{
+		RA:  base.NewRA(2, 31, 48.704).Rad(),
+		Dec: base.NewAngle(false, 89, 15, 50.72).Rad(),
+	}
+	mα := base.NewHourAngle(false, 0, 0, .19877)
+	mδ := base.NewAngle(false, 0, 0, -.0152)
+	epochs := []float64{
+		base.JDEToJulianYear(base.B1900),
+		2050,
+		2100,
+	}
+	answer := []string{
+		"α = 1ʰ22ᵐ33ˢ.90   δ = +88°46′26″.18",
+		"α = 3ʰ48ᵐ16ˢ.43   δ = +89°27′15″.38",
+		"α = 5ʰ53ᵐ29ˢ.17   δ = +89°32′22″.18",
+	}
+	eqTo := &coord.Equatorial{}
+	for i, epochTo := range epochs {
+		precess.Position(eqFrom, eqTo, 2000, epochTo, mα, mδ)
+		if answer[i] != fmt.Sprintf("α = %0.2d   δ = %+0.2d",
+			base.NewFmtRA(eqTo.RA), base.NewFmtAngle(eqTo.Dec)) {
+			t.Fatal(i)
+		}
+	}
+}
+
 func ExampleEclipticPosition() {
 	// Example 21.c, p. 137.
 	eclFrom := &coord.Ecliptic{
@@ -141,15 +170,31 @@ func ExampleProperMotion3D() {
 		fmt.Printf("%8.1f  %0.2d  %-0.1d\n", epoch,
 			base.NewFmtRA(eqTo.RA), base.NewFmtAngle(eqTo.Dec))
 	}
-	// Note that the following results differ from Meeus's.
-	// I have no idea why. --SK.
-
 	// Output:
 	// Δr = -0.000007773, Δα = -0.0000027976, Δδ = -0.0000058435
-	//   1000.0  6ʰ45ᵐ47ˢ.19  -16°22′57″.5
-	//      0.0  6ʰ46ᵐ25ˢ.32  -16°03′02″.9
-	//  -1000.0  6ʰ47ᵐ03ˢ.23  -15°43′15″.4
-	//  -2000.0  6ʰ47ᵐ40ˢ.92  -15°23′35″.3
-	// -10000.0  6ʰ52ᵐ34ˢ.56  -12°50′37″.8
+	//   1000.0  6ʰ45ᵐ47ˢ.16  -16°22′56″.0
+	//      0.0  6ʰ46ᵐ25ˢ.09  -16°03′00″.8
+	//  -1000.0  6ʰ47ᵐ02ˢ.67  -15°43′12″.3
+	//  -2000.0  6ʰ47ᵐ39ˢ.91  -15°23′30″.6
+	// -10000.0  6ʰ52ᵐ25ˢ.72  -12°50′06″.7
+}
 
+func ExampleEclipticPrecessor_ReduceElements() {
+	// Example 24.a, p. 160.
+	ele := &elementequinox.Elements{
+		Inc:  47.122 * math.Pi / 180,
+		Peri: 151.4486 * math.Pi / 180,
+		Node: 45.7481 * math.Pi / 180,
+	}
+	JFrom := base.JDEToJulianYear(base.BesselianYearToJDE(1744))
+	JTo := base.JDEToJulianYear(base.BesselianYearToJDE(1950))
+	p := precess.NewEclipticPrecessor(JFrom, JTo)
+	p.ReduceElements(ele, ele)
+	fmt.Printf("i = %.4f\n", ele.Inc*180/math.Pi)
+	fmt.Printf("Ω = %.4f\n", ele.Node*180/math.Pi)
+	fmt.Printf("ω = %.4f\n", ele.Peri*180/math.Pi)
+	// Output:
+	// i = 47.1380
+	// Ω = 48.6037
+	// ω = 151.4782
 }

@@ -18,7 +18,8 @@
 // factors conversion factors can be avoided by using the constructors
 // for these base types.
 //
-// For example, rather than
+// For example, given an annual proper motion in right ascension of -0ˢ.03847,
+// rather than
 //
 //	mra := -0.03847 / 13751 // as Meeus suggests
 //
@@ -30,9 +31,9 @@
 //
 //	mra := base.NewHourAngle(false, 0, 0, -0.03847)
 //
-// In all cases, proper motions are expected to be annual proper motions
-// so the unit denominator is years.  (The code, following Meeus's example,
-// technically treats it as Julian years.)
+// Unless otherwise indicated, functions in this library expect proper motions
+// to be annual proper motions, so the unit denominator is years.
+// (The code, following Meeus's example, technically treats it as Julian years.)
 package precess
 
 import (
@@ -40,6 +41,7 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/coord"
+	"github.com/soniakeys/meeus/elementequinox"
 	"github.com/soniakeys/meeus/nutation"
 )
 
@@ -176,11 +178,11 @@ type EclipticPrecessor struct {
 }
 
 var (
-	ηt = []float64{0, 47.0029, -0.03302, 0.000060}
+	ηt = []float64{47.0029, -0.03302, 0.000060}
 	πt = []float64{3600 * 174.876384, -869.8089, 0.03536}
-	pt = []float64{0, 5029.0966, 1.11113, -0.000006}
+	pt = []float64{5029.0966, 1.11113, -0.000006}
 
-	ηT = []float64{74.0029, -0.06603, 0.000598}
+	ηT = []float64{47.0029, -0.06603, 0.000598}
 	πT = []float64{3600 * 174.876384, 3289.4789, 0.60622}
 	pT = []float64{5029.0966, 2.22226, -0.000042}
 )
@@ -193,7 +195,7 @@ func NewEclipticPrecessor(epochFrom, epochTo float64) *EclipticPrecessor {
 	pCoeff := pt
 	if epochFrom != 2000 {
 		T := (epochFrom - 2000) * .01
-		ηCoeff = []float64{0,
+		ηCoeff = []float64{
 			base.Horner(T, ηT...),
 			-0.03302 + 0.000598*T,
 			0.000060}
@@ -201,17 +203,17 @@ func NewEclipticPrecessor(epochFrom, epochTo float64) *EclipticPrecessor {
 			base.Horner(T, πT...),
 			-869.8089 - 0.50491*T,
 			0.03536}
-		pCoeff = []float64{0,
+		pCoeff = []float64{
 			base.Horner(T, pT...),
 			1.11113 - 0.000042*T,
 			-0.000006}
 	}
 	t := (epochTo - epochFrom) * .01
 	p := &EclipticPrecessor{
-		π: base.NewAngle(false, 0, 0, base.Horner(t, πCoeff...)).Rad(),
-		p: base.NewAngle(false, 0, 0, base.Horner(t, pCoeff...)).Rad(),
+		π: base.Horner(t, πCoeff...) * math.Pi / 180 / 3600,
+		p: base.Horner(t, pCoeff...) * t * math.Pi / 180 / 3600,
 	}
-	η := base.NewAngle(false, 0, 0, base.Horner(t, ηCoeff...)).Rad()
+	η := base.Horner(t, ηCoeff...) * t * math.Pi / 180 / 3600
 	p.sη, p.cη = math.Sincos(η)
 	return p
 }
@@ -233,6 +235,21 @@ func (p *EclipticPrecessor) Precess(eclFrom, eclTo *coord.Ecliptic) *coord.Eclip
 		eclTo.Lat = math.Acos(math.Hypot(A, B)) // near pole
 	}
 	return eclTo
+}
+
+// ReduceElements reduces orbital elements of a solar system body from one
+// equinox to another.
+//
+// This function is described in chapter 24, but is located in this
+// package so it can be a method of EclipticPrecessor.
+func (p *EclipticPrecessor) ReduceElements(eFrom, eTo *elementequinox.Elements) *elementequinox.Elements {
+	ψ := p.π + p.p
+	si, ci := math.Sincos(eFrom.Inc)
+	snp, cnp := math.Sincos(eFrom.Node - p.π)
+	eTo.Inc = math.Acos(ci*p.cη + si*p.sη*cnp)
+	eTo.Node = math.Atan2(si*snp, p.cη*si*cnp-p.sη*ci) + ψ
+	eTo.Peri = math.Atan2(-p.sη*snp, si*p.cη-ci*p.sη*cnp) + eFrom.Peri
+	return eTo
 }
 
 // EclipticPosition precesses ecliptic coordinates from one epoch to another,
@@ -278,8 +295,8 @@ func eqProperMotionToEcl(mα, mδ, epoch float64, pos *coord.Ecliptic) (mλ, mβ
 // Both eqFrom and eqTo must be non-nil, although they may point to the same
 // struct.  EqTo is returned for convenience.
 func ProperMotion3D(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, r, mr float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
-	sα, cα := math.Sincos(mα.Rad())
-	sδ, cδ := math.Sincos(mδ.Rad())
+	sα, cα := math.Sincos(eqFrom.RA)
+	sδ, cδ := math.Sincos(eqFrom.Dec)
 	x := r * cδ * cα
 	y := r * cδ * sα
 	z := r * sδ
@@ -292,7 +309,7 @@ func ProperMotion3D(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, r, mr fl
 	xp := x + t*mx
 	yp := y + t*my
 	zp := z + t*mz
-	eqTo.RA = eqFrom.RA + math.Atan2(yp, xp)
-	eqTo.Dec = eqFrom.Dec + math.Atan2(zp, math.Hypot(xp, yp))
+	eqTo.RA = math.Atan2(yp, xp)
+	eqTo.Dec = math.Atan2(zp, math.Hypot(xp, yp))
 	return eqTo
 }
