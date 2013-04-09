@@ -22,8 +22,8 @@ func ExampleEcliptic_EqToEcl() {
 		base.NewRA(7, 45, 18.946).Rad(),
 		base.NewAngle(false, 28, 1, 34.26).Rad(),
 	}
-	sε, cε := math.Sincos(23.4392911 * math.Pi / 180)
-	ecl := new(coord.Ecliptic).EqToEcl(eq, sε, cε)
+	obl := coord.NewObliquity(23.4392911 * math.Pi / 180)
+	ecl := new(coord.Ecliptic).EqToEcl(eq, obl)
 	λStr := base.DecSymAdd(fmt.Sprintf("%.5f", ecl.Lon*180/math.Pi), '°')
 	βStr := base.DecSymAdd(fmt.Sprintf("%+.6f", ecl.Lat*180/math.Pi), '°')
 	fmt.Println("λ =", λStr)
@@ -39,11 +39,11 @@ func TestEquatorial_EclToEq(t *testing.T) {
 		base.NewRA(7, 45, 18.946).Rad(),
 		base.NewAngle(false, 28, 1, 34.26).Rad(),
 	}
-	sε, cε := math.Sincos(23.4392911 * math.Pi / 180)
-	ecl := new(coord.Ecliptic).EqToEcl(eq0, sε, cε)
+	obl := coord.NewObliquity(23.4392911 * math.Pi / 180)
+	ecl := new(coord.Ecliptic).EqToEcl(eq0, obl)
 
 	// now reverse transform
-	eq := new(coord.Equatorial).EclToEq(ecl, sε, cε)
+	eq := new(coord.Equatorial).EclToEq(ecl, obl)
 	if math.Abs((eq.RA-eq0.RA)/eq.RA) > 1e-15 {
 		t.Fatal("RA:", eq0.RA, eq.RA)
 	}

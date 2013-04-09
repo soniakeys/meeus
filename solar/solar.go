@@ -147,13 +147,9 @@ func ApparentEquatorialVSOP87(jde float64) (α, δ, R float64) {
 	s, β, R := TrueVSOP87(jde)
 	Δψ, Δε := nutation.Nutation(jde)
 	Δλ := -20.4898 / 3600 * math.Pi / 180 / R // aberration
-	ecl := &coord.Ecliptic{
-		Lon: s + Δψ + Δλ,
-		Lat: β,
-	}
+	λ := s + Δψ + Δλ
 	ε := nutation.MeanObliquity(jde) + Δε
 	sε, cε := math.Sincos(ε)
-	eq := &coord.Equatorial{}
-	eq.EclToEq(ecl, sε, cε)
-	return eq.RA, eq.Dec, R
+	α, δ = coord.EclToEq(λ, β, sε, cε)
+	return
 }

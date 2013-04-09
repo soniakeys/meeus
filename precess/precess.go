@@ -276,9 +276,9 @@ func EclipticPosition(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo float64
 func eqProperMotionToEcl(mα, mδ, epoch float64, pos *coord.Ecliptic) (mλ, mβ float64) {
 	ε := nutation.MeanObliquity(base.JulianYearToJDE(epoch))
 	sε, cε := math.Sincos(ε)
-	eqPos := new(coord.Equatorial).EclToEq(pos, sε, cε)
-	sα, cα := math.Sincos(eqPos.RA)
-	sδ, cδ := math.Sincos(eqPos.Dec)
+	α, δ := coord.EclToEq(pos.Lon, pos.Lat, sε, cε)
+	sα, cα := math.Sincos(α)
+	sδ, cδ := math.Sincos(δ)
 	cβ := math.Cos(pos.Lat)
 	mλ = (mδ*sε*cα + mα*cδ*(cε*cδ+sε*sδ*sα)) / (cβ * cβ)
 	mβ = (mδ*(cε*cδ+sε*sδ*sα) - mα*sε*cα*cδ) / cβ

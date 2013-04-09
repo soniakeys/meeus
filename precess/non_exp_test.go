@@ -40,7 +40,7 @@ func TestMn(t *testing.T) {
 // in Example 21.a, p. 132, and ecliptic motions given in table 21.A,
 // p. 138.
 func TestEqProperMotionToEcl(t *testing.T) {
-	sε, cε := math.Sincos(nutation.MeanObliquity(base.J2000))
+	ε := coord.NewObliquity(nutation.MeanObliquity(base.J2000))
 	mλ, mβ := eqProperMotionToEcl(
 		// eq motions from p. 132.
 		base.NewHourAngle(true, 0, 0, 0.0169).Rad(),
@@ -50,7 +50,7 @@ func TestEqProperMotionToEcl(t *testing.T) {
 		new(coord.Ecliptic).EqToEcl(&coord.Equatorial{
 			RA:  base.NewRA(10, 8, 22.3).Rad(),
 			Dec: base.NewAngle(false, 11, 58, 2).Rad(),
-		}, sε, cε))
+		}, ε))
 	d := math.Abs((mλ - base.NewAngle(true, 0, 0, .2348).Rad()) / mλ)
 	if d*169 > 1 { // 169 = significant digits of given lon
 		t.Fatal("mλ")
