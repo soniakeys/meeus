@@ -107,5 +107,6 @@
 //	23. Apparent Place of a Star                            apparent
 //	24. Reduction of Ecliptical Elements from one Equinox   elementequinox
 //	    to another one
+//	25. Solar Coordinates                                   solar
 //	32. Positions of the Planets                            planetposition
 package meeus
