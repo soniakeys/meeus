@@ -9,6 +9,7 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
+	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/solar"
 )
 
@@ -61,35 +62,19 @@ func ExampleApparentEquatorial() {
 	// δ: -7°47′6″
 }
 
-func ExampleTrueVSOP87() {
-	// Example 25.b, p. 169.
-	s, β, R := solar.TrueVSOP87(julian.CalendarGregorianToJD(1992, 10, 13))
-	fmt.Printf("☉: %.3d\n", base.NewFmtAngle(s))
-	fmt.Printf("β: %+.2d\n", base.NewFmtAngle(β))
-	fmt.Printf("R: %.8f\n", R)
-	// Output:
-	// ☉: 199°54′26″.449
-	// β: +0″.62
-	// R: 0.99760775
-}
-
-func ExampleApparentVSOP87() {
-	// Example 25.b, p. 169.
-	λ, β, _ := solar.ApparentVSOP87(julian.CalendarGregorianToJD(1992, 10, 13))
-	fmt.Printf("☉: %.3d\n", base.NewFmtAngle(λ))
-	fmt.Printf("β: %+.2d\n", base.NewFmtAngle(β))
-	// Output:
-	// ☉: 199°54′21″.818
-	// β: +0″.62
-}
-
 func ExampleApparentEquatorialVSOP87() {
-	// Example 25.b, p. 169.
+	// Example 25.b, p. 169, but as this code uses the full VSOP87 theory,
+	// results match those at bottom of p. 165.
+	e, err := pp.LoadPlanet(pp.Earth, "")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	jde := julian.CalendarGregorianToJD(1992, 10, 13)
-	α, δ, _ := solar.ApparentEquatorialVSOP87(jde)
+	α, δ, _ := solar.ApparentEquatorialVSOP87(e, jde)
 	fmt.Printf("α: %.3d\n", base.NewFmtRA(α))
 	fmt.Printf("δ: %+.2d\n", base.NewFmtAngle(δ))
 	// Output:
-	// α: 13ʰ13ᵐ30ˢ.763
-	// δ: -7°47′1″.93
+	// α: 13ʰ13ᵐ30ˢ.749
+	// δ: -7°47′1″.74
 }

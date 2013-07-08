@@ -103,13 +103,13 @@ func ApparentEquatorial(jde float64) (α, δ float64) {
 
 // TrueVSOP87 returns the true geometric position of the sun as ecliptic coordinates.
 //
-// Result computed by truncated VSOP87.
+// Result computed by full VSOP87 theory.
 //
 //	s: ecliptic longitude in radians
 //	β: ecliptic latitude in radians
 //	R: range in AU
-func TrueVSOP87(jde float64) (s, β, R float64) {
-	l, b, r := pp.VSOP87(pp.Earth, jde)
+func TrueVSOP87(e *pp.V87Planet, jde float64) (s, β, R float64) {
+	l, b, r := e.Position(jde)
 	s = l + math.Pi
 	// FK5 correction.
 	λp := base.Horner(base.J2000Century(jde),
@@ -121,35 +121,37 @@ func TrueVSOP87(jde float64) (s, β, R float64) {
 
 // ApparentVSOP87 returns the apparent position of the sun as ecliptic coordinates.
 //
-// Result computed by truncated VSOP87 and includes effects of nutation and
-// aberration.
+// Result computed by VSOP87 and includes effects of nutation and aberration.
 //
 //  λ: ecliptic longitude in radians
 //  β: ecliptic latitude in radians
 //  R: range in AU
-func ApparentVSOP87(jde float64) (λ, β, R float64) {
-	s, β, R := TrueVSOP87(jde)
+func ApparentVSOP87(e *pp.V87Planet, jde float64) (λ, β, R float64) {
+	s, β, R := TrueVSOP87(e, jde)
 	Δψ, _ := nutation.Nutation(jde)
-	Δλ := -20.4898 / 3600 * math.Pi / 180 / R // aberration
-	return s + Δψ + Δλ, β, R
+	a := aberration(R)
+	return s + Δψ + a, β, R
 }
 
 // ApparentEquatorialVSOP87 returns the apparent position of the sun as equatorial coordinates.
 //
-// Result computed by truncated VSOP87 and includes effects of nutation and
-// aberration.
+// Result computed by VSOP87 and includes effects of nutation and aberration.
 //
 //	α: right ascension in radians
 //	δ: declination in radians
 //	R: range in AU
-func ApparentEquatorialVSOP87(jde float64) (α, δ, R float64) {
+func ApparentEquatorialVSOP87(e *pp.V87Planet, jde float64) (α, δ, R float64) {
 	// duplicate code from ApparentVSOP87 so we can keep Δε
-	s, β, R := TrueVSOP87(jde)
+	s, β, R := TrueVSOP87(e, jde)
 	Δψ, Δε := nutation.Nutation(jde)
-	Δλ := -20.4898 / 3600 * math.Pi / 180 / R // aberration
-	λ := s + Δψ + Δλ
+	a := aberration(R)
+	λ := s + Δψ + a
 	ε := nutation.MeanObliquity(jde) + Δε
 	sε, cε := math.Sincos(ε)
 	α, δ = coord.EclToEq(λ, β, sε, cε)
 	return
+}
+
+func aberration(R float64) float64 {
+	return -20.4898 / 3600 * math.Pi / 180 / R
 }
