@@ -17,7 +17,7 @@ var (
 // PMod returns a positive floating-point x mod y.
 //
 // For a positive argument y, it returns a value in the range [0,y).
-//  
+//
 // The result may not be useful if y is negative.
 func PMod(x, y float64) float64 {
 	r := math.Mod(x, y)
