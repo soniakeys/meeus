@@ -13,7 +13,7 @@ import (
 	pp "github.com/soniakeys/meeus/planetposition"
 )
 
-// True returns true geometric longitude and anomaly of the sun.
+// True returns true geometric longitude and anomaly of the sun referenced to the mean equinox of date.
 //
 // Argument T is the number of Julian centuries since J2000.
 // See base.J2000Century.
@@ -58,18 +58,6 @@ func Radius(T float64) float64 {
 //
 // Result includes correction for nutation and aberration.  Unit is radians.
 func ApparentLongitude(T float64) float64 {
-	Ω := 125.04*math.Pi/180 - 1934.136*math.Pi/180*T
-	s, _ := True(T)
-	return s - .00569*math.Pi/180 - .00478*math.Pi/180*math.Sin(Ω)
-}
-
-// ApparentLongitudeJ2000 returns apparent longitude of the Sun referenced to equinox J2000.
-//
-// Argument T is the number of Julian centuries since J2000.
-// See base.J2000Century.
-//
-// Result includes correction for nutation and aberration.  Unit is radians.
-func ApparentLongitudeJ2000(T float64) float64 {
 	Ω := node(T)
 	s, _ := True(T)
 	return s - .00569*math.Pi/180 - .00478*math.Pi/180*math.Sin(Ω)
@@ -77,6 +65,22 @@ func ApparentLongitudeJ2000(T float64) float64 {
 
 func node(T float64) float64 {
 	return 125.04*math.Pi/180 - 1934.136*math.Pi/180*T
+}
+
+// True2000 returns true geometric longitude and anomaly of the sun referenced to equinox J2000.
+//
+// Argument T is the number of Julian centuries since J2000.
+// See base.J2000Century.
+//
+// Results are accurate to .01 degree for years 1900 to 2100.
+//
+// Results:
+//	s = true geometric longitude, ☉, in radians
+//	ν = true anomaly in radians
+func True2000(T float64) (s, ν float64) {
+	s, ν = True(T)
+	s -= .01397 * math.Pi / 180 * T * 100
+	return
 }
 
 // TrueEquatorial returns the true geometric position of the Sun as equatorial coordinates.
@@ -103,7 +107,8 @@ func ApparentEquatorial(jde float64) (α, δ float64) {
 
 // TrueVSOP87 returns the true geometric position of the sun as ecliptic coordinates.
 //
-// Result computed by full VSOP87 theory.
+// Result computed by full VSOP87 theory.  Result is at equator and equinox
+// of date in the FK5 frame.  It does not include nutation or aberration.
 //
 //	s: ecliptic longitude in radians
 //	β: ecliptic latitude in radians
@@ -121,7 +126,8 @@ func TrueVSOP87(e *pp.V87Planet, jde float64) (s, β, R float64) {
 
 // ApparentVSOP87 returns the apparent position of the sun as ecliptic coordinates.
 //
-// Result computed by VSOP87 and includes effects of nutation and aberration.
+// Result computed by VSOP87, at equator and equinox of date in the FK5 frame,
+// and includes effects of nutation and aberration.
 //
 //  λ: ecliptic longitude in radians
 //  β: ecliptic latitude in radians
@@ -135,7 +141,8 @@ func ApparentVSOP87(e *pp.V87Planet, jde float64) (λ, β, R float64) {
 
 // ApparentEquatorialVSOP87 returns the apparent position of the sun as equatorial coordinates.
 //
-// Result computed by VSOP87 and includes effects of nutation and aberration.
+// Result computed by VSOP87, at equator and equinox of date in the FK5 frame,
+// and includes effects of nutation and aberration.
 //
 //	α: right ascension in radians
 //	δ: declination in radians
@@ -152,6 +159,10 @@ func ApparentEquatorialVSOP87(e *pp.V87Planet, jde float64) (α, δ, R float64) 
 	return
 }
 
+// Low precision formula.  The high precision formula is not implemented
+// because the low precision formula already gives position results to the
+// accuracy given on p. 165.  The high precision formula the represents lots
+// of typing with associated chance of typos, and no way to test the result.
 func aberration(R float64) float64 {
 	return -20.4898 / 3600 * math.Pi / 180 / R
 }
