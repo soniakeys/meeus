@@ -53,12 +53,11 @@
 // test code which is neither part of the API nor the documentation but which
 // verified by the go test feature.
 //
-// The "API", or choice of functions to implement in Go, covers nearly all of
-// Meeus's numbered formulas.  The correspondence is not one-to-one, but often
-// "refactored" into functions that seem more idiomatic to Go.  Also if an
-// example or exercise from the book illustrates an algorithm that seems of
-// general utility, it will be included in the API as well.  This is set as
-// the limit of the API however, and thus the limit of the functionality
+// The "API", or choice of functions to implement in Go, covers many of
+// Meeus's numbered formulas and covers the algorithms needed to work most
+// of the numbered examples.  The correspondence is not one-to-one, but often
+// "refactored" into functions that seem more idiomatic to Go.  This is set
+// as the limit of the API however, and thus the limit of the functionality
 // offered by this library.
 //
 // Each numbered example in the book is also translated to a Go example
@@ -67,6 +66,12 @@
 // results, the examples also serve as baseline tests of the correctness
 // of the API code.  Relevant "exercises" from the book are also often
 // implemented as Go examples.
+//
+// The file readme.md indicates that some packages are incomplete.  A package
+// is considered complete if it implements all major formulas and algorithms
+// and if it implements all numbered examples.  For incomplete packages,
+// the package documentation will describe the ways in which it is
+// incomplete and typically give reasons for the incompleteness.
 //
 // In addition to the chapter packages, there is a package called "base".
 // This contains a few definitions that are provided by Meeus but are of such

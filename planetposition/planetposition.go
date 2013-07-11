@@ -2,6 +2,22 @@
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Planetposition: Chapter 32, Positions of the Planets
+//
+// Incomplete:
+//
+// 1.  The package does not implement algorithms that use appendix III,
+// but instead implements a full VSOP87 solution.  I do not have a copy
+// of the supplimentary disk with appendix III in machine readable form
+// and as the appendix is rather large, retyping it by hand is problematic.
+// The full VSOP87 data set on the other hand is freely downloadable from
+// the internet, so I implement here code that can use that data directly.
+//
+// 2.  The formula for accuracy of results is not implemented.  It is
+// not needed for full VSOP87 solutions.
+//
+// 3.  Polynomial expressions are not implemented.  Again, implemention
+// would involve typing rather large tables of numbers with associated
+// risk of typographical errors.
 package planetposition
 
 import (
