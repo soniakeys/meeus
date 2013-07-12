@@ -69,6 +69,6 @@ func conj(t1, t5 float64, dr, dd []float64) (t, Δd float64, err error) {
 	if l5, err = interp.NewLen5(t1, t5, dd); err != nil {
 		return
 	}
-	Δd, err = l5.InterpolateX(t, false)
+	Δd, err = l5.InterpolateXStrict(t)
 	return
 }

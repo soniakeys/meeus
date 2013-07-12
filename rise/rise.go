@@ -62,14 +62,15 @@ func ApproxTimes(p globe.Coord, h0, Th0 float64, α, δ float64) (mRise, mTransi
 	// approximate local hour angle
 	sLat, cLat := math.Sincos(p.Lat)
 	sδ1, cδ1 := math.Sincos(δ)
-	cH0 := (math.Sin(h0) - sLat*sδ1) / (cLat * cδ1)
+	cH0 := (math.Sin(h0) - sLat*sδ1) / (cLat * cδ1) // (15.1) p. 102
 	if cH0 < -1 || cH0 > 1 {
 		err = ErrorCircumpolar
 		return
 	}
 	H0 := math.Acos(cH0) * 43200 / math.Pi
 
-	// approximate transit, rise, set times
+	// approximate transit, rise, set times.
+	// (15.2) p. 102.
 	mt := (α+p.Lon)*43200/math.Pi - Th0
 	mTransit = base.PMod(mt, 86400)
 	mRise = base.PMod(mt-H0, 86400)
@@ -117,11 +118,7 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 	// adjust mTransit
 	{
 		th0 := base.PMod(Th0+mTransit*360.985647/360, 86400)
-		var α float64
-		α, err = d3α.InterpolateX(mTransit+ΔT, false)
-		if err != nil {
-			return
-		}
+		α := d3α.InterpolateX(mTransit + ΔT)
 		H := th0 - (p.Lon+α)*43200/math.Pi
 		mTransit -= H
 	}
@@ -130,14 +127,8 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 	adjustRS := func(m float64) (float64, error) {
 		th0 := base.PMod(Th0+m*360.985647/360, 86400)
 		ut := m + ΔT
-		α, err := d3α.InterpolateX(ut, false)
-		if err != nil {
-			return 0, err
-		}
-		δ, err := d3δ.InterpolateX(ut, false)
-		if err != nil {
-			return 0, err
-		}
+		α := d3α.InterpolateX(ut)
+		δ := d3δ.InterpolateX(ut)
 		H := th0 - (p.Lon+α)*43200/math.Pi
 		sδ, cδ := math.Sincos(δ)
 		h := sLat*sδ + cLat*cδ*math.Cos(H)

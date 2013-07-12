@@ -29,11 +29,11 @@ import (
 func Sep(r1, d1, r2, d2 float64) float64 {
 	sd1, cd1 := math.Sincos(d1)
 	sd2, cd2 := math.Sincos(d2)
-	cd := sd1*sd2 + cd1*cd2*math.Cos(r1-r2)
+	cd := sd1*sd2 + cd1*cd2*math.Cos(r1-r2) // (17.1) p. 109
 	if cd < base.CosSmallAngle {
 		return math.Acos(cd)
 	}
-	return math.Hypot((r2-r1)*cd1, d2-d1)
+	return math.Hypot((r2-r1)*cd1, d2-d1) // (17.2) p. 109
 }
 
 // MinSep returns the minimum separation between two moving objects.
@@ -104,14 +104,8 @@ func MinSepRect(jd1, jd3 float64, r1, d1, r2, d2 []float64) (float64, error) {
 	n := dn
 	var u, v float64
 	for limit := 0; limit < 10; limit++ {
-		u, err = u3.InterpolateN(n, false)
-		if err != nil {
-			return 0, err
-		}
-		v, err = v3.InterpolateN(n, false)
-		if err != nil {
-			return 0, err
-		}
+		u = u3.InterpolateN(n)
+		v = v3.InterpolateN(n)
 		if math.Abs(dn) < 1e-5 {
 			return math.Hypot(u, v), nil // success
 		}
@@ -123,6 +117,7 @@ func MinSepRect(jd1, jd3 float64, r1, d1, r2, d2 []float64) (float64, error) {
 	return 0, errors.New("MinSepRect: failure to converge")
 }
 
+// (17.5) p. 115
 func hav(a float64) float64 {
 	return .5 * (1 - math.Cos(a))
 }
@@ -132,6 +127,7 @@ func hav(a float64) float64 {
 // The algorithm uses the haversine function and is superior to the naïve
 // algorithm of the Sep function.
 func SepHav(r1, d1, r2, d2 float64) float64 {
+	// using (17.5) p. 115
 	return 2 * math.Asin(math.Sqrt(hav(d2-d1)+
 		math.Cos(d1)*math.Cos(d2)*hav(r2-r1)))
 }

@@ -23,11 +23,7 @@ func ExampleLen3_InterpolateN() {
 		return
 	}
 	n := 4.35 / 24
-	y, err := d3.InterpolateN(n, false)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	y := d3.InterpolateN(n)
 	fmt.Printf("%.6f\n", y)
 	// Output:
 	// 0.876125
@@ -45,11 +41,7 @@ func ExampleLen3_InterpolateX() {
 		return
 	}
 	x := 8 + base.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
-	y, err := d3.InterpolateX(x, false)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	y := d3.InterpolateX(x)
 	fmt.Printf("%.6f\n", y)
 	// Output:
 	// 0.876125
@@ -149,11 +141,7 @@ func ExampleLen5_InterpolateX() {
 		fmt.Println(err)
 		return
 	}
-	y, err := d5.InterpolateX(x, false)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	y := d5.InterpolateX(x)
 	// radians easy to format
 	fmt.Printf("%.3d", base.NewFmtAngle(y))
 	// Output:
