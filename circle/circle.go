@@ -37,5 +37,6 @@ func Smallest(r1, d1, r2, d2, r3, d3 float64) (Δ float64, typeI bool) {
 	if a*a >= b*b+c*c {
 		return a, true
 	}
+	// (20.1) p. 128
 	return 2 * a * b * c / math.Sqrt((a+b+c)*(a+b-c)*(b+c-a)*(a+c-b)), false
 }

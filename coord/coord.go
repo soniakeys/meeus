@@ -56,8 +56,8 @@ type Ecliptic struct {
 func (ecl *Ecliptic) EqToEcl(eq *Equatorial, ε *Obliquity) *Ecliptic {
 	sα, cα := math.Sincos(eq.RA)
 	sδ, cδ := math.Sincos(eq.Dec)
-	ecl.Lon = math.Atan2(sα*ε.C+(sδ/cδ)*ε.S, cα)
-	ecl.Lat = math.Asin(sδ*ε.C - cδ*ε.S*sα)
+	ecl.Lon = math.Atan2(sα*ε.C+(sδ/cδ)*ε.S, cα) // (13.1) p. 93
+	ecl.Lat = math.Asin(sδ*ε.C - cδ*ε.S*sα)      // (13.2) p. 93
 	return ecl
 }
 
@@ -75,8 +75,8 @@ func (ecl *Ecliptic) EqToEcl(eq *Equatorial, ε *Obliquity) *Ecliptic {
 func EqToEcl(α, δ, sε, cε float64) (λ, β float64) {
 	sα, cα := math.Sincos(α)
 	sδ, cδ := math.Sincos(δ)
-	λ = math.Atan2(sα*cε+(sδ/cδ)*sε, cα)
-	β = math.Asin(sδ*cε - cδ*sε*sα)
+	λ = math.Atan2(sα*cε+(sδ/cδ)*sε, cα) // (13.1) p. 93
+	β = math.Asin(sδ*cε - cδ*sε*sα)      // (13.2) p. 93
 	return
 }
 
@@ -90,8 +90,8 @@ type Equatorial struct {
 func (eq *Equatorial) EclToEq(ecl *Ecliptic, ε *Obliquity) *Equatorial {
 	sβ, cβ := math.Sincos(ecl.Lat)
 	sλ, cλ := math.Sincos(ecl.Lon)
-	eq.RA = math.Atan2(sλ*ε.C-(sβ/cβ)*ε.S, cλ)
-	eq.Dec = math.Asin(sβ*ε.C + cβ*ε.S*sλ)
+	eq.RA = math.Atan2(sλ*ε.C-(sβ/cβ)*ε.S, cλ) // (13.3) p. 93
+	eq.Dec = math.Asin(sβ*ε.C + cβ*ε.S*sλ)     // (13.4) p. 93
 	return eq
 }
 
@@ -108,8 +108,8 @@ func (eq *Equatorial) EclToEq(ecl *Ecliptic, ε *Obliquity) *Equatorial {
 func EclToEq(λ, β, sε, cε float64) (α, δ float64) {
 	sλ, cλ := math.Sincos(λ)
 	sβ, cβ := math.Sincos(β)
-	α = math.Atan2(sλ*cε-(sβ/cβ)*sε, cλ)
-	δ = math.Asin(sβ*cε + cβ*sε*sλ)
+	α = math.Atan2(sλ*cε-(sβ/cβ)*sε, cλ) // (13.3) p. 93
+	δ = math.Asin(sβ*cε + cβ*sε*sλ)      // (13.4) p. 93
 	return
 }
 
@@ -207,8 +207,8 @@ func (hz *Horizontal) EqToHz(eq *Equatorial, g *globe.Coord, st float64) *Horizo
 	sH, cH := math.Sincos(H)
 	sφ, cφ := math.Sincos(g.Lat)
 	sδ, cδ := math.Sincos(eq.Dec)
-	hz.Az = math.Atan2(sH, cH*sφ-(sδ/cδ)*cφ)
-	hz.Alt = math.Asin(sφ*sδ + cφ*cδ*cH)
+	hz.Az = math.Atan2(sH, cH*sφ-(sδ/cδ)*cφ) // (13.5) p. 93
+	hz.Alt = math.Asin(sφ*sδ + cφ*cδ*cH)     // (13.6) p. 93
 	return hz
 }
 
@@ -232,8 +232,8 @@ func EqToHz(α, δ, φ, ψ, st float64) (A, h float64) {
 	sH, cH := math.Sincos(H)
 	sφ, cφ := math.Sincos(φ)
 	sδ, cδ := math.Sincos(ψ)
-	A = math.Atan2(sH, cH*sφ-(sδ/cδ)*cφ)
-	h = math.Asin(sφ*sδ + cφ*cδ*cH)
+	A = math.Atan2(sH, cH*sφ-(sδ/cδ)*cφ) // (13.5) p. 93
+	h = math.Asin(sφ*sδ + cφ*cδ*cH)      // (13.6) p. 93
 	return
 }
 
@@ -259,8 +259,8 @@ func (g *Galactic) EqToGal(eq *Equatorial) *Galactic {
 	sdα, cdα := math.Sincos(galacticNorth.RA - eq.RA)
 	sgδ, cgδ := math.Sincos(galacticNorth.Dec)
 	sδ, cδ := math.Sincos(eq.Dec)
-	x := math.Atan2(sdα, cdα*sgδ-(sδ/cδ)*cgδ)
-	g.Lon = math.Mod(math.Pi+galacticLon0-x, 2*math.Pi)
+	x := math.Atan2(sdα, cdα*sgδ-(sδ/cδ)*cgδ)           // (13.7) p. 94
+	g.Lon = math.Mod(math.Pi+galacticLon0-x, 2*math.Pi) // (13.8) p. 94
 	g.Lat = math.Asin(sδ*sgδ + cδ*cgδ*cdα)
 	return g
 }
@@ -274,8 +274,8 @@ func EqToGal(α, δ float64) (l, b float64) {
 	sdα, cdα := math.Sincos(galacticNorth.RA - α)
 	sgδ, cgδ := math.Sincos(galacticNorth.Dec)
 	sδ, cδ := math.Sincos(δ)
-	x := math.Atan2(sdα, cdα*sgδ-(sδ/cδ)*cgδ)
-	l = math.Mod(math.Pi+galacticLon0-x, 2*math.Pi)
+	x := math.Atan2(sdα, cdα*sgδ-(sδ/cδ)*cgδ)       // (13.7) p. 94
+	l = math.Mod(math.Pi+galacticLon0-x, 2*math.Pi) // (13.8) p. 94
 	b = math.Asin(sδ*sgδ + cδ*cgδ*cdα)
 	return
 }

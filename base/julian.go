@@ -49,5 +49,9 @@ func JDEToBesselianYear(jde float64) float64 {
 //
 // The quantity appears as T in a number of time series.
 func J2000Century(jde float64) float64 {
+	// The formula is given in a number of places in the book, for example
+	// (12.1) p. 87.
+	// (22.1) p. 143.
+	// (25.1) p. 163.
 	return (jde - J2000) / JulianCentury
 }

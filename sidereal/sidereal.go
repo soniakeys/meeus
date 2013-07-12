@@ -19,14 +19,14 @@ import (
 // final value of sidereal time.
 func jdToCFrac(jd float64) (cen, dayFrac float64) {
 	j0, f := math.Modf(jd + .5)
-	return (j0 - .5 - base.J2000) / 36525, f
+	return base.J2000Century(j0 - .5), f
 }
 
 // iau82 is a polynomial giving mean sidereal time at Greenwich at 0h UT.
 //
 // The polynomial is in centuries from J2000.0, as given by JDToCFrac.
 // Coefficients are those adopted in 1982 by the International Astronomical
-// Union.
+// Union and are given in (12.2) p. 87.
 var iau82 = []float64{24110.54841, 8640184.812866, 0.093104, 0.0000062}
 
 // Mean returns mean sidereal time at Greenwich for a given JD.
@@ -52,6 +52,7 @@ func Mean0UT(jd float64) float64 {
 
 func mean0UT(jd float64) (sidereal, dayFrac float64) {
 	cen, f := jdToCFrac(jd)
+	// (12.2) p. 87
 	return base.Horner(cen, iau82...), f
 }
 

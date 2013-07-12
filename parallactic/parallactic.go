@@ -16,7 +16,7 @@ import "math"
 func ParallacticAngle(φ, δ, H float64) float64 {
 	sδ, cδ := math.Sincos(δ)
 	sH, cH := math.Sincos(H)
-	return math.Atan2(sH, math.Tan(φ)*cδ-sδ*cH)
+	return math.Atan2(sH, math.Tan(φ)*cδ-sδ*cH) // (14.1) p. 98
 }
 
 // ParallacticAngleOnHorizon is a special case of ParallacticAngle.
@@ -42,11 +42,11 @@ func EclipticAtHorizon(ε, φ, θ float64) (λ1, λ2, I float64) {
 	sε, cε := math.Sincos(ε)
 	sφ, cφ := math.Sincos(φ)
 	sθ, cθ := math.Sincos(θ)
-	λ := math.Atan2(-cθ, sε*(sφ/cφ)+cε*sθ)
+	λ := math.Atan2(-cθ, sε*(sφ/cφ)+cε*sθ) // (14.2) p. 99
 	if λ < 0 {
 		λ += math.Pi
 	}
-	return λ, λ + math.Pi, math.Acos(cε*sφ - sε*cφ*sθ)
+	return λ, λ + math.Pi, math.Acos(cε*sφ - sε*cφ*sθ) // (14.3) p. 99
 }
 
 // EclipticAtEquator computes the angle between the ecliptic and the parallels

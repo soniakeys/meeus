@@ -26,6 +26,7 @@ type Elements struct {
 // ReduceB1950ToJ2000 reduces orbital elements of a solar system body from
 // equinox B1950 to J2000.
 func ReduceB1950ToJ2000(eFrom, eTo *Elements) *Elements {
+	// (24.4) p. 161
 	const S = .0001139788
 	const C = .9999999935
 	W := eFrom.Node - 174.298782*math.Pi/180

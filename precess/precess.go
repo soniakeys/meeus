@@ -53,6 +53,7 @@ import (
 func ApproxAnnualPrecession(eq *coord.Equatorial, epochFrom, epochTo float64) (Δα base.HourAngle, Δδ base.Angle) {
 	m, na, nd := mn(epochFrom, epochTo)
 	sa, ca := math.Sincos(eq.RA)
+	// (21.1) p. 132
 	Δαs := m + na*sa*math.Tan(eq.Dec) // seconds of RA
 	Δδs := nd * ca                    // seconds of Dec
 	return base.NewHourAngle(false, 0, 0, Δαs), base.NewAngle(false, 0, 0, Δδs)
@@ -93,18 +94,21 @@ type Precessor struct {
 // literals inside of NewPrecessor they would be reallocated on every
 // function call.)
 var (
-	ζt = []float64{2306.2181, 0.30188, 0.017998}
-	zt = []float64{2306.2181, 1.09468, 0.018203}
-	θt = []float64{2004.3109, -0.42665, -0.041833}
-
+	// coefficients from (21.2) p. 134
 	ζT = []float64{2306.2181, 1.39656, -0.000139}
 	zT = []float64{2306.2181, 1.39656, -0.000139}
 	θT = []float64{2004.3109, -0.8533, -0.000217}
+
+	// coefficients from (21.3) p. 134
+	ζt = []float64{2306.2181, 0.30188, 0.017998}
+	zt = []float64{2306.2181, 1.09468, 0.018203}
+	θt = []float64{2004.3109, -0.42665, -0.041833}
 )
 
 // NewPrecessor constructs a Precessor object and initializes it to precess
 // coordinates from epochFrom to epochTo.
 func NewPrecessor(epochFrom, epochTo float64) *Precessor {
+	// (21.2) p. 134
 	ζCoeff := ζt
 	zCoeff := zt
 	θCoeff := θt
@@ -138,6 +142,7 @@ func NewPrecessor(epochFrom, epochTo float64) *Precessor {
 // The same struct may be used for eqFrom and eqTo.
 // EqTo is returned for convenience.
 func (p *Precessor) Precess(eqFrom, eqTo *coord.Equatorial) *coord.Equatorial {
+	// (21.4) p. 134
 	sδ, cδ := math.Sincos(eqFrom.Dec)
 	sαζ, cαζ := math.Sincos(eqFrom.RA + p.ζ)
 	A := cδ * sαζ
@@ -178,18 +183,21 @@ type EclipticPrecessor struct {
 }
 
 var (
-	ηt = []float64{47.0029, -0.03302, 0.000060}
-	πt = []float64{3600 * 174.876384, -869.8089, 0.03536}
-	pt = []float64{5029.0966, 1.11113, -0.000006}
-
+	// coefficients from (21.5) p. 136
 	ηT = []float64{47.0029, -0.06603, 0.000598}
 	πT = []float64{3600 * 174.876384, 3289.4789, 0.60622}
 	pT = []float64{5029.0966, 2.22226, -0.000042}
+
+	// coefficients from (21.6) p. 136
+	ηt = []float64{47.0029, -0.03302, 0.000060}
+	πt = []float64{3600 * 174.876384, -869.8089, 0.03536}
+	pt = []float64{5029.0966, 1.11113, -0.000006}
 )
 
 // NewEclipticPrecessor constructs an EclipticPrecessor object and initializes
 // it to precess coordinates from epochFrom to epochTo.
 func NewEclipticPrecessor(epochFrom, epochTo float64) *EclipticPrecessor {
+	// (21.5) p. 136
 	ηCoeff := ηt
 	πCoeff := πt
 	pCoeff := pt
@@ -223,6 +231,7 @@ func NewEclipticPrecessor(epochFrom, epochTo float64) *EclipticPrecessor {
 // The same struct may be used for eclFrom and eclTo.
 // EclTo is returned for convenience.
 func (p *EclipticPrecessor) Precess(eclFrom, eclTo *coord.Ecliptic) *coord.Ecliptic {
+	// (21.7) p. 137
 	sβ, cβ := math.Sincos(eclFrom.Lat)
 	sd, cd := math.Sincos(p.π - eclFrom.Lon)
 	A := p.cη*cβ*sd - p.sη*sβ
@@ -246,8 +255,11 @@ func (p *EclipticPrecessor) ReduceElements(eFrom, eTo *elementequinox.Elements) 
 	ψ := p.π + p.p
 	si, ci := math.Sincos(eFrom.Inc)
 	snp, cnp := math.Sincos(eFrom.Node - p.π)
+	// (24.1) p. 159
 	eTo.Inc = math.Acos(ci*p.cη + si*p.sη*cnp)
+	// (24.2) p. 159
 	eTo.Node = math.Atan2(si*snp, p.cη*si*cnp-p.sη*ci) + ψ
+	// (24.3) p. 159
 	eTo.Peri = math.Atan2(-p.sη*snp, si*p.cη-ci*p.sη*cnp) + eFrom.Peri
 	return eTo
 }

@@ -24,6 +24,7 @@ func Nutation(α, δ, jd float64) (Δα1, Δδ1 float64) {
 	Δψ, Δε := nutation.Nutation(jd)
 	sα, cα := math.Sincos(α)
 	tδ := math.Tan(δ)
+	// (32.1) p. 151
 	Δα1 = (cε+sε*sα*tδ)*Δψ - cα*tδ*Δε
 	Δδ1 = sε*cα*Δψ + sα*Δε
 	return
@@ -47,6 +48,7 @@ func EclipticAberration(λ, β, jd float64) (Δλ, Δβ float64) {
 	sβ, cβ := math.Sincos(β)
 	ssλ, csλ := math.Sincos(s - λ)
 	sπλ, cπλ := math.Sincos(π - λ)
+	// (23.2) p. 151
 	Δλ = κ * (e*cπλ - csλ) / cβ
 	Δβ = -κ * sβ * (ssλ - e*sπλ)
 	return
@@ -67,6 +69,7 @@ func Aberration(α, δ, jd float64) (Δα2, Δδ2 float64) {
 	cε := math.Cos(ε)
 	tε := math.Tan(ε)
 	q1 := cα * cε
+	// (23.3) p. 152
 	Δα2 = κ * (e*(q1*cπ+sα*sπ) - (q1*cs + sα*ss)) / cδ
 	q2 := cε * (tε*cδ - sα*sδ)
 	q3 := cα * sδ
@@ -117,6 +120,7 @@ func AberrationRonVondrak(α, δ, jd float64) (Δα, Δδ float64) {
 	}
 	sα, cα := math.Sincos(α)
 	sδ, cδ := math.Sincos(δ)
+	// (23.4) p. 156
 	return (Yp*cα - Xp*sα) / (c * cδ), -((Xp*cα+Yp*sα)*sδ - Zp*cδ) / c
 }
 

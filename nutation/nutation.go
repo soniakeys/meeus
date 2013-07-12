@@ -71,6 +71,7 @@ func ApproxNutation(jde float64) (Δψ, Δε float64) {
 //
 // Result unit is radians.
 func MeanObliquity(jde float64) float64 {
+	// (22.2) p. 147
 	return base.Horner(base.J2000Century(jde),
 		base.NewAngle(false, 23, 26, 21.448).Rad(),
 		-46.815/3600*(math.Pi/180),
@@ -88,6 +89,7 @@ func MeanObliquity(jde float64) float64 {
 //
 // Result unit is radians.
 func MeanObliquityLaskar(jde float64) float64 {
+	// (22.3) p. 147
 	return base.Horner(base.J2000Century(jde)*.01,
 		base.NewAngle(false, 23, 26, 21.448).Rad(),
 		-4680.93/3600*(math.Pi/180),

@@ -22,8 +22,10 @@ import (
 //	s = true geometric longitude, ☉, in radians
 //	ν = true anomaly in radians
 func True(T float64) (s, ν float64) {
+	// (25.2) p. 163
 	L0 := base.Horner(T, 280.46646, 36000.76983, 0.0003032) *
 		math.Pi / 180
+	// (25.3) p. 163
 	M := base.Horner(T, 357.52911, 35999.05029, -0.0001537) *
 		math.Pi / 180
 	C := (base.Horner(T, 1.914602, -0.004817, -.000014)*
@@ -38,6 +40,7 @@ func True(T float64) (s, ν float64) {
 // Argument T is the number of Julian centuries since J2000.
 // See base.J2000Century.
 func Eccentricity(T float64) float64 {
+	// (25.3) p. 163
 	return base.Horner(T, 0.016708634, -0.000042037, -0.0000001267)
 }
 
@@ -48,6 +51,7 @@ func Eccentricity(T float64) float64 {
 func Radius(T float64) float64 {
 	_, ν := True(T)
 	e := Eccentricity(T)
+	// (25.5) p. 164
 	return 1.000001018 * (1 - e*e) / (1 + e*math.Cos(ν))
 }
 
@@ -89,6 +93,7 @@ func TrueEquatorial(jde float64) (α, δ float64) {
 	ε := nutation.MeanObliquity(jde)
 	ss, cs := math.Sincos(s)
 	sε, cε := math.Sincos(ε)
+	// (25.6, 25.7) p. 165
 	return math.Atan2(cε*ss, cs), sε * ss
 }
 
@@ -101,6 +106,7 @@ func ApparentEquatorial(jde float64) (α, δ float64) {
 	λ := ApparentLongitude(T)
 	ε := nutation.MeanObliquity(jde)
 	sλ, cλ := math.Sincos(λ)
+	// (25.8) p. 165
 	sε, cε := math.Sincos(ε + .00256*math.Pi/180*math.Cos(node(T)))
 	return math.Atan2(cε*sλ, cλ), math.Asin(sε * sλ)
 }
@@ -121,6 +127,7 @@ func TrueVSOP87(e *pp.V87Planet, jde float64) (s, β, R float64) {
 		s, -1.397*math.Pi/180, -.00031*math.Pi/180)
 	sλp, cλp := math.Sincos(λp)
 	Δβ := .03916 / 3600 * math.Pi / 180 * (cλp - sλp)
+	// (25.9) p. 166
 	return base.PMod(s-.09033/3600*math.Pi/180, 2*math.Pi), Δβ - b, r
 }
 
@@ -164,5 +171,6 @@ func ApparentEquatorialVSOP87(e *pp.V87Planet, jde float64) (α, δ, R float64) 
 // accuracy given on p. 165.  The high precision formula the represents lots
 // of typing with associated chance of typos, and no way to test the result.
 func aberration(R float64) float64 {
+	// (25.10) p. 167
 	return -20.4898 / 3600 * math.Pi / 180 / R
 }

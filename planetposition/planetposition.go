@@ -238,6 +238,7 @@ func ToFK5(L, B, jde float64) (L5, B5 float64) {
 	T := base.J2000Century(jde)
 	Lp := L - 1.397*math.Pi/180*T - .00031*math.Pi/180*T*T
 	sLp, cLp := math.Sincos(Lp)
+	// (32.3) p. 219
 	L5 = L + -.09033/3600*math.Pi/180 +
 		.03916/3600*math.Pi/180*(cLp+sLp)*math.Tan(B)
 	B5 = B + .03916/3600*math.Pi/180*(cLp-sLp)

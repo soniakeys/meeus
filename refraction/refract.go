@@ -28,6 +28,7 @@ var (
 // Result is refraction to be subtracted from h0 to obtain the true altitude
 // of the body.  Unit is radians.
 func Gt15True(h0 float64) float64 {
+	// (16.1) p. 105
 	t := math.Tan(math.Pi/2 - h0)
 	return gt15true1*t - gt15true2*t*t*t
 }
@@ -40,6 +41,7 @@ func Gt15True(h0 float64) float64 {
 // Result is refraction to be added to h to obtain the apparent altitude
 // of the body.  Unit is radians.
 func Gt15Apparent(h float64) float64 {
+	// (16.2) p. 105
 	t := math.Tan(math.Pi/2 - h)
 	return gt15app1*t - gt15app2*t*t*t
 }
@@ -53,6 +55,7 @@ func Gt15Apparent(h float64) float64 {
 // Result is refraction to be subtracted from h0 to obtain the true altitude
 // of the body.  Unit is radians.
 func Bennett(h0 float64) float64 {
+	// (16.3) p. 106
 	const cRad = math.Pi / 180
 	const c1 = cRad / 60
 	const c731 = 7.31 * cRad * cRad
@@ -86,6 +89,7 @@ func Bennett2(h0 float64) float64 {
 // Results are consistent with Bennett to within 4 arc sec.
 // Result unit is radians.
 func Saemundsson(h float64) float64 {
+	// (16.4) p. 106
 	const cRad = math.Pi / 180
 	const c102 = 1.02 * cRad / 60
 	const c103 = 10.3 * cRad * cRad

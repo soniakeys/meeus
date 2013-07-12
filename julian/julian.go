@@ -35,6 +35,7 @@ func CalendarGregorianToJD(y, m int, d float64) float64 {
 	}
 	a := base.FloorDiv(y, 100)
 	b := 2 - a + base.FloorDiv(a, 4)
+	// (7.1) p. 61
 	return float64(base.FloorDiv64(36525*(int64(y+4716)), 100)) +
 		float64(base.FloorDiv(306*(m+1), 10)+b) + d - 1524.5
 }

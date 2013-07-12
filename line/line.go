@@ -26,6 +26,7 @@ func Time(r1, d1, r2, d2 float64, r3, d3 []float64, t1, t5 float64) (float64, er
 	}
 	gc := make([]float64, 5)
 	for i, r3i := range r3 {
+		// (19.1) p. 121
 		gc[i] = math.Tan(d1)*math.Sin(r2-r3i) +
 			math.Tan(d2)*math.Sin(r3i-r1) +
 			math.Tan(d3[i])*math.Sin(r1-r2)
