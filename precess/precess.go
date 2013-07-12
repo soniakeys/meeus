@@ -9,6 +9,10 @@
 // Also in package base are some definitions related to the Besselian and
 // Julian Year.
 //
+// Partial:  Precession from FK4 not implemented.  Meeus gives no test cases.
+// It's a fair amount of code and data, representing significant chances for
+// errors.  And precession from FK4 would seem to be of little interest today.
+//
 // Proper motion units
 //
 // Meeus gives some example annual proper motions in units of seconds of
