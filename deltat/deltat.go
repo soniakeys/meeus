@@ -70,11 +70,7 @@ func Interp10A(jde float64) float64 {
 	if err != nil {
 		panic(err) // error would indicate a bug in interp.Slice.
 	}
-	dt, err := d3.InterpolateX(yf, false)
-	if err != nil {
-		panic(err) // error would indicate a bug in InterpolateX.
-	}
-	return dt
+	return d3.InterpolateX(yf)
 }
 
 // c2000 returns centuries from calendar year 2000.0.
@@ -87,19 +83,25 @@ func c2000(y float64) float64 {
 // PolyBefore948 returns a polynomial approximation valid for calendar
 // years before 948.
 func PolyBefore948(year float64) float64 {
+	// (10.1) p. 78
 	return base.Horner(c2000(year), 2177, 497, 44.1)
 }
 
 // Poly948to1600 returns a polynomial approximation valid for calendar
 // years 948 to 1600.
 func Poly948to1600(year float64) float64 {
+	// (10.2) p. 78
 	return base.Horner(c2000(year), 102, 102, 25.3)
 }
 
 // PolyAfter2000 returns a polynomial approximation valid for calendar
 // years after 2000.
 func PolyAfter2000(year float64) float64 {
-	return Poly948to1600(year) + .37*(year-2100)
+	ΔT := Poly948to1600(year)
+	if year < 2100 {
+		ΔT += .37 * (year - 2100)
+	}
+	return ΔT
 }
 
 // jc1900 returns julian centuries from the epoch J1900.0
