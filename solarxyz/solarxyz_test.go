@@ -5,7 +5,6 @@ package solarxyz_test
 
 import (
 	"fmt"
-	//	"math"
 
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/solarxyz"
@@ -22,7 +21,7 @@ func ExamplePosition() {
 	fmt.Printf("X = %.7f\n", x)
 	fmt.Printf("Y = %.7f\n", y)
 	fmt.Printf("Z = %.7f\n", z)
-	// Meeus result:
+	// Meeus result (using appendix III):
 	// X = -0.9379952
 	// Y = -0.3116544
 	// Z = -0.1351215

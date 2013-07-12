@@ -13,7 +13,9 @@ import (
 	"github.com/soniakeys/meeus/solar"
 )
 
+// Position returns rectangular coordinates referenced to the mean equinox of date.
 func Position(e *pp.V87Planet, jde float64) (x, y, z float64) {
+	// (26.1) p. 171
 	s, β, R := solar.TrueVSOP87(e, jde)
 	sε, cε := math.Sincos(nutation.MeanObliquity(jde))
 	ss, cs := math.Sincos(s)
@@ -24,13 +26,16 @@ func Position(e *pp.V87Planet, jde float64) (x, y, z float64) {
 	return
 }
 
+// LongitudeJ2000 returns geometric longitude referenced to equinox J2000.
 func LongitudeJ2000(e *pp.V87Planet, jde float64) (l float64) {
 	l, _, _ = e.Position2000(jde)
 	return base.PMod(l+math.Pi-.09033/3600*math.Pi/180, 2*math.Pi)
 }
 
+// PositionJ2000 returns rectangular coordinates referenced to equinox J2000.
 func PositionJ2000(e *pp.V87Planet, jde float64) (x, y, z float64) {
 	x, y, z = xyz(e, jde)
+	// (26.3) p. 174
 	return x + .00000044036*y - .000000190919*z,
 		-.000000479966*x + .917482137087*y - .397776982902*z,
 		.397776982902*y + .917482137087*z
@@ -42,12 +47,17 @@ func xyz(e *pp.V87Planet, jde float64) (x, y, z float64) {
 	β := -b
 	ss, cs := math.Sincos(s)
 	sβ, cβ := math.Sincos(β)
+	// (26.2) p. 172
 	x = r * cβ * cs
 	y = r * cβ * ss
 	z = r * sβ
 	return
 }
 
+// PositionB1950 returns rectangular coordinates referenced to B1950.
+//
+// Results are referenced to the mean equator and equinox of the epoch B1950
+// in the FK5 system, not FK4.
 func PositionB1950(e *pp.V87Planet, jde float64) (x, y, z float64) {
 	x, y, z = xyz(e, jde)
 	return .999925702634*x + .012189716217*y + .000011134016*z,
@@ -61,6 +71,10 @@ var (
 	θt = []float64{2004.3109, -0.42665, -0.041833}
 )
 
+// PositionEquinox returns rectangular coordinates referenced to an arbitrary epoch.
+//
+// Position will be computed for given Julian day "jde" but referenced to mean
+// equinox "epoch" (year).
 func PositionEquinox(e *pp.V87Planet, jde, epoch float64) (xp, yp, zp float64) {
 	x0, y0, z0 := PositionJ2000(e, jde)
 	t := (epoch - 2000) * .01

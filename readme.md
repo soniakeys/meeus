@@ -38,6 +38,7 @@ Cross reference from chapters to package names
     <tr><td>23. Apparent Place of a Star</td><td>apparent</td><td>complete</td></tr>
     <tr><td>24. Reduction of Ecliptical Elements from one Equinox to another one</td><td>elementequinox</td><td>complete</td></tr>
     <tr><td>25. Solar Coordinates</td><td>solar</td><td>partial</td></tr>
+    <tr><td>26. Rectangular Coordinates of the Sun</td><td>solar</td><td>complete</td></tr>
     <tr><td>32. Positions of the Planets</td><td>planetposition</td><td>partial</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>

@@ -113,5 +113,6 @@
 //	24. Reduction of Ecliptical Elements from one Equinox   elementequinox
 //	    to another one
 //	25. Solar Coordinates                                   solar
+//	26. Rectangular Coordinates of the Sun                  solarxyz
 //	32. Positions of the Planets                            planetposition
 package meeus
