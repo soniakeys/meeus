@@ -114,5 +114,6 @@
 //	    to another one
 //	25. Solar Coordinates                                   solar
 //	26. Rectangular Coordinates of the Sun                  solarxyz
+//	27. Equinoxes and Solstices                             solstice
 //	32. Positions of the Planets                            planetposition
 package meeus
