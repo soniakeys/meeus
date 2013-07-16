@@ -37,9 +37,7 @@ func True(T float64) (s, ν float64) {
 	// (25.2) p. 163
 	L0 := base.Horner(T, 280.46646, 36000.76983, 0.0003032) *
 		math.Pi / 180
-	// (25.3) p. 163
-	M := base.Horner(T, 357.52911, 35999.05029, -0.0001537) *
-		math.Pi / 180
+	M := MeanAnomaly(T)
 	C := (base.Horner(T, 1.914602, -0.004817, -.000014)*
 		math.Sin(M) +
 		(0.019993-.000101*T)*math.Sin(2*M) +
@@ -47,12 +45,23 @@ func True(T float64) (s, ν float64) {
 	return base.PMod(L0+C, 2*math.Pi), base.PMod(M+C, 2*math.Pi)
 }
 
+// MeanAnomaly returns the mean anomaly of Earth at the given T.
+//
+// Argument T is the number of Julian centuries since J2000.
+// See base.J2000Century.
+//
+// Result is in radians and is not normalized to the range 0..2π.
+func MeanAnomaly(T float64) float64 {
+	// (25.3) p. 163
+	return base.Horner(T, 357.52911, 35999.05029, -0.0001537) * math.Pi / 180
+}
+
 // Eccentricity returns eccentricity of the Earth's orbit around the sun.
 //
 // Argument T is the number of Julian centuries since J2000.
 // See base.J2000Century.
 func Eccentricity(T float64) float64 {
-	// (25.3) p. 163
+	// (25.4) p. 163
 	return base.Horner(T, 0.016708634, -0.000042037, -0.0000001267)
 }
 
@@ -152,6 +161,7 @@ func TrueVSOP87(e *pp.V87Planet, jde float64) (s, β, R float64) {
 //  β: ecliptic latitude in radians
 //  R: range in AU
 func ApparentVSOP87(e *pp.V87Planet, jde float64) (λ, β, R float64) {
+	// note: see duplicated code in ApparentEquatorialVSOP87.
 	s, β, R := TrueVSOP87(e, jde)
 	Δψ, _ := nutation.Nutation(jde)
 	a := aberration(R)
@@ -167,7 +177,8 @@ func ApparentVSOP87(e *pp.V87Planet, jde float64) (λ, β, R float64) {
 //	δ: declination in radians
 //	R: range in AU
 func ApparentEquatorialVSOP87(e *pp.V87Planet, jde float64) (α, δ, R float64) {
-	// duplicate code from ApparentVSOP87 so we can keep Δε
+	// note: duplicate code from ApparentVSOP87 so we can keep Δε.
+	// see also duplicate code in time.E().
 	s, β, R := TrueVSOP87(e, jde)
 	Δψ, Δε := nutation.Nutation(jde)
 	a := aberration(R)

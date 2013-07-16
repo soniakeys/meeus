@@ -27,6 +27,14 @@ func ExampleTrue() {
 	// ☉:   199.90987
 }
 
+func ExampleMeanAnomaly() {
+	// Example 25.a, p. 165.
+	T := base.J2000Century(julian.CalendarGregorianToJD(1992, 10, 13))
+	fmt.Printf("%.5f\n", solar.MeanAnomaly(T)*180/math.Pi)
+	// Output:
+	// -2241.00603
+}
+
 func ExampleEccentricity() {
 	// Example 25.a, p. 165.
 	T := base.J2000Century(julian.CalendarGregorianToJD(1992, 10, 13))
