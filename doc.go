@@ -116,5 +116,6 @@
 //	26. Rectangular Coordinates of the Sun                  solarxyz
 //	27. Equinoxes and Solstices                             solstice
 //  28. Equation of Time                                    eqtime
+//  29. Ephemeris for Physical Observations of the Sun      solardisk
 //	32. Positions of the Planets                            planetposition
 package meeus
