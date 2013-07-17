@@ -117,5 +117,6 @@
 //	27. Equinoxes and Solstices                             solstice
 //  28. Equation of Time                                    eqtime
 //  29. Ephemeris for Physical Observations of the Sun      solardisk
+//  30. Equation of Kepler                                  kepler
 //	32. Positions of the Planets                            planetposition
 package meeus

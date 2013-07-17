@@ -42,6 +42,7 @@ Cross reference from chapters to package names
     <tr><td>27. Equinoxes and Solstices</td><td>solstice</td><td>complete</td></tr>
     <tr><td>28. Equation of Time</td><td>eqtime</td><td>complete</td></tr>
     <tr><td>29. Ephemeris for Physical Observations of the Sun</td><td>solardisk</td><td>complete</td></tr>
+    <tr><td>30. Equation of Kepler</td><td>kepler</td><td>complete</td></tr>
     <tr><td>32. Positions of the Planets</td><td>planetposition</td><td>partial</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>
