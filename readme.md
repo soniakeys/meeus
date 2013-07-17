@@ -5,9 +5,9 @@ Selected algorithms from the book "Astronomical Algorithms"
 by Jean Meeus, following the second edition, copyright 1998,
 with corrections as of August 10, 2009.
 
-Generally each subpackage implements algorithms of a chapter of the book.
-In addition there is a package "common" with additional functions that
-are not described in the book but are useful with multiple other packages.
+Generally each subpackage implements algorithms of one chapter of the book.
+In addition there is a package "base" with additional functions that
+may not be described in the book but are useful with multiple other packages.
 
 Cross reference from chapters to package names
 ----------------------------------------------
