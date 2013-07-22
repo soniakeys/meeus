@@ -120,4 +120,5 @@
 //  30. Equation of Kepler                                  kepler
 //  31. Elements of Planetar Orbits                         elementplanet
 //	32. Positions of the Planets                            planetposition
+//  33. Elliptic Motion                                     elliptic
 package meeus

@@ -11,6 +11,26 @@ import (
 	"github.com/soniakeys/meeus/iterate"
 )
 
+// True returns true anomaly ν for given eccentric anomaly E.
+//
+// Argument e is eccentricity.  E must be in radians.
+//
+// Result is in radians.
+func True(E, e float64) float64 {
+	// (30.1) p. 195
+	return 2 * math.Atan(math.Sqrt((1+e)/(1-e))*math.Tan(E*.5))
+}
+
+// Radius returns radius distance r for given eccentric anomaly E.
+//
+// Argument e is eccentricity, a is semimajor axis.
+//
+// Result unit is the unit of semimajor axis a (typically AU.)
+func Radius(E, e, a float64) float64 {
+	// (30.2) p. 195
+	return a * (1 - e*math.Cos(E))
+}
+
 // Kepler1 solves Kepler's equation by iteration.
 //
 // The iterated formula is
