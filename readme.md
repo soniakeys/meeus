@@ -46,5 +46,6 @@ Cross reference from chapters to package names
     <tr><td>31. Elements of Planetary Orbits</td><td>elementorbit</td><td>partial</td></tr>
     <tr><td>32. Positions of the Planets</td><td>planetposition</td><td>partial</td></tr>
     <tr><td>33. Elliptic Motion</td><td>elliptic</td><td>partial</td></tr>
+    <tr><td>34. Parabolic Motion</td><td>parabolic</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>
