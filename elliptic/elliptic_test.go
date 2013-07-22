@@ -38,12 +38,12 @@ func ExampleElements_Position() {
 		return
 	}
 	k := &elliptic.Elements{
-		Time: julian.CalendarGregorianToJD(1990, 10, 28.54502),
-		Axis: 2.2091404,
-		Ecc:  .8502196,
-		Inc:  11.94524 * math.Pi / 180,
-		Node: 334.75006 * math.Pi / 180,
-		Peri: 186.23352 * math.Pi / 180,
+		TimeP: julian.CalendarGregorianToJD(1990, 10, 28.54502),
+		Axis:  2.2091404,
+		Ecc:   .8502196,
+		Inc:   11.94524 * math.Pi / 180,
+		Node:  334.75006 * math.Pi / 180,
+		ArgP:  186.23352 * math.Pi / 180,
 	}
 	j := julian.CalendarGregorianToJD(1990, 10, 6)
 	α, δ, ψ := k.Position(j, earth)

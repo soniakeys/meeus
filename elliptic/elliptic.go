@@ -63,12 +63,12 @@ func lightTime(Δ float64) float64 {
 
 // Elements holds keplerian elements.
 type Elements struct {
-	Axis float64 // Semimajor axis, a, in AU
-	Ecc  float64 // Eccentricity, e
-	Inc  float64 // Inclination, i, in radians
-	Peri float64 // Argument of perihelion, ω, in radians
-	Node float64 // Longitude of ascending node, Ω, in radians
-	Time float64 // Time of perihelion, T, as jde
+	Axis  float64 // Semimajor axis, a, in AU
+	Ecc   float64 // Eccentricity, e
+	Inc   float64 // Inclination, i, in radians
+	ArgP  float64 // Argument of perihelion, ω, in radians
+	Node  float64 // Longitude of ascending node, Ω, in radians
+	TimeP float64 // Time of perihelion, T, as jde
 }
 
 // Position returns observed equatorial coordinates of a body with Keplerian elements.
@@ -101,7 +101,7 @@ func (k *Elements) Position(jde float64, e *pp.V87Planet) (α, δ, ψ float64) {
 	b := math.Hypot(G, Q)
 	c := math.Hypot(H, R)
 
-	M := n * (jde - k.Time)
+	M := n * (jde - k.TimeP)
 	E, err := kepler.Kepler2b(k.Ecc, M, 15)
 	if err != nil {
 		E = kepler.Kepler3(k.Ecc, M)
@@ -109,9 +109,9 @@ func (k *Elements) Position(jde float64, e *pp.V87Planet) (α, δ, ψ float64) {
 	ν := kepler.True(E, k.Ecc)
 	r := kepler.Radius(E, k.Ecc, k.Axis)
 	// (33.9) p. 229
-	x := r * a * math.Sin(A+k.Peri+ν)
-	y := r * b * math.Sin(B+k.Peri+ν)
-	z := r * c * math.Sin(C+k.Peri+ν)
+	x := r * a * math.Sin(A+k.ArgP+ν)
+	y := r * b * math.Sin(B+k.ArgP+ν)
+	z := r * c * math.Sin(C+k.ArgP+ν)
 	// (33.10) p. 229
 	ξ := X + x
 	η := Y + y
@@ -120,16 +120,16 @@ func (k *Elements) Position(jde float64, e *pp.V87Planet) (α, δ, ψ float64) {
 	{
 		τ := lightTime(Δ)
 		// repeating with jde-τ
-		M = n * (jde - τ - k.Time)
+		M = n * (jde - τ - k.TimeP)
 		E, err = kepler.Kepler2b(k.Ecc, M, 15)
 		if err != nil {
 			E = kepler.Kepler3(k.Ecc, M)
 		}
 		ν = kepler.True(E, k.Ecc)
 		r = kepler.Radius(E, k.Ecc, k.Axis)
-		x = r * a * math.Sin(A+k.Peri+ν)
-		y = r * b * math.Sin(B+k.Peri+ν)
-		z = r * c * math.Sin(C+k.Peri+ν)
+		x = r * a * math.Sin(A+k.ArgP+ν)
+		y = r * b * math.Sin(B+k.ArgP+ν)
+		z = r * c * math.Sin(C+k.ArgP+ν)
 		ξ = X + x
 		η = Y + y
 		ζ = Z + z
