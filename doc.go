@@ -87,15 +87,15 @@
 //
 //	Chapter                                                 Package
 //
-//	1. Hints and Tips                                       hints
-//	2. About Accuracy                                       accuracy
-//	3. Interpolation                                        interp
-//	4. Curve Fitting                                        fit
-//	5. Iteration                                            iterate
-//	6. Sorting Numbers                                      sort
-//	7. Julian Day                                           julian
-//	8. Date of Easter                                       easter
-//	9. Jewish and Moslem Calendars                          jm
+//	1.  Hints and Tips                                      hints
+//	2.  About Accuracy                                      accuracy
+//	3.  Interpolation                                       interp
+//	4.  Curve Fitting                                       fit
+//	5.  Iteration                                           iterate
+//	6.  Sorting Numbers                                     sort
+//	7.  Julian Day                                          julian
+//	8.  Date of Easter                                      easter
+//	9.  Jewish and Moslem Calendars                         jm
 //	10. Dynamical Time and Universal Time                   deltat
 //	11. The Earth's Globe                                   globe
 //	12. Sidereal Time at Greenwich                          sidereal
