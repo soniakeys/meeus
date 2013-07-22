@@ -11,6 +11,7 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/apparent"
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/kepler"
 	"github.com/soniakeys/meeus/nutation"
@@ -80,7 +81,7 @@ type Elements struct {
 func (k *Elements) Position(jde float64, e *pp.V87Planet) (α, δ, ψ float64) {
 	X, Y, Z := solarxyz.PositionJ2000(e, jde)
 	// (33.6) p. 227
-	n := .9856076686 * math.Pi / 180 / k.Axis / math.Sqrt(k.Axis)
+	n := base.K / k.Axis / math.Sqrt(k.Axis)
 	// J2000 values, given on p. 228
 	const sε = .397777156
 	const cε = .917482062
