@@ -1,7 +1,7 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Elliptic: Chapter 33, Elliptic Motion
+// Elliptic: Chapter 33, Elliptic Motion.
 //
 // Partial: Various formulas and algorithms are unimplemented for lack of
 // examples or test cases.

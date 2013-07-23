@@ -1,7 +1,7 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Parabolic: Chapter 34, Parabolic Motion
+// Parabolic: Chapter 34, Parabolic Motion.
 package parabolic
 
 import (

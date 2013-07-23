@@ -1,7 +1,7 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Kepler: Chapter 30, Equation of Kepler
+// Kepler: Chapter 30, Equation of Kepler.
 package kepler
 
 import (
