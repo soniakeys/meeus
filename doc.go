@@ -122,4 +122,5 @@
 //	32. Positions of the Planets                            planetposition
 //	33. Elliptic Motion                                     elliptic
 //	34. Parabolic Motion                                    parabolic
+//	35. Near-parabolic Motion                               nearparabolic
 package meeus
