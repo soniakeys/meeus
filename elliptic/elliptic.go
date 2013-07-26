@@ -79,12 +79,10 @@ type Elements struct {
 // Results are right ascension and declination α and δ, and elongation ψ,
 // all in radians.
 func (k *Elements) Position(jde float64, e *pp.V87Planet) (α, δ, ψ float64) {
-	X, Y, Z := solarxyz.PositionJ2000(e, jde)
 	// (33.6) p. 227
 	n := base.K / k.Axis / math.Sqrt(k.Axis)
-	// J2000 values, given on p. 228
-	const sε = .397777156
-	const cε = .917482062
+	const sε = base.SOblJ2000
+	const cε = base.COblJ2000
 	sΩ, cΩ := math.Sincos(k.Node)
 	si, ci := math.Sincos(k.Inc)
 	// (33.7) p. 228
@@ -102,17 +100,35 @@ func (k *Elements) Position(jde float64, e *pp.V87Planet) (α, δ, ψ float64) {
 	b := math.Hypot(G, Q)
 	c := math.Hypot(H, R)
 
-	M := n * (jde - k.TimeP)
-	E, err := kepler.Kepler2b(k.Ecc, M, 15)
-	if err != nil {
-		E = kepler.Kepler3(k.Ecc, M)
+	f := func(jde float64) (x, y, z float64) {
+		M := n * (jde - k.TimeP)
+		E, err := kepler.Kepler2b(k.Ecc, M, 15)
+		if err != nil {
+			E = kepler.Kepler3(k.Ecc, M)
+		}
+		ν := kepler.True(E, k.Ecc)
+		r := kepler.Radius(E, k.Ecc, k.Axis)
+		// (33.9) p. 229
+		x = r * a * math.Sin(A+k.ArgP+ν)
+		y = r * b * math.Sin(B+k.ArgP+ν)
+		z = r * c * math.Sin(C+k.ArgP+ν)
+		return
 	}
-	ν := kepler.True(E, k.Ecc)
-	r := kepler.Radius(E, k.Ecc, k.Axis)
-	// (33.9) p. 229
-	x := r * a * math.Sin(A+k.ArgP+ν)
-	y := r * b * math.Sin(B+k.ArgP+ν)
-	z := r * c * math.Sin(C+k.ArgP+ν)
+	return AstrometricJ2000(f, jde, e)
+}
+
+// AstrometricJ2000 is a utility function for computing astrometric coordinates.
+//
+// It is used internally and only exported so that it can be used from
+// multiple packages.  It is not otherwise expected to be used.
+//
+// Argument f is a function that returns J2000 equatorial rectangular
+// coodinates of a body.
+//
+// Results are J2000 right ascention, declination, and elongation.
+func AstrometricJ2000(f func(float64) (x, y, z float64), jde float64, e *pp.V87Planet) (α, δ, ψ float64) {
+	X, Y, Z := solarxyz.PositionJ2000(e, jde)
+	x, y, z := f(jde)
 	// (33.10) p. 229
 	ξ := X + x
 	η := Y + y
@@ -120,23 +136,16 @@ func (k *Elements) Position(jde float64, e *pp.V87Planet) (α, δ, ψ float64) {
 	Δ := math.Sqrt(ξ*ξ + η*η + ζ*ζ)
 	{
 		τ := lightTime(Δ)
-		// repeating with jde-τ
-		M = n * (jde - τ - k.TimeP)
-		E, err = kepler.Kepler2b(k.Ecc, M, 15)
-		if err != nil {
-			E = kepler.Kepler3(k.Ecc, M)
-		}
-		ν = kepler.True(E, k.Ecc)
-		r = kepler.Radius(E, k.Ecc, k.Axis)
-		x = r * a * math.Sin(A+k.ArgP+ν)
-		y = r * b * math.Sin(B+k.ArgP+ν)
-		z = r * c * math.Sin(C+k.ArgP+ν)
+		x, y, z = f(jde - τ)
 		ξ = X + x
 		η = Y + y
 		ζ = Z + z
 		Δ = math.Sqrt(ξ*ξ + η*η + ζ*ζ)
 	}
 	α = math.Atan2(η, ξ)
+	if α < 0 {
+		α += 2 * math.Pi
+	}
 	δ = math.Asin(ζ / Δ)
 	R0 := math.Sqrt(X*X + Y*Y + Z*Z)
 	ψ = math.Acos((ξ*X + η*Y + ζ*Z) / R0 / Δ)
