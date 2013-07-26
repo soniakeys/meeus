@@ -49,5 +49,6 @@ Cross reference from chapters to package names
     <tr><td>34. Parabolic Motion</td><td>parabolic</td><td>complete</td></tr>
     <tr><td>35. Near-parabolic Motion</td><td>nearparabolic</td><td>complete</td></tr>
     <tr><td>36. The Calculation of some Planetary Phenomena</td><td>planetary</td><td>partial</td></tr>
+    <tr><td>37. Pluto</td><td>pluto</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>
