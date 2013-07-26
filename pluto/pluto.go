@@ -1,7 +1,7 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Pluto: Chapter 37, Pluto
+// Pluto: Chapter 37, Pluto.
 package pluto
 
 import (
