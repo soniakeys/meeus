@@ -81,6 +81,22 @@
 // as helper subroutines or IO subroutines.  The functions do not offer
 // additional astronomy algorithms beyond those provided by Meeus.
 //
+// Identifers
+//
+// To more closely follow the book's use of Greek letters and other symbols,
+// Unicode is freely used in the source code.  Recognizing that these symbols
+// are awkard to enter in many environments however, they are avoided for
+// exported symbols that comprise the library API.  The function Coord.EclToEq
+// for example, returns (α, δ float64) but of course you can assign these
+// return values to whatever variables you like.  The struct Coord.Equatorial
+// on the other hand, has exported fields RA and Dec.  ASCII is used in this
+// case to simplify using these symbols in your code.
+//
+// Some identifiers use the prime symbol (ʹ).  That's Unicode U+02B9,
+// not the ASCII '.  Go uses ASCII ' for raw strings and does not allow it
+// in identifiers.  U+02B9 on the other hand is Unicode category Lm,
+// and is perfectly valid in Go identifiers.
+//
 // Chapter Cross-reference
 //
 // .
@@ -127,4 +143,5 @@
 //	37. Pluto                                               pluto
 //	38. Planets in Perihelion and in Aphelion               perihelion
 //	39. Passages through the Nodes                          node
+//	40. Correction for Parallax                             parallax
 package meeus

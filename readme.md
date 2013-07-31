@@ -52,5 +52,6 @@ Cross reference from chapters to package names
     <tr><td>37. Pluto</td><td>pluto</td><td>complete</td></tr>
     <tr><td>38. Planets in Perihelion and in Aphelion</td><td>perihelion</td><td>complete</td></tr>
     <tr><td>39. Passages through the Nodes</td><td>node</td><td>complete</td></tr>
+    <tr><td>40. Correction for Parallax</td><td>parallax</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>
