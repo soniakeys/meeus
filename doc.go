@@ -156,4 +156,6 @@
 //	38. Planets in Perihelion and in Aphelion               perihelion
 //	39. Passages through the Nodes                          node
 //	40. Correction for Parallax                             parallax
+//	41. Illuminated Fraction of the Disk and Magnitude      illum
+//	    of a Planet
 package meeus
