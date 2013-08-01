@@ -97,6 +97,18 @@
 // in identifiers.  U+02B9 on the other hand is Unicode category Lm,
 // and is perfectly valid in Go identifiers.
 //
+// Radians and Degrees
+//
+// The book generally works in degrees; this library generally uses radians.
+// While degrees are familiar for I/O, radians are most efficient for
+// computations and are required for the trigonometric functions in the Go
+// math library.  Looking at example code provided in this library, you may
+// get the impression that there is an awful lot of churn in converting back
+// and forth between radians and degrees.  The bulk of example code however
+// is I/O.  In a computationally intensive program that used this library,
+// a smaller fraction would be I/O and the advantage of working in radians
+// would emerge.
+//
 // Chapter Cross-reference
 //
 // .
