@@ -37,7 +37,7 @@ func Position(p, earth *pp.V87Planet, jde float64) (α, δ float64) {
 	z := R*sB - R0*sB0
 	{
 		Δ := math.Sqrt(x*x + y*y + z*z) // (33.4) p. 224
-		τ := lightTime(Δ)
+		τ := base.LightTime(Δ)
 		// repeating with jde-τ
 		L, B, R = p.Position(jde - τ)
 		sB, cB = math.Sincos(B)
@@ -56,10 +56,6 @@ func Position(p, earth *pp.V87Planet, jde float64) (α, δ float64) {
 	return coord.EclToEq(λ, β, sε, cε)
 	// Meeus gives a formula for elongation but doesn't spell out how to
 	// obtaion term λ0 and doesn't give an example solution.
-}
-
-func lightTime(Δ float64) float64 {
-	return .0057755183 * Δ // (33.3) p. 224
 }
 
 // Elements holds keplerian elements.
@@ -135,7 +131,7 @@ func AstrometricJ2000(f func(float64) (x, y, z float64), jde float64, e *pp.V87P
 	ζ := Z + z
 	Δ := math.Sqrt(ξ*ξ + η*η + ζ*ζ)
 	{
-		τ := lightTime(Δ)
+		τ := base.LightTime(Δ)
 		x, y, z = f(jde - τ)
 		ξ = X + x
 		η = Y + y
