@@ -24,7 +24,7 @@ func Nutation(α, δ, jd float64) (Δα1, Δδ1 float64) {
 	Δψ, Δε := nutation.Nutation(jd)
 	sα, cα := math.Sincos(α)
 	tδ := math.Tan(δ)
-	// (32.1) p. 151
+	// (23.1) p. 151
 	Δα1 = (cε+sε*sα*tδ)*Δψ - cα*tδ*Δε
 	Δδ1 = sε*cα*Δψ + sα*Δε
 	return
