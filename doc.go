@@ -159,4 +159,5 @@
 //	41. Illuminated Fraction of the Disk and Magnitude      illum
 //	    of a Planet
 //	42. Ephemeris for Physical Observations of Mars         mars
+//	43. Ephemeris for Physical Observations of Jupiter      jupiter
 package meeus
