@@ -143,7 +143,7 @@ func TestYMD(t *testing.T) {
 	}
 }
 
-func ExampleDayOWeek() {
+func ExampleDayOfWeek() {
 	// Example 7.e, p. 65.
 	fmt.Println(time.Weekday(julian.DayOfWeek(2434923.5)))
 	// Output:
