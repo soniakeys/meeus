@@ -3,6 +3,7 @@ package elementplanet_test
 import (
 	"fmt"
 	"math"
+	"testing"
 
 	ep "github.com/soniakeys/meeus/elementplanet"
 	"github.com/soniakeys/meeus/julian"
@@ -26,4 +27,22 @@ func ExampleMean() {
 	// i: 7.006171
 	// Ω: 49.107650
 	// ϖ: 78.475382
+}
+
+func TestInc(t *testing.T) {
+	j := julian.CalendarGregorianToJD(2065, 6, 24)
+	var e ep.Elements
+	ep.Mean(ep.Mercury, j, &e)
+	if i := ep.Inc(ep.Mercury, j); i != e.Inc {
+		t.Fatal(i, "!=", e.Inc)
+	}
+}
+
+func TestNode(t *testing.T) {
+	j := julian.CalendarGregorianToJD(2065, 6, 24)
+	var e ep.Elements
+	ep.Mean(ep.Mercury, j, &e)
+	if Ω := ep.Node(ep.Mercury, j); Ω != e.Node {
+		t.Fatal(Ω, "!=", e.Node)
+	}
 }

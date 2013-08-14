@@ -58,8 +58,18 @@ var cMean = []c6{
 		[]float64{.723329820},
 		[]float64{.00677192, -.000047765, .0000000981, .00000000046},
 		[]float64{3.394662, .0010037, -.00000088, -.000000007},
-		[]float64{76.67992, .9011206,.00040618, -.000000093},
+		[]float64{76.67992, .9011206, .00040618, -.000000093},
 		[]float64{131.563703, 1.4022288, -.00107618, -.0000005678},
+	},
+	{}, // Earth
+	{}, // Mars
+	{ // Jupiter
+		[]float64{34.351519, 3036.3027748, .0002233, .000000037},
+		[]float64{5.202603209, .0000001913},
+		[]float64{.04849793, .000163225, -.0000004714, -.00000000201},
+		[]float64{1.303267, -.0054965, .00000466, -.000000002},
+		[]float64{100.464407, 1.0209774, .00040315, .000000404},
+		[]float64{14.331207, 1.6126352, .00103042, -.000004464},
 	},
 }
 
@@ -81,4 +91,20 @@ func Mean(p int, jde float64, e *Elements) {
 	e.Inc = base.Horner(T, c.i...) * math.Pi / 180
 	e.Node = base.Horner(T, c.Ω...) * math.Pi / 180
 	e.Peri = base.Horner(T, c.ϖ...) * math.Pi / 180
+}
+
+// Inc returns mean inclination for a planet at a date.
+//
+// Result is the same as the Inc field returned by function Mean.  That is,
+// radians, referenced to mean dynamical ecliptic and equinox of date.
+func Inc(p int, jde float64) float64 {
+	return base.Horner(base.J2000Century(jde), cMean[p].i...) * math.Pi / 180
+}
+
+// Node returns mean longitude of ascending node for a planet at a date.
+//
+// Result is the same as the Node field returned by function Mean.  That is,
+// radians, referenced to mean dynamical ecliptic and equinox of date.
+func Node(p int, jde float64) float64 {
+	return base.Horner(base.J2000Century(jde), cMean[p].Ω...) * math.Pi / 180
 }
