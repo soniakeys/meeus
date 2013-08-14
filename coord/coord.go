@@ -92,9 +92,9 @@ func (eq *Equatorial) EclToEq(ecl *Ecliptic, ε *Obliquity) *Equatorial {
 	sλ, cλ := math.Sincos(ecl.Lon)
 	eq.RA = math.Atan2(sλ*ε.C-(sβ/cβ)*ε.S, cλ) // (13.3) p. 93
 	if eq.RA < 0 {
-		eq.RA += 2*math.Pi
+		eq.RA += 2 * math.Pi
 	}
-	eq.Dec = math.Asin(sβ*ε.C + cβ*ε.S*sλ)     // (13.4) p. 93
+	eq.Dec = math.Asin(sβ*ε.C + cβ*ε.S*sλ) // (13.4) p. 93
 	return eq
 }
 
@@ -113,9 +113,9 @@ func EclToEq(λ, β, sε, cε float64) (α, δ float64) {
 	sβ, cβ := math.Sincos(β)
 	α = math.Atan2(sλ*cε-(sβ/cβ)*sε, cλ) // (13.3) p. 93
 	if α < 0 {
-		α += 2*math.Pi
+		α += 2 * math.Pi
 	}
-	δ = math.Asin(sβ*cε + cβ*sε*sλ)      // (13.4) p. 93
+	δ = math.Asin(sβ*cε + cβ*sε*sλ) // (13.4) p. 93
 	return
 }
 
@@ -128,7 +128,7 @@ func (eq *Equatorial) HzToEq(hz *Horizontal, g globe.Coord, st float64) *Equator
 	sh, ch := math.Sincos(hz.Alt)
 	sφ, cφ := math.Sincos(g.Lat)
 	H := math.Atan2(sA, cA*sφ+sh/ch*cφ)
-	eq.RA = base.PMod(base.Time(st).Rad() - g.Lon - H, 2*math.Pi)
+	eq.RA = base.PMod(base.Time(st).Rad()-g.Lon-H, 2*math.Pi)
 	eq.Dec = math.Asin(sφ*sh - cφ*ch*cA)
 	return eq
 }
@@ -153,7 +153,7 @@ func HzToEq(A, h, φ, ψ, st float64) (α, δ float64) {
 	sh, ch := math.Sincos(h)
 	sφ, cφ := math.Sincos(φ)
 	H := math.Atan2(sA, cA*sφ+sh/ch*cφ)
-	α = base.PMod(base.Time(st).Rad() - ψ - H, 2*math.Pi)
+	α = base.PMod(base.Time(st).Rad()-ψ-H, 2*math.Pi)
 	δ = math.Asin(sφ*sh - cφ*ch*cA)
 	return
 }
