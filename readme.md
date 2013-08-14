@@ -43,7 +43,7 @@ Cross reference from chapters to package names
     <tr><td>28. Equation of Time</td><td>eqtime</td><td>complete</td></tr>
     <tr><td>29. Ephemeris for Physical Observations of the Sun</td><td>solardisk</td><td>complete</td></tr>
     <tr><td>30. Equation of Kepler</td><td>kepler</td><td>complete</td></tr>
-    <tr><td>31. Elements of Planetary Orbits</td><td>elementorbit</td><td>partial</td></tr>
+    <tr><td>31. Elements of Planetary Orbits</td><td>planetelements</td><td>partial</td></tr>
     <tr><td>32. Positions of the Planets</td><td>planetposition</td><td>partial</td></tr>
     <tr><td>33. Elliptic Motion</td><td>elliptic</td><td>partial</td></tr>
     <tr><td>34. Parabolic Motion</td><td>parabolic</td><td>complete</td></tr>

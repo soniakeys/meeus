@@ -146,7 +146,7 @@
 //	28. Equation of Time                                    eqtime
 //	29. Ephemeris for Physical Observations of the Sun      solardisk
 //	30. Equation of Kepler                                  kepler
-//	31. Elements of Planetar Orbits                         elementplanet
+//	31. Elements of Planetary Orbits                        planetelements
 //	32. Positions of the Planets                            planetposition
 //	33. Elliptic Motion                                     elliptic
 //	34. Parabolic Motion                                    parabolic

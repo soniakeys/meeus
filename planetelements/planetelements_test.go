@@ -1,19 +1,19 @@
-package elementplanet_test
+package planetelements_test
 
 import (
 	"fmt"
 	"math"
 	"testing"
 
-	ep "github.com/soniakeys/meeus/elementplanet"
 	"github.com/soniakeys/meeus/julian"
+	pe "github.com/soniakeys/meeus/planetelements"
 )
 
 func ExampleMean() {
 	// Example 31.a, p. 211
 	j := julian.CalendarGregorianToJD(2065, 6, 24)
-	var e ep.Elements
-	ep.Mean(ep.Mercury, j, &e)
+	var e pe.Elements
+	pe.Mean(pe.Mercury, j, &e)
 	fmt.Printf("L: %.6f\n", e.Lon*180/math.Pi)
 	fmt.Printf("a: %.9f\n", e.Axis)
 	fmt.Printf("e: %.8f\n", e.Ecc)
@@ -31,18 +31,18 @@ func ExampleMean() {
 
 func TestInc(t *testing.T) {
 	j := julian.CalendarGregorianToJD(2065, 6, 24)
-	var e ep.Elements
-	ep.Mean(ep.Mercury, j, &e)
-	if i := ep.Inc(ep.Mercury, j); i != e.Inc {
+	var e pe.Elements
+	pe.Mean(pe.Mercury, j, &e)
+	if i := pe.Inc(pe.Mercury, j); i != e.Inc {
 		t.Fatal(i, "!=", e.Inc)
 	}
 }
 
 func TestNode(t *testing.T) {
 	j := julian.CalendarGregorianToJD(2065, 6, 24)
-	var e ep.Elements
-	ep.Mean(ep.Mercury, j, &e)
-	if Ω := ep.Node(ep.Mercury, j); Ω != e.Node {
+	var e pe.Elements
+	pe.Mean(pe.Mercury, j, &e)
+	if Ω := pe.Node(pe.Mercury, j); Ω != e.Node {
 		t.Fatal(Ω, "!=", e.Node)
 	}
 }

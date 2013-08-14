@@ -1,11 +1,11 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Elementplanet: Chapter 31, Elements of Planetary Orbits.
+// Planetelements: Chapter 31, Elements of Planetary Orbits.
 //
-// Partial: Only Mercury is implemented, and only mean elements.  The tables
+// Partial: Not all planets implemented, and only mean elements.  The tables
 // present too much chance of typographic errors.
-package elementplanet
+package planetelements
 
 import (
 	"math"
