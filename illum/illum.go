@@ -116,6 +116,7 @@ func Jupiter(r, Δ float64) float64 {
 // B is the Saturnicentric latitude of the Earth referred to the plane of
 // Saturn's ring. ΔU is the difference between the Saturnicentric longitudes
 // of the Sun and the Earth, measured in the plane of the ring.
+// You can use saturndisk.Disk() to obtain B and ΔU.
 func Saturn(r, Δ, B, ΔU float64) float64 {
 	s := math.Sin(math.Abs(B))
 	return -8.68 + 5*math.Log10(r*Δ) + .044/p*math.Abs(ΔU) - 2.6*s + 1.25*s*s
