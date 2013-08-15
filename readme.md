@@ -56,5 +56,6 @@ Cross reference from chapters to package names
     <tr><td>41. Illuminated Fraction of the Disk and Magnitude of a Planet</td><td>illum</td><td>complete</td></tr>
     <tr><td>42. Ephemeris for Physical Observations of Mars</td><td>mars</td><td>complete</td></tr>
     <tr><td>43. Ephemeris for Physical Observations of Jupiter</td><td>jupiter</td><td>complete</td></tr>
+    <tr><td>44. Positions of the Satellites of Jupiter</td><td>jupitersatellies</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>
