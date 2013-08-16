@@ -18,9 +18,8 @@
 // Meeus gives some example annual proper motions in units of seconds of
 // right ascension and seconds of declination.  To make units clear,
 // functions in this package take proper motions with argument types of
-// base.HourAngle and base.Angle respectively.  Error-prone conversion
-// factors conversion factors can be avoided by using the constructors
-// for these base types.
+// base.HourAngle and base.Angle respectively.  Error-prone conversions
+// can be avoided by using the constructors for these base types.
 //
 // For example, given an annual proper motion in right ascension of -0ˢ.03847,
 // rather than
