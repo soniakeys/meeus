@@ -18,7 +18,7 @@ const (
 	B1900 = 2415020.3135
 )
 
-// JulianYear and other common constants.
+// JulianYear and other common periods.
 const (
 	JulianYear    = 365.25      // days
 	JulianCentury = 36525       // days

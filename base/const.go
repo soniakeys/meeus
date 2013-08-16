@@ -4,25 +4,22 @@
 package base
 
 // K is the Gaussian gravitational constant.
-//
-// From ch 33, p. 228, for example
 const K = .01720209895
+// K from ch 33, p. 228, for example
 
 // SOblJ2000, COblJ2000 are sine and cosine of obliquity at J2000.
-//
-// From ch 33, p. 228, for example
 const (
 	SOblJ2000 = .397777156
 	COblJ2000 = .917482062
 )
+// SOblJ2000, COblJ2000 from ch 33, p. 228, for example
 
 // LightTime returns time for light to travel a given distance.
-//
-// Formula given as (33.3) p. 224.
 //
 // Δ is distance in AU.
 //
 // Result in seconds of time.
 func LightTime(Δ float64) float64 {
+	// Formula given as (33.3) p. 224.
 	return .0057755183 * Δ
 }
