@@ -123,7 +123,7 @@ func NewPrecessor(epochFrom, epochTo float64) *Precessor {
 			0.017998}
 		zCoeff = []float64{
 			base.Horner(T, zT...),
-			1.09468 - 0.000066*T,
+			1.09468 + 0.000066*T,
 			0.018203}
 		θCoeff = []float64{
 			base.Horner(T, θT...),
