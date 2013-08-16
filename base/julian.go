@@ -12,11 +12,13 @@ const JMod = 2400000.5
 // J2000 is the Julian date corresponding to January 1.5, year 2000.
 const J2000 = 2451545.0
 
-// J1900, B1900, common epochs.
+// Julian days of common epochs.
 const (
 	J1900 = 2415020.0
 	B1900 = 2415020.3135
+	B1950 = 2433282.4235
 )
+// B1900, B1950 from p. 133
 
 // JulianYear and other common periods.
 const (
