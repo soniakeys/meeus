@@ -58,5 +58,6 @@ Cross reference from chapters to package names
     <tr><td>43. Ephemeris for Physical Observations of Jupiter</td><td>jupiter</td><td>complete</td></tr>
     <tr><td>44. Positions of the Satellites of Jupiter</td><td>jupitersatellies</td><td>complete</td></tr>
     <tr><td>45. The Ring of Saturn</td><td>saturnring</td><td>complete</td></tr>
+    <tr><td>46. Positions of the Satellites of Saturn</td><td>saturnmoons</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>
