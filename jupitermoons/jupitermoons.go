@@ -1,8 +1,8 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Jupitersatellites: Chapter 42, Positions of the Satellites of Jupiter.
-package jupitersatellites
+// Jupitermoons: Chapter 42, Positions of the Satellites of Jupiter.
+package jupitermoons
 
 import (
 	"math"
@@ -13,12 +13,12 @@ import (
 	"github.com/soniakeys/meeus/solar"
 )
 
-// XY used for returning satellite coordinates.
+// XY used for returning coordinates of moons.
 type XY struct {
 	X, Y float64
 }
 
-// Positions computes positions of satellites of Jupiter.
+// Positions computes positions of moons of Jupiter.
 //
 // Returned coordinates are in units of Jupiter radii.
 func Positions(jde float64) (pI, pII, pIII, pIV XY) {
@@ -72,7 +72,7 @@ func Positions(jde float64) (pI, pII, pIII, pIV XY) {
 	return xy(u1+c1, r1), xy(u2+c2, r2), xy(u3+c3, r3), xy(u4+c4, r4)
 }
 
-// Positions computes positions of satellites of Jupiter.
+// Positions computes positions of moons of Jupiter.
 //
 // High accuracy method based on theory "E5."  Results returned in
 // argument pos, which must not be nil.  Returned coordinates in units

@@ -160,7 +160,7 @@
 //	    of a Planet
 //	42. Ephemeris for Physical Observations of Mars         mars
 //	43. Ephemeris for Physical Observations of Jupiter      jupiter
-//	44. Positions of the Satellites of Jupiter              jupitersatellites
+//	44. Positions of the Satellites of Jupiter              jupitermoons
 //	45. The Ring of Saturn                                  saturnring
 //	46. Positions of the Satellites of Saturn               saturnmoons
 package meeus
