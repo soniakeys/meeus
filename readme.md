@@ -59,5 +59,6 @@ Cross reference from chapters to package names
     <tr><td>44. Positions of the Satellites of Jupiter</td><td>jupitermoons</td><td>complete</td></tr>
     <tr><td>45. The Ring of Saturn</td><td>saturnring</td><td>complete</td></tr>
     <tr><td>46. Positions of the Satellites of Saturn</td><td>saturnmoons</td><td>complete</td></tr>
+    <tr><td>47. Position of the Moon</td><td>moon</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>

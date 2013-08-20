@@ -163,4 +163,5 @@
 //	44. Positions of the Satellites of Jupiter              jupitermoons
 //	45. The Ring of Saturn                                  saturnring
 //	46. Positions of the Satellites of Saturn               saturnmoons
+//	47. Position of the Moon                                moon
 package meeus
