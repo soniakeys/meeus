@@ -93,22 +93,22 @@ type Precessor struct {
 	ζ, z, sθ, cθ float64
 }
 
-const d = math.Pi/180
-const s = d/3600
+const d = math.Pi / 180
+const s = d / 3600
 
 // Package variables allow these slices to be reused.  (As composite
 // literals inside of NewPrecessor they would be reallocated on every
 // function call.)
 var (
 	// coefficients from (21.2) p. 134
-	ζT = []float64{2306.2181*s, 1.39656*s, -0.000139*s}
-	zT = []float64{2306.2181*s, 1.39656*s, -0.000139*s}
-	θT = []float64{2004.3109*s, -0.8533*s, -0.000217*s}
+	ζT = []float64{2306.2181 * s, 1.39656 * s, -0.000139 * s}
+	zT = []float64{2306.2181 * s, 1.39656 * s, -0.000139 * s}
+	θT = []float64{2004.3109 * s, -0.8533 * s, -0.000217 * s}
 
 	// coefficients from (21.3) p. 134
-	ζt = []float64{2306.2181*s, 0.30188*s, 0.017998*s}
-	zt = []float64{2306.2181*s, 1.09468*s, 0.018203*s}
-	θt = []float64{2004.3109*s, -0.42665*s, -0.041833*s}
+	ζt = []float64{2306.2181 * s, 0.30188 * s, 0.017998 * s}
+	zt = []float64{2306.2181 * s, 1.09468 * s, 0.018203 * s}
+	θt = []float64{2004.3109 * s, -0.42665 * s, -0.041833 * s}
 )
 
 // NewPrecessor constructs a Precessor object and initializes it to precess
@@ -123,15 +123,15 @@ func NewPrecessor(epochFrom, epochTo float64) *Precessor {
 		ζCoeff = []float64{
 			base.Horner(T, ζT...),
 			0.30188*s - 0.000344*s*T,
-			0.017998*s}
+			0.017998 * s}
 		zCoeff = []float64{
 			base.Horner(T, zT...),
 			1.09468*s + 0.000066*s*T,
-			0.018203*s}
+			0.018203 * s}
 		θCoeff = []float64{
 			base.Horner(T, θT...),
 			-0.42665*s - 0.000217*s*T,
-			-0.041833*s}
+			-0.041833 * s}
 	}
 	t := (epochTo - epochFrom) * .01
 	p := &Precessor{
@@ -190,14 +190,14 @@ type EclipticPrecessor struct {
 
 var (
 	// coefficients from (21.5) p. 136
-	ηT = []float64{47.0029*s, -0.06603*s, 0.000598*s}
-	πT = []float64{174.876384*d, 3289.4789*s, 0.60622*s}
-	pT = []float64{5029.0966*s, 2.22226*s, -0.000042*s}
+	ηT = []float64{47.0029 * s, -0.06603 * s, 0.000598 * s}
+	πT = []float64{174.876384 * d, 3289.4789 * s, 0.60622 * s}
+	pT = []float64{5029.0966 * s, 2.22226 * s, -0.000042 * s}
 
 	// coefficients from (21.6) p. 136
-	ηt = []float64{47.0029*s, -0.03302*s, 0.000060*s}
-	πt = []float64{174.876384*d, -869.8089*s, 0.03536*s}
-	pt = []float64{5029.0966*s, 1.11113*s, -0.000006*s}
+	ηt = []float64{47.0029 * s, -0.03302 * s, 0.000060 * s}
+	πt = []float64{174.876384 * d, -869.8089 * s, 0.03536 * s}
+	pt = []float64{5029.0966 * s, 1.11113 * s, -0.000006 * s}
 )
 
 // NewEclipticPrecessor constructs an EclipticPrecessor object and initializes
@@ -212,15 +212,15 @@ func NewEclipticPrecessor(epochFrom, epochTo float64) *EclipticPrecessor {
 		ηCoeff = []float64{
 			base.Horner(T, ηT...),
 			-0.03302*s + 0.000598*s*T,
-			0.000060*s}
+			0.000060 * s}
 		πCoeff = []float64{
 			base.Horner(T, πT...),
 			-869.8089*s - 0.50491*s*T,
-			0.03536*s}
+			0.03536 * s}
 		pCoeff = []float64{
 			base.Horner(T, pT...),
 			1.11113*s - 0.000042*s*T,
-			-0.000006*s}
+			-0.000006 * s}
 	}
 	t := (epochTo - epochFrom) * .01
 	p := &EclipticPrecessor{
