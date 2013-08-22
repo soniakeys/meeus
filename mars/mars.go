@@ -123,7 +123,7 @@ func Physical(jde float64, earth, mars *pp.V87Planet) (DE, DS, ω, P, Q, d, k, q
 	Q = χ + math.Pi
 	// Step 19.
 	d = 9.36 / 60 / 60 * math.Pi / 180 / Δ
-	k = illum.Fraction2(r, Δ, R)
+	k = illum.Fraction(r, Δ, R)
 	q = (1 - k) * d
 	return
 }

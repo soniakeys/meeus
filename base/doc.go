@@ -109,6 +109,12 @@
 //
 // Chapter 22, Nutation contains the function for Julian centuries since J2000.
 //
+// Phase angle functions
+//
+// Two functions, Illuminated and Limb, concern the illumnated phase of a body
+// and are given in two chapters, 41 an 48.  They are collected here because
+// the identical functions apply in both chapters.
+//
 // General purpose math functions
 //
 // SmallAngle is recommended in chapter 17, p. 109.

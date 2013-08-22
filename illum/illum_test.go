@@ -7,14 +7,6 @@ import (
 	"github.com/soniakeys/meeus/illum"
 )
 
-func ExampleFraction() {
-	// Example 41.a, p. 284
-	k := illum.Fraction(math.Acos(.29312))
-	fmt.Printf("%.3f\n", k)
-	// Output:
-	// 0.647
-}
-
 func ExamplePhaseAngle() {
 	// Example 41.a, p. 284
 	i := illum.PhaseAngle(.724604, .910947, .983824)
@@ -23,9 +15,9 @@ func ExamplePhaseAngle() {
 	// 0.29312
 }
 
-func ExampleFraction2() {
+func ExampleFraction() {
 	// Example 41.a, p. 284
-	k := illum.Fraction2(.724604, .910947, .983824)
+	k := illum.Fraction(.724604, .910947, .983824)
 	fmt.Printf("%.3f\n", k)
 	// Output:
 	// 0.647

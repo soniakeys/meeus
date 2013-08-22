@@ -2,6 +2,11 @@
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Illum: Chapter 41, Illuminated Fraction of the Disk and Magnitude of a Planet.
+//
+// Also see functions Illuminated and Limb in package base.  While this
+// chapter title includes "illumnated fraction," the function for computing
+// illuminated fraction given a phase angle is base.Illuminated.
+// Base.Limb is the function mentioned at the bottom of p. 283.
 package illum
 
 import (
@@ -9,14 +14,6 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 )
-
-// Fraction computes the illuminated fraction of the disk of a planet.
-//
-// Argument i is the phase angle in radians.
-func Fraction(i float64) float64 {
-	// (41.1) p. 283
-	return (1 + math.Cos(i)) * .5
-}
 
 // PhaseAngle computes the phase angle of a planet.
 //
@@ -28,11 +25,11 @@ func PhaseAngle(r, Δ, R float64) float64 {
 	return math.Acos((r*r + Δ*Δ - R*R) / (2 * r * Δ))
 }
 
-// Fraction2 computes the illuminated fraction of the disk of a planet.
+// Fraction computes the illuminated fraction of the disk of a planet.
 //
 // Argument r is planet's distance to Sun, Δ its distance to Earth, and R
 // the distance from Sun to Earth.  All distances in AU.
-func Fraction2(r, Δ, R float64) float64 {
+func Fraction(r, Δ, R float64) float64 {
 	// (41.2) p. 283
 	s := r + Δ
 	return (s*s - R*R) / (4 * r * Δ)
