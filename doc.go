@@ -164,4 +164,5 @@
 //	45. The Ring of Saturn                                  saturnring
 //	46. Positions of the Satellites of Saturn               saturnmoons
 //	47. Position of the Moon                                moon
+//	48. Illuminated Fraction of the Moon's Disk             moonillum
 package meeus
