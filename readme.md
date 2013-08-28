@@ -63,5 +63,6 @@ Cross reference from chapters to package names
     <tr><td>48. Illuminated Fraction of the Moon&#39s Disk</td><td>moonillum</td><td>complete</td></tr>
     <tr><td>49. Phases of the Moon</td><td>moonphase</td><td>complete</td></tr>
     <tr><td>50. Perigee and apogee of the Moon</td><td>apsis</td><td>partial</td></tr>
+    <tr><td>51. Passages of the Moon through the Nodes</td><td>moonnode</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>

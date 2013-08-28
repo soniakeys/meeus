@@ -167,4 +167,5 @@
 //	48. Illuminated Fraction of the Moon's Disk             moonillum
 //	49. Phases of the Moon                                  moonphase
 //	50. Perigee and apogee of the Moon                      apsis
+//	51. Passages of the Moon through the Nodes              moonnode
 package meeus
