@@ -166,4 +166,5 @@
 //	47. Position of the Moon                                moon
 //	48. Illuminated Fraction of the Moon's Disk             moonillum
 //	49. Phases of the Moon                                  moonphase
+//	50. Perigee and apogee of the Moon                      apsis
 package meeus
