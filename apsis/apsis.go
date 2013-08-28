@@ -3,8 +3,8 @@
 
 // Apsis: Chapter 50, Perigee and apogee of the Moon
 //
-// Incomplete:  Perigee and PerigeeParallax not implemented for lack of test
-// cases.  Implementation involves copying tables of coefficients, involving
+// Incomplete:  PerigeeParallax not implemented for lack of test cases.
+// Implementation involves copying a table of coefficients, involving
 // risk of typographical error.
 package apsis
 
@@ -34,6 +34,14 @@ func snap(y, h float64) float64 {
 // Year is a decimal year specifying a date.
 func MeanPerigee(year float64) float64 {
 	return mean(snap(year, 0) * ck)
+}
+
+// Perigee returns the jde of perigee of the Moon nearest the given date.
+//
+// Year is a decimal year specifying a date.
+func Perigee(year float64) float64 {
+	l := newLa(year, 0)
+	return mean(l.T) + l.pc()
 }
 
 // MeanApogee returns the jde of the mean apogee of the Moon nearest the given date.
@@ -77,6 +85,70 @@ func newLa(y, h float64) *la {
 	l.F = base.Horner(l.T, 316.6109*p, 364.5287911*p/ck,
 		-.0125053*p, -.0000148*p)
 	return l
+}
+
+// perigee correction
+func (l *la) pc() float64 {
+	return -1.6769*math.Sin(2*l.D) +
+		.4589*math.Sin(4*l.D) +
+		-.1856*math.Sin(6*l.D) +
+		.0883*math.Sin(8*l.D) +
+		(-.0773+.00019*l.T)*math.Sin(2*l.D-l.M) +
+		(.0502-.00013*l.T)*math.Sin(l.M) +
+		-.046*math.Sin(10*l.D) +
+		(.0422-.00011*l.T)*math.Sin(4*l.D-l.M) +
+		-.0256*math.Sin(6*l.D-l.M) +
+		.0253*math.Sin(12*l.D) +
+		.0237*math.Sin(l.D) +
+		.0162*math.Sin(8*l.D-l.M) +
+		-.0145*math.Sin(14*l.D) +
+		.0129*math.Sin(2*l.F) +
+		-.0112*math.Sin(3*l.D) +
+		-.0104*math.Sin(10*l.D-l.M) +
+		.0086*math.Sin(16*l.D) +
+		.0069*math.Sin(12*l.D-l.M) +
+		.0066*math.Sin(5*l.D) +
+		-.0053*math.Sin(2*(l.D+l.F)) +
+		-.0052*math.Sin(18*l.D) +
+		-.0046*math.Sin(14*l.D-l.M) +
+		-.0041*math.Sin(7*l.D) +
+		.004*math.Sin(2*l.D+l.M) +
+		.0032*math.Sin(20*l.D) +
+		-.0032*math.Sin(l.D+l.M) +
+		.0031*math.Sin(16*l.D-l.M) +
+		-.0029*math.Sin(4*l.D+l.M) +
+		.0027*math.Sin(9*l.D) +
+		.0027*math.Sin(4*l.D+2*l.F) +
+		-.0027*math.Sin(2*(l.D-l.M)) +
+		.0024*math.Sin(4*l.D-2*l.M) +
+		-.0021*math.Sin(6*l.D-2*l.M) +
+		-.0021*math.Sin(22*l.D) +
+		-.0021*math.Sin(18*l.D-l.M) +
+		.0019*math.Sin(6*l.D+l.M) +
+		-.0018*math.Sin(11*l.D) +
+		-.0014*math.Sin(8*l.D+l.M) +
+		-.0014*math.Sin(4*l.D-2*l.F) +
+		-.0014*math.Sin(6*l.D+2*l.F) +
+		.0014*math.Sin(3*l.D+l.M) +
+		-.0014*math.Sin(5*l.D+l.M) +
+		.0013*math.Sin(13*l.D) +
+		.0013*math.Sin(20*l.D-l.M) +
+		.0011*math.Sin(3*l.D+2*l.M) +
+		-.0011*math.Sin(2*(2*l.D+l.F-l.M)) +
+		-.001*math.Sin(l.D+2*l.M) +
+		-.0009*math.Sin(22*l.D-l.M) +
+		-.0008*math.Sin(4*l.F) +
+		.0008*math.Sin(6*l.D-2*l.F) +
+		.0008*math.Sin(2*(l.D-l.F)+l.M) +
+		.0007*math.Sin(2*l.M) +
+		.0007*math.Sin(2*l.F-l.M) +
+		.0007*math.Sin(2*l.D+4*l.F) +
+		-.0006*math.Sin(2*(l.F-l.M)) +
+		-.0006*math.Sin(2*(l.D-l.F+l.M)) +
+		.0006*math.Sin(24*l.D) +
+		.0005*math.Sin(4*(l.D-l.F)) +
+		.0005*math.Sin(2*(l.D+l.M)) +
+		-.0004*math.Sin(l.D-l.M)
 }
 
 // apogee correction

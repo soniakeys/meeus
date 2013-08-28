@@ -3,6 +3,7 @@ package apsis_test
 import (
 	"fmt"
 	"math"
+	"testing"
 	"time"
 
 	"github.com/soniakeys/meeus/apsis"
@@ -38,4 +39,23 @@ func ExampleApogeeParallax() {
 	// Output:
 	// 3240.679
 	// 54′00″.679
+}
+
+// Test cases from p. 361.
+func TestPerigee(t *testing.T) {
+	for _, c := range []struct {
+		y, m  int
+		d, dy float64
+	}{
+		{1997, 12, 9 + 16.9/24, 1997.93},
+		{1998, 1, 3 + 8.5/24, 1998.01},
+		{1990, 12, 2 + 10.8/24, 1990.92},
+		{1990, 12, 30 + 23.8/24, 1991},
+	} {
+		ref := julian.CalendarGregorianToJD(c.y, c.m, c.d)
+		j := apsis.Perigee(c.dy)
+		if math.Abs(j-ref) > .1 {
+			t.Fatal("got", j, "expected", ref)
+		}
+	}
 }
