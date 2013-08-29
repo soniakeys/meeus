@@ -168,4 +168,5 @@
 //	49. Phases of the Moon                                  moonphase
 //	50. Perigee and apogee of the Moon                      apsis
 //	51. Passages of the Moon through the Nodes              moonnode
+//	52. Maximum declinations of the Moon                    moonmaxdec
 package meeus
