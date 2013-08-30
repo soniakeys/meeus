@@ -59,7 +59,7 @@ Cross reference from chapters to package names
     <tr><td>44. Positions of the Satellites of Jupiter</td><td>jupitermoons</td><td>complete</td></tr>
     <tr><td>45. The Ring of Saturn</td><td>saturnring</td><td>complete</td></tr>
     <tr><td>46. Positions of the Satellites of Saturn</td><td>saturnmoons</td><td>complete</td></tr>
-    <tr><td>47. Position of the Moon</td><td>moon</td><td>complete</td></tr>
+    <tr><td>47. Position of the Moon</td><td>moonposition</td><td>complete</td></tr>
     <tr><td>48. Illuminated Fraction of the Moon&#39s Disk</td><td>moonillum</td><td>complete</td></tr>
     <tr><td>49. Phases of the Moon</td><td>moonphase</td><td>complete</td></tr>
     <tr><td>50. Perigee and apogee of the Moon</td><td>apsis</td><td>partial</td></tr>

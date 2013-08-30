@@ -163,7 +163,7 @@
 //	44. Positions of the Satellites of Jupiter              jupitermoons
 //	45. The Ring of Saturn                                  saturnring
 //	46. Positions of the Satellites of Saturn               saturnmoons
-//	47. Position of the Moon                                moon
+//	47. Position of the Moon                                moonposition
 //	48. Illuminated Fraction of the Moon's Disk             moonillum
 //	49. Phases of the Moon                                  moonphase
 //	50. Perigee and apogee of the Moon                      apsis
