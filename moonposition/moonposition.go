@@ -36,7 +36,8 @@ func dmf(T float64) (D, M, Mʹ, F float64) {
 
 // Position returns geocentric location of the Moon.
 //
-// Results are referenced to mean equinox of date.
+// Results are referenced to mean equinox of date and do not include
+// the effect of nutation.
 //
 //	λ  Geocentric longitude, in radians.
 //	β  Geocentric latidude, in radians.
