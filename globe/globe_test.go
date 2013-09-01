@@ -12,7 +12,7 @@ import (
 	"github.com/soniakeys/meeus/globe"
 )
 
-func ExampleEllipsoid_Parallax() {
+func ExampleEllipsoid_ParallaxConstants() {
 	// Example 11.a, p 82.
 	// phi = geographic latitude of Palomar
 	φ := base.NewAngle(false, 33, 21, 22).Rad()
