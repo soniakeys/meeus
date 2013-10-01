@@ -7,7 +7,7 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
-	"github.com/soniakeys/meeus/moon"
+	"github.com/soniakeys/meeus/moonposition"
 	"github.com/soniakeys/meeus/moonillum"
 	"github.com/soniakeys/meeus/solar"
 )
@@ -32,7 +32,7 @@ func ExamplePhaseAngleEq2() {
 
 func TestPhaseAngleEcl(t *testing.T) {
 	j := julian.CalendarGregorianToJD(1992, 4, 12)
-	λ, β, Δ := moon.Position(j)
+	λ, β, Δ := moonposition.Position(j)
 	T := base.J2000Century(j)
 	λ0 := solar.ApparentLongitude(T)
 	R := solar.Radius(T) * base.AU
@@ -45,7 +45,7 @@ func TestPhaseAngleEcl(t *testing.T) {
 
 func TestPhaseAngleEcl2(t *testing.T) {
 	j := julian.CalendarGregorianToJD(1992, 4, 12)
-	λ, β, _ := moon.Position(j)
+	λ, β, _ := moonposition.Position(j)
 	λ0 := solar.ApparentLongitude(base.J2000Century(j))
 	i := moonillum.PhaseAngleEcl2(λ, β, λ0)
 	k := base.Illuminated(i)
