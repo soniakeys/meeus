@@ -66,5 +66,6 @@ Cross reference from chapters to package names
     <tr><td>51. Passages of the Moon through the Nodes</td><td>moonnode</td><td>complete</td></tr>
     <tr><td>52. Maximum declinations of the Moon</td><td>moonmaxdec</td><td>complete</td></tr>
     <tr><td>53. Ephemeris for Physical Observations of the Moon</td><td>moon</td><td>partial</td></tr>
+    <tr><td>54. Eclipses</td><td>eclipse</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>

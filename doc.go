@@ -170,4 +170,5 @@
 //	51. Passages of the Moon through the Nodes              moonnode
 //	52. Maximum declinations of the Moon                    moonmaxdec
 //	53. Ephemeris for Physical Observations of the Moon     moon
+//	54. Eclipses                                            eclipse
 package meeus
