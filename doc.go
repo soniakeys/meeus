@@ -172,4 +172,5 @@
 //	53. Ephemeris for Physical Observations of the Moon     moon
 //	54. Eclipses                                            eclipse
 //	55. Semidiameters of the Sun, Moon, and Planets         semidiameter
+//	56. Stellar Magnitudes                                  stellar
 package meeus

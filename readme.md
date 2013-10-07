@@ -68,5 +68,6 @@ Cross reference from chapters to package names
     <tr><td>53. Ephemeris for Physical Observations of the Moon</td><td>moon</td><td>partial</td></tr>
     <tr><td>54. Eclipses</td><td>eclipse</td><td>complete</td></tr>
     <tr><td>55. Semidiameters of the Sun, Moon, and Planets</td><td>semidiameter</td><td>complete</td></tr>
+    <tr><td>56. Stellar Magnitudes</td><td>stellar</td><td>complete</td></tr>
     <tr><td>Non-Meeus useful functions</td><td>base</td><td></td></tr>
 </table>
