@@ -86,8 +86,8 @@ func MoonTopocentric2(Δ, h float64) float64 {
 	return Moon / Δ * (1 + math.Sin(h)*math.Sin(parallax.Horizontal(Δ)))
 }
 
-// AsteroidDiameter returns approximate diameter given absolute magnitude and
-// albedo.
+// AsteroidDiameter returns approximate diameter given absolute magnitude H
+// and albedo A.
 //
 // Result is in km.
 func AsteroidDiameter(H, A float64) float64 {
