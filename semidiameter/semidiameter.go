@@ -91,7 +91,7 @@ func MoonTopocentric2(Δ, h float64) float64 {
 //
 // Result is in km.
 func AsteroidDiameter(H, A float64) float64 {
-	return math.Pow(10, 3.12 - .2*H - .5*math.Log10(A))
+	return math.Pow(10, 3.12-.2*H-.5*math.Log10(A))
 }
 
 // Asteroid returns semidiameter of an asteroid with a given diameter

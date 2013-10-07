@@ -7,8 +7,8 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
-	"github.com/soniakeys/meeus/moonposition"
 	"github.com/soniakeys/meeus/moonillum"
+	"github.com/soniakeys/meeus/moonposition"
 	"github.com/soniakeys/meeus/solar"
 )
 
