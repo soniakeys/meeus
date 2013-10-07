@@ -171,4 +171,5 @@
 //	52. Maximum declinations of the Moon                    moonmaxdec
 //	53. Ephemeris for Physical Observations of the Moon     moon
 //	54. Eclipses                                            eclipse
+//	55. Semidiameters of the Sun, Moon, and Planets         semidiameter
 package meeus
