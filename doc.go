@@ -173,4 +173,5 @@
 //	54. Eclipses                                            eclipse
 //	55. Semidiameters of the Sun, Moon, and Planets         semidiameter
 //	56. Stellar Magnitudes                                  stellar
+//	57. Binary Stars                                        binary
 package meeus
