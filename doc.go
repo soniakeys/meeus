@@ -67,11 +67,11 @@
 // of the API code.  Relevant "exercises" from the book are also often
 // implemented as Go examples.
 //
-// The file readme.md indicates that some packages are incomplete.  A package
-// is considered complete if it implements all major formulas and algorithms
-// and if it implements all numbered examples.  For incomplete packages,
-// the package documentation will describe the ways in which it is
-// incomplete and typically give reasons for the incompleteness.
+// Some packages are yet incomplete.  A package is considered complete if
+// it implements all major formulas and algorithms and if it implements all
+// numbered examples.  For incomplete packages, the package documentation
+// will describe the ways in which it is incomplete and typically give reasons
+// for the incompleteness.
 //
 // In addition to the chapter packages, there is a package called "base".
 // This contains a few definitions that are provided by Meeus but are of such
@@ -174,5 +174,5 @@
 //	55. Semidiameters of the Sun, Moon, and Planets         semidiameter
 //	56. Stellar Magnitudes                                  stellar
 //	57. Binary Stars                                        binary
-//  58. Calculation of a Planar Sundial                     sundial
+//	58. Calculation of a Planar Sundial                     sundial
 package meeus
