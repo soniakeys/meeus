@@ -174,4 +174,5 @@
 //	55. Semidiameters of the Sun, Moon, and Planets         semidiameter
 //	56. Stellar Magnitudes                                  stellar
 //	57. Binary Stars                                        binary
+//  58. Calculation of a Planar Sundial                     sundial
 package meeus
