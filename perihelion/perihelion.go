@@ -2,6 +2,24 @@
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Perihelion: Chapter 38, Planets in Perihelion and Aphelion.
+//
+// Functions Aphelion and Perihelion implement algorithms from the book
+// to return approximate results.
+//
+// For accurate results, Meeus describes the general technique of
+// interpolating from a precise ephemeris but does not give a complete
+// algorithm.  The algorithm implemented here for Aphelion2 and Perihelion2
+// is to start with the approximate result and then crawl along the curve
+// at the specified time resolution until the desired extremum is found.
+// This algorithm slows down as higher accuracy is demanded.  1 day accuracy
+// is generally quick for planets other than Neptune.
+//
+// Meeus doesn't give an algorithm to handle the double extrema of Neptune.
+// The algorithm here is to pick starting points several years either side
+// of the approximate date and follow the slopes inward.  The consequence of
+// starting farther from the extremum is that these functions are particularly
+// slow for Neptune.  They are offered here though as a simple implementation
+// of Meeus's presentation in the book.
 package perihelion
 
 import (
@@ -136,10 +154,6 @@ func ap2(p int, y, d float64, v *pp.V87Planet, a bool, f func(float64) float64) 
 	if p != Neptune {
 		return ap2a(j1, d, a, v)
 	}
-	// Meeus doesn't give an algorithm to handle the double extrema of
-	// Neptune.  The algorithm here is to pick starting points several years
-	// either side of the approximate date and let ap2a follow the slopes
-	// from there.  It's rather slow, but seems to find correct answers.
 	j0, r0 := ap2a(j1-5000, d, a, v)
 	j2, r2 := ap2a(j1+5000, d, a, v)
 	if r0 > r2 == a {
@@ -149,12 +163,6 @@ func ap2(p int, y, d float64, v *pp.V87Planet, a bool, f func(float64) float64) 
 }
 
 func ap2a(j1, d float64, a bool, v *pp.V87Planet) (jde, r float64) {
-	// Meeus doesn't give a complete algorithm for finding accurate answers.
-	// The algorithm here starts with the approximate result algorithm
-	// then crawls along the curve at resultion d until three points
-	// are found containing the desired extremum.  It's slow if the starting
-	// point is far away (the case of Neptune) or if high accuracy is
-	// demanded.  1 day accuracy is generally quick.
 	j0 := j1 - d
 	j2 := j1 + d
 	rr := make([]float64, 3)
