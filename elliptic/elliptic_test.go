@@ -12,12 +12,12 @@ import (
 
 func ExamplePosition() {
 	// Example 33.a, p. 225.  VSOP87 result p. 227.
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	venus, err := pp.LoadPlanet(pp.Venus, "")
+	venus, err := pp.LoadPlanet(pp.Venus)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -32,7 +32,7 @@ func ExamplePosition() {
 
 func ExampleElements_Position() {
 	// Example 33.b, p. 232.
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return

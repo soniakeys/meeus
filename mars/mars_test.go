@@ -10,12 +10,12 @@ import (
 
 func ExamplePhysical() {
 	// Example 42.a, p. 291
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	m, err := pp.LoadPlanet(pp.Mars, "")
+	m, err := pp.LoadPlanet(pp.Mars)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -83,21 +83,25 @@ const fileVersion = '2'
 
 // LoadPlanet constructs a V87Planet object from a VSOP87 file.
 //
-// Ibody should be one of the planet constants.
+// Argument ibody should be one of the planet constants.
 //
-// The directory containing the VSOP87 files can be indicated in two ways.
-// It can be indicated by the path parameter, or if path is the empty string,
-// then the directory should be indicated by environment variable VSOP87.
-func LoadPlanet(ibody int, path string) (*V87Planet, error) {
+// The directory containing the VSOP87 must be indicated by environment
+// variable VSOP87.
+func LoadPlanet(ibody int) (*V87Planet, error) {
+	path := os.Getenv("VSOP87")
+	if path == "" {
+		return nil, errors.New("No path assigned to environment variable VSOP87")
+	}
+	return LoadPlanetPath(ibody, path)
+}
+
+// LoadPlanetPath constructs a V87Planet object from a VSOP87 file.
+//
+// Argument ibody should be one of the planet constants; path should be
+// a directory containing the VSOP87 files.
+func LoadPlanetPath(ibody int, path string) (*V87Planet, error) {
 	if ibody < 0 || ibody >= nPlanets {
 		return nil, errors.New("Invalid planet.")
-	}
-	if path == "" {
-		ep := os.Getenv("VSOP87")
-		if ep == "" {
-			return nil, errors.New("No path")
-		}
-		path = ep
 	}
 	data, err := ioutil.ReadFile(path + "/VSOP87B." + ext[ibody])
 	if err != nil {
@@ -181,7 +185,7 @@ func (c *coeff) parse(ic byte, ibody int, lines []string, n int, au bool) (int, 
 
 // Position2000 returns ecliptic position of planets by full VSOP87 theory.
 //
-//	Jde is the jde for which positions are desired.
+// Argument jde is the date for which positions are desired.
 //
 // Results are for the dynamical equinox and ecliptic J2000.
 //
@@ -211,10 +215,10 @@ func (vt *V87Planet) Position2000(jde float64) (L, B, R float64) {
 
 // Position returns ecliptic position of planets at equinox and ecliptic of date.
 //
-// This function returns positions consistent with Meeus, that is, at equinox
-// and ecliptic of date.
+// Argument jde is the date for which positions are desired.
 //
-//  Jde is the jde for which positions are desired.
+// Results are positions consistent with those from Meeus's Apendix III,
+// that is, at equinox and ecliptic of date.
 //
 //  L is heliocentric longitude in radians.
 //  B is heliocentric latitude in radians.

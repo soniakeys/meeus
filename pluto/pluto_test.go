@@ -23,7 +23,7 @@ func ExampleHeliocentric() {
 
 func ExampleAstrometric() {
 	// Example 37.a, p. 266
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return

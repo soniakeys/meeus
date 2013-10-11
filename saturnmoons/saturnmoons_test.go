@@ -9,12 +9,12 @@ import (
 
 func ExamplePositions() {
 	// Example 46.a, p. 334.
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	saturn, err := pp.LoadPlanet(pp.Saturn, "")
+	saturn, err := pp.LoadPlanet(pp.Saturn)
 	if err != nil {
 		fmt.Println(err)
 		return

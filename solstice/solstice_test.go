@@ -155,7 +155,7 @@ var years = []seasons{
 
 func ExampleJune2() {
 	// Example 27.b, p. 180.
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -179,7 +179,7 @@ the reason for this is Meeus using his truncated VSOP87 rather than full VSOP87
 to construct the table but I have no way of knowing.
 
 func Test10000(t *testing.T) {
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		t.Fatal(err)
 		return

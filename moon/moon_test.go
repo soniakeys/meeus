@@ -12,7 +12,7 @@ import (
 
 func ExamplePhysical() {
 	j := julian.CalendarGregorianToJD(1992, 4, 12)
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -33,7 +33,7 @@ func ExamplePhysical() {
 
 func ExampleSunAltitude() {
 	j := julian.CalendarGregorianToJD(1992, 4, 12)
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -46,7 +46,7 @@ func ExampleSunAltitude() {
 }
 
 func ExampleSunrise() {
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return

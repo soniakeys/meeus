@@ -51,7 +51,7 @@ func TestJS(t *testing.T) {
 
 func TestJS2(t *testing.T) {
 	// p. 270
-	v, err := pp.LoadPlanet(pp.Jupiter, "")
+	v, err := pp.LoadPlanet(pp.Jupiter)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,7 +60,7 @@ func TestJS2(t *testing.T) {
 	if y != 1981 || m != 7 || int(d) != 28 {
 		t.Fatal(y, m, d)
 	}
-	v, err = pp.LoadPlanet(pp.Saturn, "")
+	v, err = pp.LoadPlanet(pp.Saturn)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +91,7 @@ var sd = []su{
 
 func TestS2(t *testing.T) {
 	// p. 271
-	v, err := pp.LoadPlanet(pp.Saturn, "")
+	v, err := pp.LoadPlanet(pp.Saturn)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -125,7 +125,7 @@ var sr = []su{
 
 func TestU2(t *testing.T) {
 	// p. 271
-	v, err := pp.LoadPlanet(pp.Uranus, "")
+	v, err := pp.LoadPlanet(pp.Uranus)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -152,7 +152,7 @@ var sn = []su{
 }
 
 func TestN2(t *testing.T) {
-	v, err := pp.LoadPlanet(pp.Neptune, "")
+	v, err := pp.LoadPlanet(pp.Neptune)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -246,7 +246,7 @@ var ea = []ed{
 
 func TestEarth2(t *testing.T) {
 	// p. 274
-	v, err := pp.LoadPlanet(pp.Earth, "")
+	v, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -12,12 +12,12 @@ import (
 
 func ExampleRing() {
 	// Example 45.a, p. 320
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	saturn, err := pp.LoadPlanet(pp.Saturn, "")
+	saturn, err := pp.LoadPlanet(pp.Saturn)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -39,12 +39,12 @@ func ExampleRing() {
 }
 
 func TestUB(t *testing.T) {
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	saturn, err := pp.LoadPlanet(pp.Saturn, "")
+	saturn, err := pp.LoadPlanet(pp.Saturn)
 	if err != nil {
 		fmt.Println(err)
 		return

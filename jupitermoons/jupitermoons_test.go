@@ -21,12 +21,12 @@ func ExamplePositions() {
 }
 
 func ExampleE5() {
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	j, err := pp.LoadPlanet(pp.Jupiter, "")
+	j, err := pp.LoadPlanet(pp.Jupiter)
 	if err != nil {
 		fmt.Println(err)
 		return

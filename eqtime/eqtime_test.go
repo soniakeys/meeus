@@ -11,7 +11,7 @@ import (
 
 func ExampleE() {
 	// Example 28.a, p. 184
-	earth, err := pp.LoadPlanet(pp.Earth, "")
+	earth, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -12,7 +12,7 @@ import (
 
 func ExampleEphemeris() {
 	j := 2448908.50068
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return

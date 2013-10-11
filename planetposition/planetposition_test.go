@@ -15,7 +15,7 @@ import (
 func ExampleV87Planet_Position2000() {
 	// Mars 1899 spherical data from vsop87.chk.
 	jd := 2415020.0
-	p, err := pp.LoadPlanet(pp.Mars, "")
+	p, err := pp.LoadPlanet(pp.Mars)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -23,17 +23,17 @@ func ExampleV87Planet_Position2000() {
 	l, b, r := p.Position2000(jd)
 	fmt.Printf("L = %.10f rad\n", l)
 	fmt.Printf("B = %.10f rad\n", b)
-	fmt.Printf("R = %.10f au\n", r)
+	fmt.Printf("R = %.10f AU\n", r)
 	// Output:
 	// L = 5.0185792656 rad
 	// B = -0.0274073500 rad
-	// R = 1.4218777718 au
+	// R = 1.4218777718 AU
 }
 
 func ExampleV87Planet_Position() {
 	// Example 32.a, p. 219
 	jd := julian.CalendarGregorianToJD(1992, 12, 20)
-	p, err := pp.LoadPlanet(pp.Venus, "")
+	p, err := pp.LoadPlanet(pp.Venus)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -44,12 +44,6 @@ func ExampleV87Planet_Position() {
 	fmt.Printf("B = %s\n",
 		base.DecSymAdd(fmt.Sprintf("%+.5f", b*180/math.Pi), '°'))
 	fmt.Printf("R = %.6f AU\n", r)
-	// Meeus results:
-	// L = +26°.11428
-	// B = -2°.62070
-	// R = 0.724603 AU
-	// Answers below seem close enough.
-
 	// Output:
 	// L = +26°.11412
 	// B = -2°.62060

@@ -12,7 +12,7 @@ import (
 
 func ExamplePosition() {
 	// Example 26.a, p. 172.
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -35,7 +35,7 @@ func ExamplePosition() {
 func ExamplePositionJ2000() {
 	// Example 26.b, p. 175 but for output see complete VSOP87
 	// results given on p. 176.
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -52,7 +52,7 @@ func ExamplePositionJ2000() {
 
 func ExamplePositionB1950() {
 	// Example 26.b, p. 175
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -69,7 +69,7 @@ func ExamplePositionB1950() {
 
 func ExamplePositionEquinox() {
 	// Example 26.b, p. 175
-	e, err := pp.LoadPlanet(pp.Earth, "")
+	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
 		fmt.Println(err)
 		return
