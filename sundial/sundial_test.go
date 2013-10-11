@@ -10,7 +10,7 @@ import (
 func ExampleGeneral_a() {
 	// Example 58.a, p. 404.
 	const p = math.Pi / 180
-	ls, c, _, ψ := sundial.General(40*p, 70*p, 50*p, 1)
+	ls, c, _, ψ := sundial.General(40*p, 70*p, 1, 50*p)
 	fmt.Printf("Hours:  %d", ls[0].Hour)
 	for _, l := range ls[1:] {
 		fmt.Printf(", %d", l.Hour)
@@ -41,7 +41,7 @@ func ExampleGeneral_a() {
 func ExampleGeneral_b() {
 	// Example 58.b, p. 404.
 	const p = math.Pi / 180
-	ls, c, _, ψ := sundial.General(-35*p, 160*p, 90*p, 1)
+	ls, c, _, ψ := sundial.General(-35*p, 160*p, 1, 90*p)
 	for _, l := range ls {
 		if l.Hour == 12 {
 			fmt.Printf("%d:  x = %+.4f  y = %+.4f\n",
@@ -66,7 +66,7 @@ func ExampleGeneral_b() {
 func ExampleGeneral_c() {
 	// Example 58.c, p. 405.
 	const p = math.Pi / 180
-	ls, _, _, _ := sundial.General(40*p, 160*p, 75*p, 1)
+	ls, _, _, _ := sundial.General(40*p, 160*p, 1, 75*p)
 	fmt.Printf("Hours:  %d", ls[0].Hour)
 	for _, l := range ls[1:] {
 		fmt.Printf(", %d", l.Hour)
