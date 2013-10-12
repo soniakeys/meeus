@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/soniakeys/meeus/elementplanet"
+	"github.com/soniakeys/meeus/planetelements"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/node"
 	"github.com/soniakeys/meeus/perihelion"
@@ -65,8 +65,8 @@ func ExampleParabolicDescending() {
 
 func ExampleEllipticAscending_venus() {
 	// Example 39.c, p. 278
-	var k elementplanet.Elements
-	elementplanet.Mean(elementplanet.Venus,
+	var k planetelements.Elements
+	planetelements.Mean(planetelements.Venus,
 		julian.CalendarGregorianToJD(1979, 1, 1), &k)
 	t, _ := node.EllipticAscending(k.Axis, k.Ecc,
 		k.Peri-k.Node,
