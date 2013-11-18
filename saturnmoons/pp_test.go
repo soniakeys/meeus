@@ -1,3 +1,5 @@
+// +build !nopp
+
 package saturnmoons_test
 
 import (

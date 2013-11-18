@@ -1,6 +1,8 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
+// +build !nopp
+
 package planetposition_test
 
 import (

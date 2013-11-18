@@ -1,3 +1,5 @@
+// +build !nopp
+
 package moon_test
 
 import (

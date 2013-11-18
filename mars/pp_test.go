@@ -1,3 +1,5 @@
+// +build !nopp
+
 package mars_test
 
 import (

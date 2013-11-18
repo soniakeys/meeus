@@ -1,3 +1,5 @@
+// +build !nopp
+
 package saturnring_test
 
 import (

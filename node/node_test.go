@@ -5,10 +5,10 @@ import (
 	"math"
 	"time"
 
-	"github.com/soniakeys/meeus/planetelements"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/node"
 	"github.com/soniakeys/meeus/perihelion"
+	"github.com/soniakeys/meeus/planetelements"
 )
 
 func ExampleEllipticAscending() {
