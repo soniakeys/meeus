@@ -1,9 +1,10 @@
-v0.2 2013-10-11
+## v0.2 2013-10-11
+
 * All chapters now implemented.
 
 Upcoming work will change the API a bit.
 
-v0.1 2013-09-29
+## v0.1 2013-09-29
 
 Tag added with the library starting to get some attention.  Existing code is
 pretty good shape but there is some work remaining.  Here's what I can think
