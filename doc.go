@@ -3,6 +3,8 @@
 // It follows the second edition, copyright 1998, with corrections as of
 // August 10, 2009.
 //
+// It requires Go 1.1 or later.
+//
 // Library Goals
 //
 // Jean Meeus's book has long been respected as a broad-reaching source of
