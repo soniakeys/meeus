@@ -1,7 +1,9 @@
 Meeus
 =====
 
-[GoDoc](http://godoc.org/github.com/soniakeys/meeus)
+[![GoDoc](https://godoc.org/github.com/garyburd/gddo?status.png)](http://godoc.org/github.com/soniakeys/meeus)
+
+[![Go Walker](http://gowalker.org/api/v1/badge)](http://gowalker.org/github.com/soniakeys/meeus)
 
 Selected algorithms from the book "Astronomical Algorithms"
 by Jean Meeus, following the second edition, copyright 1998,
@@ -13,6 +15,3 @@ there iss a package "base" with additional functions that may not be described
 in the book but are useful with multiple other packages.
 
 See meeus package documentation for a chapter title cross-reference.
-
-View package documentation online at
-[GoDoc](http://godoc.org/github.com/soniakeys/meeus).
