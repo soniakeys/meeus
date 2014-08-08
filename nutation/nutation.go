@@ -99,7 +99,7 @@ func MeanObliquityLaskar(jde float64) float64 {
 		-249.67/3600*(math.Pi/180),
 		-39.05/3600*(math.Pi/180),
 		7.12/3600*(math.Pi/180),
-		2787/3600*(math.Pi/180),
+		27.87/3600*(math.Pi/180),
 		5.79/3600*(math.Pi/180),
 		2.45/3600*(math.Pi/180))
 }
