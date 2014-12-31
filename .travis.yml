@@ -1,5 +1,7 @@
 language: go
 
-go: go1.1.2
+go:
+  - go1.1.2
+  - release
 
 script: go test -tags nopp ./...
