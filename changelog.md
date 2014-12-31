@@ -1,3 +1,19 @@
+## v1 31 Dec 2014
+
+Status:  No changes in the last year!  89 GitHub stars currently, otherwise
+little feedback.  Some feedback suggested changes to improve algorithms or
+wrap existing functions in a more convenient API.  I declined these in the
+interest of keeping this library as close as practical to the algorithms in
+the book.  Otherwise, bug reports or other issues are always welcome.
+
+There were a few minor changes just after the v0.2 tag.  Also I do have a
+rewrite of of the angle formatting stuff ready to merge now.  This changes
+the angle formatting API so it's time for a new tag.  The v1 tag will reference
+this code that has been stable for the last year, including the minor changes
+just after v0.2, but before API breaking changes to the angle formatting.
+
+Happy New Year!
+
 ## v0.2 2013-10-11
 
 * All chapters now implemented.
