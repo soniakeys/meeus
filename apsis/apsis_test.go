@@ -24,7 +24,7 @@ func ExampleApogee() {
 	fmt.Printf("JDE = %.4f\n", j)
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
-	fmt.Printf("%d %s %d, at %.62d TD\n", y, time.Month(m), int(d),
+	fmt.Printf("%d %s %d, at %m TD\n", y, time.Month(m), int(d),
 		base.NewFmtTime(f*24*3600))
 	// Output:
 	// JDE = 2447442.3543

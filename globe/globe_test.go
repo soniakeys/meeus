@@ -66,8 +66,7 @@ func ExampleEllipsoid_Distance() {
 	cos := globe.ApproxAngularDistance(c1, c2)
 	fmt.Printf("cos d = %.6f\n", cos)
 	d := math.Acos(cos)
-	fmt.Println("    d =",
-		base.DecSymAdd(fmt.Sprintf("%.5f", d*180/math.Pi), '°'))
+	fmt.Printf("    d = %.5j\n", base.NewFmtAngle(d))
 	fmt.Printf("    s = %.0f km\n", globe.ApproxLinearDistance(d))
 	// Output:
 	// 6181.63 km

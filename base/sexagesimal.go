@@ -5,58 +5,88 @@ package base
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 	"unicode/utf8"
 )
 
-// DecSymAdd adds a symbol representing units to a formatted decimal number.
-// The symbol is added just before the decimal point.
-func DecSymAdd(d string, sym rune) string {
-	i := strings.IndexRune(d, '.')
-	if i < 0 {
-		return d + string(sym) // no decimal point, append symbol
+const (
+	secAppend    = 's'
+	secCombine   = 'c'
+	secInsert    = 'd'
+	minAppend    = 'm'
+	minCombine   = 'n'
+	minInsert    = 'o'
+	hrDegAppend  = 'h'
+	hrDegCombine = 'i'
+	hrDegInsert  = 'j'
+)
+
+// InsertUnit inserts a unit indicator into a formatted decimal number.
+//
+// The indicator is inserted just before the decimal separator if one is
+// present, or at the end of the number otherwise.
+//
+// The package variable DecSep is used to identify the decimal separator.
+// If DecSep is non-empty and occurrs in d, unit is added just before the
+// occurrence.  Otherwise unit is appended to the end of d.
+//
+// See also CombineUnit, StripUnit.
+func InsertUnit(d, unit string) string {
+	if DecSep == "" {
+		return d + unit // DecSep empty, append unit
 	}
-	// insert c before decimal point
-	return d[:i] + string(sym) + d[i:]
+	i := strings.Index(d, DecSep)
+	if i < 0 {
+		return d + unit // no DecSep found, append unit
+	}
+	// insert unit before DecSep
+	return d[:i] + unit + d[i:]
 }
 
-// DecSymCombine adds a symbol like DecSymAdd but replaces the decimal point
-// with the Unicode combining dot below (u+0323) so that it will combine
-// with the added symbol.
-func DecSymCombine(d string, sym rune) string {
-	i := strings.IndexRune(d, '.')
-	if i < 0 {
-		return d + string(sym) // no decimal point, append symbol
+// CombineUnit inserts a unit indicator into a formatted decimal number,
+// combining it if possible with the decimal separator.
+//
+// The package variable DecSep is used to identify the decimal separator.
+// If DecSep is non-empty and occurrs in d, the occurrence is replaced with
+// argument 'unit' and package variable DecCombine.  Otherwise unit is
+// appended to the end of d.
+//
+// See also InsertUnit, StripUnit.
+func CombineUnit(d, unit string) string {
+	if DecSep == "" {
+		return d + unit // DecSep empty, append unit
 	}
-	// insert c, replace decimal point with combining dot below
-	return d[:i] + string(sym) + "̣" + d[i+1:]
+	i := strings.Index(d, DecSep)
+	if i < 0 {
+		return d + unit // no DecSep found, append unit
+	}
+	// insert unit, replace DecSep occurrence with DecCombine
+	return d[:i] + unit + string(DecCombine) + d[i+len(DecSep):]
 }
 
-// DecSymStrip reverses the action of DecSymAdd or DecSymCombine,
-// removing the specified unit symbol and restoring a combining dot
-// to an ordinary decimal point.
-func DecSymStrip(d string, sym rune) string {
-	sl := utf8.RuneLen(sym)
-	if i := strings.IndexRune(d, sym); i >= 0 {
-		if i < len(d)-sl && d[i+sl] == '.' {
-			// ordinary decimal point following unit
-			return d[:i] + d[i+sl:]
-		}
-		if i < len(d)-sl-1 && d[i+sl:i+sl+2] == "̣" {
-			// combining dot below following unit
-			return d[:i] + "." + d[i+sl+2:]
-		}
-		if i+sl == len(d) {
-			// no decimal point or combining dot found, but string ends
-			// with sym.  just remove the symbol.
-			return d[:i]
-		}
+// StripUnit reverses the action of InsertUnit or CombineUnit,
+// removing the specified unit indicator and restoring a following
+// DecCombine to DecSep.
+func StripUnit(d, unit string) string {
+	xu := strings.Index(d, unit)
+	if xu < 0 {
+		return d
 	}
-	// otherwise don't mess with it
-	return d
+	xd := xu + len(unit)
+	if xd == len(d) {
+		return d[:xu] // string ends with unit.  just remove the unit.
+	}
+	if strings.HasPrefix(d[xd:], DecSep) {
+		return d[:xu] + d[xd:] // remove unit, retain DecSep
+	}
+	if r, sz := utf8.DecodeRuneInString(d[xd:]); r == DecCombine {
+		// replace unit and DecCombine with DecSep
+		return d[:xu] + DecSep + d[xd+sz:]
+	}
+	return d // otherwise don't mess with it
 }
 
 // DMSToDeg converts from parsed sexagesimal angle components to decimal
@@ -72,116 +102,55 @@ func DMSToDeg(neg bool, d, m int, s float64) float64 {
 // UnitSymbols holds symbols for formatting FmtAngle, FmtHourAngle, FmtRA,
 // and FmtTime types.
 type UnitSymbols struct {
-	First, M, S rune
+	HrDeg, Min, Sec string
 }
 
-// DMSRunes specifies symbols use when formatting angles.  You can change
-// these, perhaps to ASCII 'd', 'm', and 's', as needed.
-var DMSRunes = UnitSymbols{'°', '′', '″'}
-
-// HMSRunes specifies symbols use when formatting hour angles, right
-// ascensions, and times.
+// DMSUnits, HMSUnits, and DecSep specify unit and decimal indicators.
 //
-// You can change these, perhaps to ASCII 'h', 'm', and 's', as needed.
-var HMSRunes = UnitSymbols{'ʰ', 'ᵐ', 'ˢ'}
-
-// WidthError is an explanatory error set when a formatting operation outputs
-// all stars, indicating a format overflow error.
-type WidthError string
-
-// Error implements the built in error interface.
-func (e WidthError) Error() string {
-	return string(e)
-}
-
-// Predefined WidthErrors.  The custom formatters for FmtAngle, FmtHourAngle,
-// FmtRA, and FmtTime emit all asterisks, "*************", in these overflow
-// cases.  The exact error is stored in the WidthError field of the type.
+// You can change these as needed, for example to ASCII symbols.
+// It is valid to use multiple character strings for DMSUnits and HMSUnits.
+// It is valid to use empty strings with a fixed width format.
+// DecCombine should be a rune of Unicode category "Mn" (mark, nonspacing).
 var (
-	WidthErrorInvalidPrecision = WidthError("Invalid precision")
-	WidthErrorLossOfPrecision  = WidthError("Possible loss of precision")
-	WidthErrorDegreeOverflow   = WidthError("Degrees overflow width")
-	WidthErrorHourOverflow     = WidthError("Hours overflow width")
-	WidthErrorInfP             = WidthError("+Inf")
-	WidthErrorInfN             = WidthError("-Inf")
-	WidthErrorNaN              = WidthError("NaN")
+	DMSUnits   = UnitSymbols{"°", "′", "″"}
+	HMSUnits   = UnitSymbols{"ʰ", "ᵐ", "ˢ"}
+	DecSep     = "."
+	DecCombine = '\u0323'
 )
 
-// Split60 splits a decimal segment from a floating point number that
-// will be formatted in some sexagesimal notation.
-//
-// It is a low-level function used internally but exported to support
-// formatting cases not handled by the custom formatters of the FmtAngle,
-// FmtHourAngle, FmtRA, and FmtTime types.
-//
-// Argument x is the number to split and prec specifies the number digits
-// to place past the decimal point in the decimal segment.
-//
-// Return value neg will be true if x is < 0. x60 and seg are then returned as
-// non-negative numbers.  Seg will be a formatted string in the range [0,60)
-// and the relation
-//	x60 * 60 + seg = abs(x)
-// will hold.
-//
-// Seg is returned as a string because x is rounded specifically for the
-// the specified precision.  Do not convert seg to a floating point number and
-// do further operations on it or you risk seeing results like 23′60″.
-// Seg will always have at least 1 digit to the left of the decimal point.
-// Set argument pad to true to 0-pad seg to two digits to the left.
-//
-// Maximum allowed precision is 15, but that is only valid for angles smaller
-// than a few arc seconds.  Larger angles will give a "Possible loss of
-// precision" error.  The maximum precision before getting a loss of precision
-// error decreases as the angle magnitude increases.  At one degree you can
-// get 12 digits of precision.  At 360 degrees you get 9.
-func Split60(x float64, prec int, pad bool) (neg bool, x60 int64, seg string, err error) {
+// Predefined errors indicate that a value could not be formatted.
+// Custom formatters of FmtAngle, FmtHourAngle, FmtRA, and FmtTime types
+// may store these in the Err field of the value being formatted.
+var (
+	ErrLossOfPrecision = errors.New("Loss of precision")
+	ErrDegreeOverflow  = errors.New("Degrees overflow width")
+	ErrHourOverflow    = errors.New("Hours overflow width")
+	ErrPosInf          = errors.New("+Inf")
+	ErrNegInf          = errors.New("-Inf")
+	ErrNaN             = errors.New("NaN")
+)
 
-	switch {
-	case math.IsNaN(x):
-		err = WidthErrorNaN
-	case !math.IsInf(x, 0):
-		goto P
-	case math.IsInf(x, 1):
-		err = WidthErrorInfP
-	default:
-		err = WidthErrorInfN
-	}
-	return
-P:
-	// limit of 15 set by max power of 10 that is exactly representable
-	// as a float64
-	if prec < 0 || prec > 15 {
-		err = WidthErrorInvalidPrecision
-		return
-	}
-	if x < 0 {
-		x = -x
-		neg = true
-	}
-	// precision factor, known to be exact
-	pf := math.Pow(10, float64(prec))
-	xs := x * pf // scale to precision
+var (
+	tenf = [16]float64{1e0, 1e1, 1e2, 1e3, 1e4, 1e5,
+		1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15}
+	teni = [16]int64{1e0, 1e1, 1e2, 1e3, 1e4, 1e5,
+		1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15}
+)
 
-	// check that we can represent xs exactly
-	i := int64(xs + .5) // round
-	if i > 1<<52 {
-		err = WidthErrorLossOfPrecision
-		return
+// sig verifies and returns significant digits of a number at a precision.
+//
+// x must be >= 0.  prec must be 0..15.
+//
+// the digits are returned as xs = int64(x * 10**prec + .5), as long as
+// the result xs is small enough that all digits are significant given
+// float64 representation.
+// if xs does not represent a fully significant result -1 is returned.
+func sig(x float64, prec int) int64 {
+	xs := x*tenf[prec] + .5
+	if !(xs <= 1<<52) { // 52 mantissa bits in float64
+		return -1
 	}
-	// compute final return values
-	p60 := 60 * int64(pf)
-	x60 = i / p60
-	// digits of segment, scaled to precision
-	digits := prec + 1
-	if pad {
-		digits++
-	}
-	seg = fmt.Sprintf("%0*d", digits, i%p60)
-	if prec > 0 {
-		split := len(seg) - prec
-		seg = seg[:split] + "." + seg[split:]
-	}
-	return
+	return int64(xs)
 }
 
 // Angle represents a general purpose angle.
@@ -205,8 +174,8 @@ func (a Angle) Deg() float64 { return float64(a) * 180 / math.Pi }
 
 // FmtAngle is represents a formattable angle.
 type FmtAngle struct {
-	Angle            // embedded Angle with Rad method
-	WidthError error // valid after format
+	Angle
+	Err error // set each time the value is formatted.
 }
 
 // NewFmtAngle constructs a new FmtAngle from a float64 in radians.
@@ -223,10 +192,15 @@ func (a *FmtAngle) SetDMS(neg bool, d, m int, s float64) *FmtAngle {
 	return a
 }
 
-// Format implements fmt.Formatter, formatting to degrees, minutes,
-// and seconds.
+// Format implements fmt.Formatter
 func (a *FmtAngle) Format(f fmt.State, c rune) {
-	a.WidthError = formatSex(a.Rad()*3600*180/math.Pi, fsAngle, nil, f, c)
+	s := state{
+		State:  f,
+		verb:   c,
+		hrDeg:  a.Deg(),
+		caller: fsAngle,
+	}
+	a.Err = s.writeFormatted()
 }
 
 // String implements fmt.Stringer
@@ -256,8 +230,8 @@ func (a HourAngle) Hour() float64 { return float64(a) * 12 / math.Pi }
 
 // FmtHourAngle represents a formattable angle hour.
 type FmtHourAngle struct {
-	HourAngle        // embedded HourAngle with Rad method
-	WidthError error // valid after format
+	HourAngle
+	Err error // set each time the value is formatted.
 }
 
 // NewFmtHourAngle constructs a new FmtHourAngle from a float64 in radians.
@@ -274,10 +248,15 @@ func (ha *FmtHourAngle) SetHMS(neg bool, h, m int, s float64) *FmtHourAngle {
 	return ha
 }
 
-// Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
+// Format implements fmt.Formatter
 func (ha *FmtHourAngle) Format(f fmt.State, c rune) {
-	ha.WidthError =
-		formatSex(ha.Rad()*3600*180/math.Pi/15, fsHourAngle, nil, f, c)
+	s := &state{
+		State:  f,
+		verb:   c,
+		hrDeg:  ha.Hour(),
+		caller: fsHourAngle,
+	}
+	ha.Err = s.writeFormatted()
 }
 
 // String implements fmt.Stringer
@@ -309,19 +288,15 @@ func (ra RA) Hour() float64 { return float64(ra) * 12 / math.Pi }
 
 // FmtRA represents a formattable right ascension.
 type FmtRA struct {
-	RA               // embedded RA with Rad method
-	WidthError error // valid after format
+	RA
+	Err error // set each time the value is formatted.
 }
 
 // NewFmtRA constructs a new FmtRA from a float64 in radians.
 //
 // The value is wrapped to the range [0,24) hours.
 func NewFmtRA(rad float64) *FmtRA {
-	rad = math.Mod(rad, 2*math.Pi)
-	if rad < 0 {
-		rad += 2 * math.Pi
-	}
-	return &FmtRA{RA: RA(rad)}
+	return &FmtRA{RA: RA(PMod(rad, 2*math.Pi))}
 }
 
 // SetHMS sets the value of RA from components hour, minute, and second.
@@ -336,12 +311,14 @@ func (ra *FmtRA) SetHMS(h, m int, s float64) *FmtRA {
 
 // Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
 func (ra *FmtRA) Format(f fmt.State, c rune) {
-	// repeat mod in case Rad was directly set to something out of range
-	decimalHours := math.Mod(ra.Rad()*180/math.Pi/15, 24)
-	if decimalHours < 0 {
-		decimalHours += 24
+	s := &state{
+		State: f,
+		verb:  c,
+		// PMod in case ra.RA was directly set to something out of range
+		hrDeg:  PMod(ra.Hour(), 24),
+		caller: fsRA,
 	}
-	ra.WidthError = formatSex(decimalHours*3600, fsRA, nil, f, c)
+	ra.Err = s.writeFormatted()
 }
 
 // String implements fmt.Stringer
@@ -383,8 +360,8 @@ func (t Time) Rad() float64 { return float64(t) * math.Pi / 12 / 3600 }
 
 // FmtTime represents a formattable duration or relative time.
 type FmtTime struct {
-	Time             // embedded Time with Sec method
-	WidthError error // valid after format
+	Time
+	Err error // set each time the value is formatted.
 }
 
 // NewFmtTime constructs a new FmtTime from a float64 in seconds.
@@ -403,7 +380,13 @@ func (t *FmtTime) SetHMS(neg bool, h, m int, s float64) *FmtTime {
 
 // Format implements fmt.Formatter, formatting to hours, minutes, and seconds.
 func (t *FmtTime) Format(f fmt.State, c rune) {
-	t.WidthError = formatSex(t.Sec(), fsTime, nil, f, c)
+	s := &state{
+		State:  f,
+		verb:   c,
+		hrDeg:  t.Hour(),
+		caller: fsTime,
+	}
+	t.Err = s.writeFormatted()
 }
 
 // String implements fmt.Stringer
@@ -418,123 +401,246 @@ const (
 	fsTime
 )
 
-func formatSex(x float64, caller int, mock *string, f fmt.State, c rune) error {
-	// valiate verb
-	switch c {
-	case 's', 'd', 'c', 'v', 'x':
+type state struct {
+	fmt.State         // 'f' in fmt.Formatter doc.  kind of handy to embed this.
+	verb      rune    // 'c' in fmt.Formatter doc
+	hrDeg     float64 // input, value to format
+	prec      int     // f.Precision with a default of 0
+	caller    int     // use fs constants
+	units     UnitSymbols
+}
+
+func (s *state) writeFormatted() error {
+	// valiate verb, pick formatting method in the process
+	var f func() (string, error)
+	switch s.verb {
+	case 'v':
+		fallthrough
+	case secAppend, secCombine, secInsert:
+		f = s.decimalSec // it's a method value! see the spec.
+	case minAppend, minCombine, minInsert:
+		f = s.decimalMin
+	case hrDegAppend, hrDegCombine, hrDegInsert:
+		f = s.decimalHrDeg
 	default:
-		fmt.Fprintf(f, "Invalid verb: %%%c", c)
-		return nil // not an overflow error
+		fmt.Fprintf(s, "%%!%c(BADVERB)", s.verb)
+		return nil // not a value error
 	}
-	// declare some variables ahead of goto
+
+	// validate precision, storing it in the receiver.
+	// 0 is our default if it's not specified.
+	// (the docs don't define what prec is returned for the !ok case)
+	var ok bool
+	switch s.prec, ok = s.Precision(); {
+	case !ok:
+		s.prec = 0
+	case s.prec > 15:
+		// limit of 15 set by max power of 10 that is exactly representable
+		// as a float64.  later code depends on prec being in this range.
+		fmt.Fprintf(s, "%%!(BADPREC %d)", s.prec)
+		return nil // not a value error
+	}
+
+	// format validated, now preliminary checks on value:
 	var (
-		r          string // formatted result, ultimately
-		err        error
-		x60        int64
-		degHr, min int64
-		s1         string
-		sexRune    UnitSymbols
-		wid1       int
-		wid1Spec   bool
+		r   string
+		err error
 	)
-	neg := x < 0
-	if neg {
-		x = -x
-	}
-	// determine unit symbols
 	switch {
-	case c == 'x':
-		sexRune = UnitSymbols{' ', ' ', ' '}
-	case caller == fsAngle:
-		sexRune = DMSRunes
+	case math.IsNaN(s.hrDeg):
+		err = ErrNaN
+		goto valErr
+	case !math.IsInf(s.hrDeg, 0): // normal path
+	case math.IsInf(s.hrDeg, 1):
+		err = ErrPosInf
+		goto valErr
 	default:
-		sexRune = HMSRunes
+		err = ErrNegInf
+		goto valErr
 	}
-	// get meaningful precision
-	prec, ok := f.Precision()
-	if !ok {
-		prec = 0
+	// okay so far.  a little more set up,
+	switch {
+	case s.caller == fsAngle:
+		s.units = DMSUnits
+	default:
+		s.units = HMSUnits
 	}
-	if prec == 64 {
-		degHr = int64(.5 + x/3600)
-	} else {
-		if prec == 62 {
-			x60 = int64(.5 + x/60)
+	// and then call the formatting method picked above
+	if r, err = f(); err == nil {
+		s.Write([]byte(r))
+		return nil // normal return
+	}
+
+	// If there was a value error, we output all '*'s
+	// but we need a length.  The strategy here is to replace the invalid
+	// value with something valid and call format again to get a mock
+	// result, then use len(mock) for the number of '*'s to output.
+valErr:
+	s.hrDeg = 0
+	width := 10 // default, defensive in case f somehow fails on 0.
+	if mock, err2 := f(); err2 == nil {
+		width = utf8.RuneCountInString(mock)
+		if strings.IndexRune(mock, DecCombine) >= 0 {
+			width--
+		}
+	}
+	s.Write(bytes.Repeat([]byte{'*'}, width))
+	return err
+}
+
+func (s *state) decimalHrDeg() (string, error) {
+	i := sig(math.Abs(s.hrDeg), s.prec)
+	if i < 0 {
+		return "", ErrLossOfPrecision
+	}
+	if s.hrDeg < 0 {
+		i = -i
+	}
+	var r, f string
+	if wid, widSpec := s.Width(); !widSpec {
+		if s.Flag('+') {
+			f = "%+0*d"
+		} else if s.Flag(' ') { // sign space if requested
+			f = "% 0*d"
 		} else {
-			// format seconds into r
-			_, x60, r, err = Split60(x, prec, f.Flag('0'))
-			if err != nil {
-				goto Overflow
-			}
-			// add seconds unit symbol
-			switch c {
-			case 's', 'v':
-				r += string(sexRune.S)
-			case 'd':
-				r = DecSymAdd(r, sexRune.S)
-			case 'c':
-				r = DecSymCombine(r, sexRune.S)
-			}
+			f = "%0*d"
 		}
-		degHr = x60 / 60
-		min = x60 % 60
-		// format minutes into r
-		if f.Flag('#') || x60 > 0 {
-			if f.Flag('0') {
-				r = fmt.Sprintf("%02d%c%s", min, sexRune.M, r)
-			} else {
-				r = fmt.Sprintf("%d%c%s", min, sexRune.M, r)
-			}
-		}
-	}
-	s1 = strconv.FormatInt(degHr, 10)
-	wid1, wid1Spec = f.Width()
-	if wid1Spec {
-		// simple rule applies in all cases where width is specified:
-		if len(s1) > wid1 {
-			if caller == fsAngle {
-				err = WidthErrorDegreeOverflow
-			} else {
-				err = WidthErrorHourOverflow
-			}
-			goto Overflow
-		}
-	}
-	// format degrees or hours into r
-	if f.Flag('#') || degHr > 0 {
-		if f.Flag('0') {
-			r = fmt.Sprintf("%0*s%c%s", wid1, s1, sexRune.First, r)
+		// +1 forces at least one place left of decimal point
+		r = fmt.Sprintf(f, s.prec+1, i)
+	} else {
+		// fixed width a little more involved
+		if s.Flag('+') {
+			f = "%+"
 		} else {
-			r = fmt.Sprintf("%s%c%s", s1, sexRune.First, r)
+			f = "% " // sign space forced with fixed width
+		}
+		if s.Flag('0') {
+			f += "0*d"
+		} else {
+			f += "*d"
+		}
+		wf := s.prec + wid + 1 // +1 here is required space for sign
+		r := fmt.Sprintf(f, wf, i)
+		if len(r) > wf {
+			if s.caller == fsAngle {
+				return "", ErrDegreeOverflow
+			}
+			return "", ErrHourOverflow
 		}
 	}
-	// add leading sign
-	if caller != fsRA {
-		switch {
-		case neg:
-			r = "-" + r
-		case f.Flag('+'):
-			r = "+" + r
-		case f.Flag(' '):
-			r = " " + r
+	if s.prec > 0 {
+		split := len(r) - s.prec
+		r = r[:split] + DecSep + r[split:]
+	}
+	switch s.verb {
+	case hrDegAppend:
+		r += string(s.units.HrDeg)
+	case hrDegCombine:
+		r = CombineUnit(r, s.units.HrDeg)
+	case hrDegInsert:
+		r = InsertUnit(r, s.units.HrDeg)
+	}
+	return r, nil
+}
+
+func (s *state) decimalMin() (string, error) {
+	i := sig(math.Abs(s.hrDeg)*60, s.prec) // hrDeg*60 gets minutes
+	if i < 0 {
+		return "", ErrLossOfPrecision
+	}
+	p60 := 60 * teni[s.prec]
+	min := i / p60
+	sec := i % p60
+
+	r, minEl, err := s.firstSeg(min)
+	if err != nil {
+		return "", err
+	}
+	return r + s.lastSeg(sec, s.units.Min, minEl), nil
+}
+
+func (s *state) firstSeg(x int64) (r string, elided bool, err error) {
+	switch wid, widSpec := s.Width(); {
+	case widSpec:
+		f := "%*d"
+		if s.Flag('0') {
+			f = "%0*d"
+		}
+		r = fmt.Sprintf(f, wid, x)
+		if len(r) > wid {
+			if s.caller == fsAngle {
+				return "", false, ErrDegreeOverflow
+			}
+			return "", false, ErrHourOverflow
+		}
+		r += s.units.HrDeg
+	case x > 0 || s.Flag('#'):
+		r = fmt.Sprintf("%d%s", x, s.units.HrDeg)
+	default:
+		elided = true
+	}
+	switch {
+	case s.hrDeg < 0:
+		r = "-" + r
+	case s.Flag('+'):
+		r = "+" + r
+	case s.Flag(' '):
+		r = " " + r
+	}
+	return r, elided, nil
+}
+
+func (s *state) lastSeg(sec int64, unit string, first bool) string {
+	wid := s.prec + 1
+	_, widSpec := s.Width()
+	if s.Flag('0') && (widSpec || !first) {
+		wid++
+	}
+	r := fmt.Sprintf("%0*d", wid, sec)
+	if widSpec && len(r) < s.prec+2 {
+		r = " " + r
+	}
+	if s.prec > 0 {
+		split := len(r) - s.prec
+		r = r[:split] + DecSep + r[split:]
+	}
+	switch s.verb {
+	case secCombine, minCombine:
+		return CombineUnit(r, unit)
+	case secInsert, minInsert:
+		return InsertUnit(r, unit)
+	}
+	return r + unit
+}
+
+func (s *state) decimalSec() (string, error) {
+	i := sig(math.Abs(s.hrDeg)*3600, s.prec) // hrDeg*3600 gets seconds
+	if i < 0 {
+		return "", ErrLossOfPrecision
+	}
+	p60 := 60 * teni[s.prec]
+	sec := i % p60
+	i /= p60
+	min := i % 60
+	hrDeg := i / 60
+	r, firstEl, err := s.firstSeg(hrDeg)
+	if err != nil {
+		return "", err
+	}
+	f := "%s%d%s"
+	minEl := false
+	if s.Flag('0') && !firstEl {
+		f = "%s%02d%s"
+	} else {
+		switch _, widSpec := s.Width(); {
+		case widSpec:
+			f = "%s%2d%s"
+		case firstEl && min == 0:
+			minEl = true
+			goto last
 		}
 	}
-	if mock == nil {
-		f.Write([]byte(r))
-	} else {
-		*mock = r
-	}
-	return nil
-Overflow:
-	err1 := err
-	var width int
-	if mock != nil { // detect recursive loop
-		width = 10
-	} else {
-		var valid string
-		formatSex(0, caller, &valid, f, c)
-		width = utf8.RuneCountInString(valid)
-	}
-	f.Write(bytes.Repeat([]byte{'*'}, width)) // emit overflow indicator
-	return err1
+	r = fmt.Sprintf(f, r, min, s.units.Min)
+last:
+	return r + s.lastSeg(sec, s.units.Sec, minEl), nil
 }

@@ -39,7 +39,7 @@ func ExamplePolyBefore948() {
 	UT := base.NewTime(false, 6, 0, 0).Sec()
 	TD := UT + ΔT
 	fmt.Printf("%+.0f seconds\n", ΔT)
-	fmt.Printf("333 February 6 at %.62s TD", base.NewFmtTime(TD))
+	fmt.Printf("333 February 6 at %m TD", base.NewFmtTime(TD))
 	// Output:
 	// +6146 seconds
 	// 333 February 6 at 7ʰ42ᵐ TD

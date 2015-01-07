@@ -3,29 +3,16 @@
 
 // Base: Functions and other definitions useful with multiple packages.
 //
-// The book Astrononomical Algorithsms begins with an unnumbered chapter
+// The book Astrononomical Algorithms (AA) begins with an unnumbered chapter
 // titled "Some Symbols and Abbreviations."  In addition to a list of symbols
 // and abbreviations are a few paragraphs introducing sexagesimal notation.
 // Chapter 1, Hints and Tips contains additional information about sexagesimal
 // numbers.  It made sense to combine these in one package.  Also here
 // are various definitions and support functions useful in multiple chapters.
 //
-// Decimal Symbols
-//
-// Described on p.6 is a convention for placing a
-// unit symbol directly above the decimal point of a decimal number.
-// This can be done with Unicode by replacing the decimal point with
-// the unit symbol and "combining dot below," u+0323.  The function
-// DecSymCombine here performs this substitution.  Of course this only
-// works to the extent that software can render the combining character.
-// For cases where rendering software fails badly, DecSymAdd is provided
-// as a compromise.  It does not use the combining dot but simply places
-// the unit symbol ahead of the decimal point.  Numbers modified with either
-// function can be returned to their original form with DecSymStrip.
-//
 // Sexagesimal types
 //
-// Not described in AA, but of great use are four types commonly expressed
+// Of great use are four types for quantities commonly expressed
 // in sexagesimal format: Angle, HourAngle, RA, and Time.
 // The underlying type of each is float64.  The unit for Angle, HourAngle,
 // and RA is radians.  The unit for Time is seconds.
@@ -41,66 +28,133 @@
 // that have pointer receivers.  There is more overhead with these types
 // than with the basic Angle, HourAngle, RA, and Time types.
 //
-// The syntax of a format specifier is
-//  %[flags][width][.precision]verb
-//
-// Verbs are s, d, c, x, and v.  The meanings are different than for
-// common Go types.  Given an Angle equivalent to 1.23 seconds,
-//  %.2s formats as 1.23″   (s for standard formatting)
-//  %.2d formats as 1″.23   (d for decimal symbol, as in DecSymAdd)
-//  %.2c formats as 1″̣23    (c for combining dot, as in DecSymCombine)
-//  %.2x formats as 123     (x for space, suppresses unit symbols and decimal point)
-//  %v formats the same as %s
-//
-// The following flags are supported:
-//  + always print leading sign
-//  ' ' (space) leave space for elided sign
-//  # display all three segments, even if 0
-//  0 pad all segments with leading zeros
-//
-// A + flag takes precedence over a ' ' (space) flag.
-// The # flag forces all formatted strings to have three numeric components,
-// an hour or degree, a minute, and a second.  Without the # flag, small vaues
-// will have zero values of hours, degrees, or minutes elided.
-// The 0 flag pads with leading zeros on minutes and seconds, and if a
-// width is specfied, leading zeros on the first segment as well.
-// For the RA type, sign formatting flags '+' and ' ' are ignored.
-//
-// Width specifies the number of digits in the most significant segment,
-// degrees or hours (not the total width of all three segments.)
-//
-// Precision specifies the number of places past the decimal point
-// of the last (seconds) segment.  There are two magic numbers for precision
-// however:  62 means to round to the nearest minute and not show seconds
-// at all.  64 means to round to the nearest degree or hour and not show
-// minutes or seconds at all.
-//
-// To ensure fixed width output, use one of the + or ' ' (space) flags,
-// use the 0 flag, and use a width.
+// Unit indicators
 //
 // The symbols used for degrees, minutes, and seconds for the FmtAngle type
-// are taken from the package variable DMSRunes.  The symbols for
+// are taken from the package variable DMSUnits.  The symbols for
 // hours, minutes, and seconds for the FmtHourAngle, FmtRA, and FmtTime
-// types are taken from HMSRunes.
+// types are taken from HMSUnits.
 //
-// Width Errors
+// Decimal unit indication
 //
-// For various types of overflow, the custom formatters emit all asterisks
-// "*************" and leave an exact error in the WidthError field of the
-// type.
+// The decimal separator, if it appears, is always in the last segment.
+// Symbols used for decimal separators are taken from package variables
+// DecSep and DecCombine.
 //
-// Precision is limited to the range [0,15].  Values outside of that range
-// will cause this overflow condition.
+// Three conventions are supported for unit indication on the decimal segment.
+// By default (with %v, for example) the unit follows the segment.
 //
-// Precision of 15 is possible only for angles less than a few arc seconds.
-// As angle values increase, fewer digits of precision are possible.  At one
-// degree, you can get 12 digits of precision, at 360 degrees, you can get 9.
-// An angle too large for the specified precision causes overflow.
+// 1°23′45.6″
 //
-// If you specifiy width, the first segment, degrees or hours, must fit in the
-// specified width.  Larger values cause overflow.
+// Described on AA p.6 is a convention for placing a unit symbol directly above
+// the decimal point of a decimal number. This sometimes can be approximated in
+// Unicode with codes of the category "Mn", for example "combining dot below"
+// u+0323.  Example (that may or may not look right*)
+//
+// 1°23′45″̣6
+//
+// For cases where software does not render this satisfactorily, an
+// alternative convention is to simply insert the unit symbol ahead of the
+// decimal separator as in
+//
+// 1°23′45″.6
+//
+//   * Footnote about combining dot.  The combining dot only looks right
+//     to the extent that software (such as fonts and browsers) can render it.
+//     See http://www.unicode.org/faq/char_combmark.html#12b for a description
+//     of the issues.  It seems that monospace fonts are more problematic.
+//     The examples above are aligned flush left to avoid godoc coding
+//     them monospace in the HTML.  For example 1°23′45″̣6 is less likely to
+//     look right.  Other contexts likely to use monospace fonts and so likely
+//     to have trouble with the combining dot are operating system shells and
+//     source code text editors.
+//
+// Format specifiers
+//
+// The syntax of a format specifier is
+//
+//    %[flags][width][.precision]verb
+//
+// The syntax is set by the Go fmt package, but this package customizes
+// the meaning of all format specifier components.
+//
+// Verbs specify one of the above decimal unit conventions and also the unit
+// of the decimal (right most) segment.  The decimal unit determines the
+// the potential number of segments.  Full sexagesimal format has three
+// segments with the decimal separator in seconds.  Decimal minutes format has
+// an hour or degrees segment, a minutes segment with the decimal separator,
+// and no seconds segment.  Decimal hour or degree format has only a single
+// decimal segment.
+//
+// This table gives the verbs for the combinations of decimal unit indication
+// and decimal segment:
+//
+//    decimal-unit indication:             following  combined  inserted
+//
+//    three segments, decimal in seconds:      %s        %c        %d
+//    two segments, decimal in minutes:        %m        %n        %o
+//    one segment, decimal in hr/degs:         %h        %i        %j
+//
+// Also %v is equivalent to %s.
+//
+// The following flags are supported:
+//  +   always print leading sign
+//  ' ' (space) leave space for elided + sign
+//  #   display all segments, even if 0
+//  0   pad displayed segments with leading zeros
+//
+// A + flag takes precedence over a ' ' (space) flag.
+//
+// The # flag forces output to have all segments, even if 0.  Without it,
+// leading zero segments are elided.  (Consider formatting coordinates with #;
+// distances and durations without.)
+//
+// The 0 flag pads with a leading zero on non-first (sexagesimal) segments.
+// If a width is specfied, the 0 flag pads with leading zeros on the first
+// (hr/deg) segment as well.
+//
+// For the RA type, sign formatting flags '+' and ' ' are ignored.
+//
+// Specifying width forces a fixed width format.  Flag '#' is implied, ' ' is
+// implied unless '+' is given, and segments are space padded unless '0' is
+// given.  The width number specifies the number of digits in the integer part
+// of the most significant segment, hours or degrees — not the total width.
+// For example you would typically use the number 2 for RA, 3 for longitude.
+// Also with fixed width consider avoiding the combining dot verbs.
+// (See note above on rendering of the combining dot.)  With fixed width
+// sexagesimal formats, the sign indicator is always the left-most column;
+// with fixed width space padded decimal hour or degree formats, the sign
+// indicator is formatted immediately in front of the number within the
+// space padded field.
+//
+// Precision specifies the number of places past the decimal separator
+// of the decimal segment.  The default is 0.  There is no variable precision
+// format.
+//
+// Errors
+//
+// A value that cannot be expressed the in the requested format represents
+// an overflow condition.  In this case, the custom formatters emit all
+// asterisks "*************" and leave a more descriptive error in the
+// Err field of the value.
+//
+// If you specifiy width, digits of the integer part of the first segment must
+// fit in the specified width.  Larger values cause overflow.
+//
+// Overflow also happens if more precision is requested than is represented
+// in the underlying float64.  In the case of an angle formatted with the
+// decimal separator in seconds, precision of 15 is possible only for angles
+// less than a few arc seconds.  As angle values increase, fewer digits of
+// precision are possible.  At one degree, you can get 12 digits of precision
+// in the seconds segment of a full sexagesimal number, at 360 degrees,
+// you can get 9.  For all formats, an angle too large for the specified
+// precision causes overflow.
 //
 // +Inf, -Inf, and NaN always cause overflow.
+//
+// Only errors related to the value being formatted are handled as overflow.
+// Errors of format specification are handled with the standard Printf
+// convention of emitting the error in the formatted result.
 //
 // Bessellian and Julian Year
 //

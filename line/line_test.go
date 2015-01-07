@@ -42,7 +42,7 @@ func ExampleTime() {
 	y, m, d := julian.JDToCalendar(jd)
 	dInt, dFrac := math.Modf(d)
 	fmt.Printf("%d %s %.4f\n", y, time.Month(m), d)
-	fmt.Printf("%d %s %d, at %.64s TD(UT)\n", y, time.Month(m), int(dInt),
+	fmt.Printf("%d %s %d, at %h TD(UT)\n", y, time.Month(m), int(dInt),
 		base.NewFmtTime(dFrac*24*3600))
 	// Output:
 	// 1994 October 1.2233
@@ -60,7 +60,7 @@ func ExampleAngle() {
 
 	n := line.Angle(rδ, dδ, rε, dε, rζ, dζ)
 	fmt.Printf("%.4f degrees\n", n*180/math.Pi)
-	fmt.Printf("%.62s\n", base.NewFmtAngle(n))
+	fmt.Printf("%m\n", base.NewFmtAngle(n))
 	// Output:
 	// 172.4830 degrees
 	// 172°29′
@@ -76,9 +76,10 @@ func ExampleError() {
 	dζ := base.NewAngle(true, 1, 56, 33.3).Rad()
 
 	ω := line.Error(rζ, dζ, rδ, dδ, rε, dε)
-	fmt.Println(base.DecSymAdd(fmt.Sprintf("%.6f", ω*180/math.Pi), '°'))
-	fmt.Printf("%.0f″\n", ω*3600*180/math.Pi)
-	fmt.Println(base.NewFmtAngle(ω))
+	e := base.NewFmtAngle(ω)
+	fmt.Printf("%.6j\n", e)
+	fmt.Printf("%.0f″\n", ω*180/math.Pi*3600)
+	fmt.Println(e)
 	// Output:
 	// 0°.089876
 	// 324″
@@ -95,7 +96,7 @@ func ExampleAngleError() {
 	dζ := base.NewAngle(true, 1, 56, 33.3).Rad()
 
 	n, ω := line.AngleError(rδ, dδ, rε, dε, rζ, dζ)
-	fmt.Printf("%.62s\n", base.NewFmtAngle(n))
+	fmt.Printf("%m\n", base.NewFmtAngle(n))
 	fmt.Println(base.NewFmtAngle(ω))
 	// Output:
 	// 7°31′

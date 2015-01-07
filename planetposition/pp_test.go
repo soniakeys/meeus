@@ -7,7 +7,6 @@ package planetposition_test
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
@@ -41,10 +40,8 @@ func ExampleV87Planet_Position() {
 		return
 	}
 	l, b, r := p.Position(jd)
-	fmt.Printf("L = %s\n",
-		base.DecSymAdd(fmt.Sprintf("%+.5f", l*180/math.Pi), '°'))
-	fmt.Printf("B = %s\n",
-		base.DecSymAdd(fmt.Sprintf("%+.5f", b*180/math.Pi), '°'))
+	fmt.Printf("L = %+.5j\n", base.NewFmtAngle(l))
+	fmt.Printf("B = %+.5j\n", base.NewFmtAngle(b))
 	fmt.Printf("R = %.6f AU\n", r)
 	// Output:
 	// L = +26°.11412

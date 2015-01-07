@@ -43,7 +43,7 @@ func ExampleMercuryWestElongation() {
 	d, f := math.Modf(df)
 	fmt.Printf("%d %s %d, at %dʰ\n", y, time.Month(m), int(d), int(f*24+.5))
 	fmt.Printf("%.4f deg\n", e*180/math.Pi)
-	fmt.Printf("%.62d\n", base.NewFmtAngle(e))
+	fmt.Printf("%m\n", base.NewFmtAngle(e))
 	// Output:
 	// 2449314.14
 	// 1993 November 22, at 15ʰ

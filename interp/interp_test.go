@@ -66,7 +66,7 @@ func ExampleLen3_Extremum() {
 	fmt.Printf("distance:  %.7f AU\n", y)
 	fmt.Printf("date:     %.4f\n", x)
 	i, frac := math.Modf(x)
-	fmt.Printf("1992 May %d, at %.64s TD",
+	fmt.Printf("1992 May %d, at %h TD",
 		int(i), base.NewFmtTime(frac*24*3600))
 	// Output:
 	// distance:  1.3812030 AU
@@ -96,7 +96,7 @@ func ExampleLen3_Zero() {
 	}
 	fmt.Printf("February %.5f\n", x)
 	i, frac := math.Modf(x)
-	fmt.Printf("February %d, at %.62s TD",
+	fmt.Printf("February %d, at %m TD",
 		int(i), base.NewFmtTime(frac*24*3600))
 	// Output:
 	// February 26.79873
@@ -171,7 +171,7 @@ func ExampleLen5_Zero() {
 	}
 	fmt.Printf("1988 January %.6f\n", z)
 	zInt, zFrac := math.Modf(z)
-	fmt.Printf("1988 January %d at %.62s TD\n", int(zInt),
+	fmt.Printf("1988 January %d at %m TD\n", int(zInt),
 		base.NewFmtTime(zFrac*24*3600))
 
 	// compare result to that from just three central values

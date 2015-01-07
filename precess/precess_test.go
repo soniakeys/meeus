@@ -91,14 +91,14 @@ func TestPosition(t *testing.T) {
 		α, δ string
 		jde  float64
 	}{
-		{"1 22 33.90", "88 46 26.18", base.BesselianYearToJDE(1900)},
-		{"3 48 16.43", "89 27 15.38", base.JulianYearToJDE(2050)},
-		{"5 53 29.17", "89 32 22.18", base.JulianYearToJDE(2100)},
+		{"1ʰ22ᵐ33.90ˢ", "88°46′26.18″", base.BesselianYearToJDE(1900)},
+		{"3ʰ48ᵐ16.43ˢ", "89°27′15.38″", base.JulianYearToJDE(2050)},
+		{"5ʰ53ᵐ29.17ˢ", "89°32′22.18″", base.JulianYearToJDE(2100)},
 	} {
 		epochTo := base.JDEToJulianYear(tc.jde)
 		precess.Position(eqFrom, eqTo, 2000.0, epochTo, mα, mδ)
-		αStr := fmt.Sprintf("%.2x", base.NewFmtRA(eqTo.RA))
-		δStr := fmt.Sprintf("%.2x", base.NewFmtAngle(eqTo.Dec))
+		αStr := fmt.Sprintf("%.2s", base.NewFmtRA(eqTo.RA))
+		δStr := fmt.Sprintf("%.2s", base.NewFmtAngle(eqTo.Dec))
 		if αStr != tc.α {
 			t.Fatal("got:", αStr, "want:", tc.α)
 		}
