@@ -69,7 +69,7 @@
 // of the API code.  Relevant "exercises" from the book are also often
 // implemented as Go examples.
 //
-// Some packages are yet incomplete.  A package is considered complete if
+// A few packages remain incomplete.  A package is considered complete if
 // it implements all major formulas and algorithms and if it implements all
 // numbered examples.  For incomplete packages, the package documentation
 // will describe the ways in which it is incomplete and typically give reasons
