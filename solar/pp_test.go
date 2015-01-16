@@ -8,10 +8,10 @@ package solar_test
 import (
 	"fmt"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/solar"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleApparentEquatorialVSOP87() {
@@ -24,8 +24,8 @@ func ExampleApparentEquatorialVSOP87() {
 	}
 	jde := julian.CalendarGregorianToJD(1992, 10, 13)
 	α, δ, _ := solar.ApparentEquatorialVSOP87(e, jde)
-	fmt.Printf("α: %.3d\n", base.NewFmtRA(α))
-	fmt.Printf("δ: %+.2d\n", base.NewFmtAngle(δ))
+	fmt.Printf("α: %.3d\n", sexa.NewFmtRA(α))
+	fmt.Printf("δ: %+.2d\n", sexa.NewFmtAngle(δ))
 	// Output:
 	// α: 13ʰ13ᵐ30ˢ.749
 	// δ: -7°47′1″.74

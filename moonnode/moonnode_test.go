@@ -5,9 +5,9 @@ import (
 	"math"
 	"time"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/moonnode"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleAscending() {
@@ -17,7 +17,7 @@ func ExampleAscending() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d, at %d TD\n", y, time.Month(m), int(d),
-		base.NewFmtTime(f*24*3600))
+		sexa.NewFmtTime(f*24*3600))
 	// Output:
 	// 2446938.76803
 	// 1987 May 23, at 6ʰ25ᵐ58ˢ TD

@@ -7,9 +7,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus/base"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/saturnring"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleRing() {
@@ -29,8 +29,8 @@ func ExampleRing() {
 	fmt.Printf("Bʹ = %.3f\n", Bʹ*180/math.Pi)
 	fmt.Printf("ΔU = %.3f\n", ΔU*180/math.Pi)
 	fmt.Printf("P  = %.3f\n", P*180/math.Pi)
-	fmt.Printf("a  = %.2d\n", base.NewFmtAngle(a))
-	fmt.Printf("b  = %.2d\n", base.NewFmtAngle(b))
+	fmt.Printf("a  = %.2d\n", sexa.NewFmtAngle(a))
+	fmt.Printf("b  = %.2d\n", sexa.NewFmtAngle(b))
 	// Output:
 	// B  = 16.442
 	// Bʹ = 14.679

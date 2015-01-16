@@ -12,6 +12,7 @@ import (
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/deltat"
 	"github.com/soniakeys/meeus/julian"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleInterp10A() {
@@ -36,10 +37,10 @@ func ExamplePoly1900to1997() {
 func ExamplePolyBefore948() {
 	// Example 10.b, p. 80.
 	ΔT := deltat.PolyBefore948(333.1)
-	UT := base.NewTime(false, 6, 0, 0).Sec()
+	UT := sexa.NewTime(false, 6, 0, 0).Sec()
 	TD := UT + ΔT
 	fmt.Printf("%+.0f seconds\n", ΔT)
-	fmt.Printf("333 February 6 at %m TD", base.NewFmtTime(TD))
+	fmt.Printf("333 February 6 at %m TD", sexa.NewFmtTime(TD))
 	// Output:
 	// +6146 seconds
 	// 333 February 6 at 7ʰ42ᵐ TD

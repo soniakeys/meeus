@@ -8,9 +8,9 @@ package planetposition_test
 import (
 	"fmt"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 	pp "github.com/soniakeys/meeus/planetposition"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleV87Planet_Position2000() {
@@ -40,8 +40,8 @@ func ExampleV87Planet_Position() {
 		return
 	}
 	l, b, r := p.Position(jd)
-	fmt.Printf("L = %+.5j\n", base.NewFmtAngle(l))
-	fmt.Printf("B = %+.5j\n", base.NewFmtAngle(b))
+	fmt.Printf("L = %+.5j\n", sexa.NewFmtAngle(l))
+	fmt.Printf("B = %+.5j\n", sexa.NewFmtAngle(b))
 	fmt.Printf("R = %.6f AU\n", r)
 	// Output:
 	// L = +26°.11412

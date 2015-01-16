@@ -8,9 +8,9 @@ import (
 	"math"
 	"time"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/line"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleTime() {
@@ -43,7 +43,7 @@ func ExampleTime() {
 	dInt, dFrac := math.Modf(d)
 	fmt.Printf("%d %s %.4f\n", y, time.Month(m), d)
 	fmt.Printf("%d %s %d, at %h TD(UT)\n", y, time.Month(m), int(dInt),
-		base.NewFmtTime(dFrac*24*3600))
+		sexa.NewFmtTime(dFrac*24*3600))
 	// Output:
 	// 1994 October 1.2233
 	// 1994 October 1, at 5ʰ TD(UT)
@@ -51,16 +51,16 @@ func ExampleTime() {
 
 func ExampleAngle() {
 	// Example p. 123.
-	rδ := base.NewRA(5, 32, 0.40).Rad()
-	dδ := base.NewAngle(true, 0, 17, 56.9).Rad()
-	rε := base.NewRA(5, 36, 12.81).Rad()
-	dε := base.NewAngle(true, 1, 12, 7.0).Rad()
-	rζ := base.NewRA(5, 40, 45.52).Rad()
-	dζ := base.NewAngle(true, 1, 56, 33.3).Rad()
+	rδ := sexa.NewRA(5, 32, 0.40).Rad()
+	dδ := sexa.NewAngle(true, 0, 17, 56.9).Rad()
+	rε := sexa.NewRA(5, 36, 12.81).Rad()
+	dε := sexa.NewAngle(true, 1, 12, 7.0).Rad()
+	rζ := sexa.NewRA(5, 40, 45.52).Rad()
+	dζ := sexa.NewAngle(true, 1, 56, 33.3).Rad()
 
 	n := line.Angle(rδ, dδ, rε, dε, rζ, dζ)
 	fmt.Printf("%.4f degrees\n", n*180/math.Pi)
-	fmt.Printf("%m\n", base.NewFmtAngle(n))
+	fmt.Printf("%m\n", sexa.NewFmtAngle(n))
 	// Output:
 	// 172.4830 degrees
 	// 172°29′
@@ -68,15 +68,15 @@ func ExampleAngle() {
 
 func ExampleError() {
 	// Example p. 124.
-	rδ := base.NewRA(5, 32, 0.40).Rad()
-	dδ := base.NewAngle(true, 0, 17, 56.9).Rad()
-	rε := base.NewRA(5, 36, 12.81).Rad()
-	dε := base.NewAngle(true, 1, 12, 7.0).Rad()
-	rζ := base.NewRA(5, 40, 45.52).Rad()
-	dζ := base.NewAngle(true, 1, 56, 33.3).Rad()
+	rδ := sexa.NewRA(5, 32, 0.40).Rad()
+	dδ := sexa.NewAngle(true, 0, 17, 56.9).Rad()
+	rε := sexa.NewRA(5, 36, 12.81).Rad()
+	dε := sexa.NewAngle(true, 1, 12, 7.0).Rad()
+	rζ := sexa.NewRA(5, 40, 45.52).Rad()
+	dζ := sexa.NewAngle(true, 1, 56, 33.3).Rad()
 
 	ω := line.Error(rζ, dζ, rδ, dδ, rε, dε)
-	e := base.NewFmtAngle(ω)
+	e := sexa.NewFmtAngle(ω)
 	fmt.Printf("%.6j\n", e)
 	fmt.Printf("%.0f″\n", ω*180/math.Pi*3600)
 	fmt.Println(e)
@@ -88,16 +88,16 @@ func ExampleError() {
 
 func ExampleAngleError() {
 	// Example p. 125.
-	rδ := base.NewRA(5, 32, 0.40).Rad()
-	dδ := base.NewAngle(true, 0, 17, 56.9).Rad()
-	rε := base.NewRA(5, 36, 12.81).Rad()
-	dε := base.NewAngle(true, 1, 12, 7.0).Rad()
-	rζ := base.NewRA(5, 40, 45.52).Rad()
-	dζ := base.NewAngle(true, 1, 56, 33.3).Rad()
+	rδ := sexa.NewRA(5, 32, 0.40).Rad()
+	dδ := sexa.NewAngle(true, 0, 17, 56.9).Rad()
+	rε := sexa.NewRA(5, 36, 12.81).Rad()
+	dε := sexa.NewAngle(true, 1, 12, 7.0).Rad()
+	rζ := sexa.NewRA(5, 40, 45.52).Rad()
+	dζ := sexa.NewAngle(true, 1, 56, 33.3).Rad()
 
 	n, ω := line.AngleError(rδ, dδ, rε, dε, rζ, dζ)
-	fmt.Printf("%m\n", base.NewFmtAngle(n))
-	fmt.Println(base.NewFmtAngle(ω))
+	fmt.Printf("%m\n", sexa.NewFmtAngle(n))
+	fmt.Println(sexa.NewFmtAngle(ω))
 	// Output:
 	// 7°31′
 	// -5′24″

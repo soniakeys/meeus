@@ -8,6 +8,7 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/sexagesimal"
 )
 
 // Nutation returns nutation in longitude (Δψ) and nutation in obliquity (Δε)
@@ -73,7 +74,7 @@ func ApproxNutation(jde float64) (Δψ, Δε float64) {
 func MeanObliquity(jde float64) float64 {
 	// (22.2) p. 147
 	return base.Horner(base.J2000Century(jde),
-		base.NewAngle(false, 23, 26, 21.448).Rad(),
+		sexa.NewAngle(false, 23, 26, 21.448).Rad(),
 		-46.815/3600*(math.Pi/180),
 		-0.00059/3600*(math.Pi/180),
 		0.001813/3600*(math.Pi/180))
@@ -91,7 +92,7 @@ func MeanObliquity(jde float64) float64 {
 func MeanObliquityLaskar(jde float64) float64 {
 	// (22.3) p. 147
 	return base.Horner(base.J2000Century(jde)*.01,
-		base.NewAngle(false, 23, 26, 21.448).Rad(),
+		sexa.NewAngle(false, 23, 26, 21.448).Rad(),
 		-4680.93/3600*(math.Pi/180),
 		-1.55/3600*(math.Pi/180),
 		1999.25/3600*(math.Pi/180),

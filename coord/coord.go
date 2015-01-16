@@ -29,6 +29,7 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
+	"github.com/soniakeys/sexagesimal"
 )
 
 // Obliquity represents the obliquity of the ecliptic.
@@ -128,7 +129,7 @@ func (eq *Equatorial) HzToEq(hz *Horizontal, g globe.Coord, st float64) *Equator
 	sh, ch := math.Sincos(hz.Alt)
 	sφ, cφ := math.Sincos(g.Lat)
 	H := math.Atan2(sA, cA*sφ+sh/ch*cφ)
-	eq.RA = base.PMod(base.Time(st).Rad()-g.Lon-H, 2*math.Pi)
+	eq.RA = base.PMod(sexa.Time(st).Rad()-g.Lon-H, 2*math.Pi)
 	eq.Dec = math.Asin(sφ*sh - cφ*ch*cA)
 	return eq
 }
@@ -153,7 +154,7 @@ func HzToEq(A, h, φ, ψ, st float64) (α, δ float64) {
 	sh, ch := math.Sincos(h)
 	sφ, cφ := math.Sincos(φ)
 	H := math.Atan2(sA, cA*sφ+sh/ch*cφ)
-	α = base.PMod(base.Time(st).Rad()-ψ-H, 2*math.Pi)
+	α = base.PMod(sexa.Time(st).Rad()-ψ-H, 2*math.Pi)
 	δ = math.Asin(sφ*sh - cφ*ch*cA)
 	return
 }
@@ -203,7 +204,7 @@ type Horizontal struct {
 // Sidereal time must be consistent with the equatorial coordinates.
 // If coordinates are apparent, sidereal time must be apparent as well.
 func (hz *Horizontal) EqToHz(eq *Equatorial, g *globe.Coord, st float64) *Horizontal {
-	H := base.Time(st).Rad() - g.Lon - eq.RA
+	H := sexa.Time(st).Rad() - g.Lon - eq.RA
 	sH, cH := math.Sincos(H)
 	sφ, cφ := math.Sincos(g.Lat)
 	sδ, cδ := math.Sincos(eq.Dec)
@@ -228,7 +229,7 @@ func (hz *Horizontal) EqToHz(eq *Equatorial, g *globe.Coord, st float64) *Horizo
 //	A: azimuth of observed point in radians, measured westward from the South.
 //	h: elevation, or height of observed point in radians above horizon.
 func EqToHz(α, δ, φ, ψ, st float64) (A, h float64) {
-	H := base.Time(st).Rad() - ψ - α
+	H := sexa.Time(st).Rad() - ψ - α
 	sH, cH := math.Sincos(H)
 	sφ, cφ := math.Sincos(φ)
 	sδ, cδ := math.Sincos(ψ)
@@ -244,7 +245,7 @@ type Galactic struct {
 }
 
 var galacticNorth = &Equatorial{
-	RA:  base.NewRA(12, 49, 0).Rad(),
+	RA:  sexa.NewRA(12, 49, 0).Rad(),
 	Dec: 27.4 * math.Pi / 180,
 }
 

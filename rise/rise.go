@@ -11,24 +11,25 @@ import (
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/meeus/interp"
+	"github.com/soniakeys/sexagesimal"
 )
 
-var meanRefraction = base.NewAngle(false, 0, 34, 0).Rad()
+var meanRefraction = sexa.NewAngle(false, 0, 34, 0).Rad()
 
 // "Standard altitudes" for various bodies.
 //
 // The standard altitude is the geometric altitude of the center of body
 // at the time of apparent rising or setting.
 var (
-	Stdh0Stellar   = base.NewAngle(true, 0, 34, 0).Rad()
-	Stdh0Solar     = base.NewAngle(true, 0, 50, 0).Rad()
-	Stdh0LunarMean = base.NewAngle(false, 0, 0, .125).Rad()
+	Stdh0Stellar   = sexa.NewAngle(true, 0, 34, 0).Rad()
+	Stdh0Solar     = sexa.NewAngle(true, 0, 50, 0).Rad()
+	Stdh0LunarMean = sexa.NewAngle(false, 0, 0, .125).Rad()
 )
 
 // Stdh0Lunar is the standard altitude of the Moon considering π, the
 // Moon's horizontal parallax.
 func Stdh0Lunar(π float64) float64 {
-	return base.NewAngle(false, 0, 0, .7275).Rad()*π - meanRefraction
+	return sexa.NewAngle(false, 0, 0, .7275).Rad()*π - meanRefraction
 }
 
 // ErrorCircumpolar returned by Times when the object does not rise and

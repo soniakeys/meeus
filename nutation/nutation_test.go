@@ -8,9 +8,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/nutation"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleNutation() {
@@ -19,10 +19,10 @@ func ExampleNutation() {
 	Δψ, Δε := nutation.Nutation(jd)
 	ε0 := nutation.MeanObliquity(jd)
 	ε := ε0 + Δε
-	fmt.Printf("%+.3d\n", base.NewFmtAngle(Δψ))
-	fmt.Printf("%+.3d\n", base.NewFmtAngle(Δε))
-	fmt.Printf("%.3d\n", base.NewFmtAngle(ε0))
-	fmt.Printf("%.3d\n", base.NewFmtAngle(ε))
+	fmt.Printf("%+.3d\n", sexa.NewFmtAngle(Δψ))
+	fmt.Printf("%+.3d\n", sexa.NewFmtAngle(Δε))
+	fmt.Printf("%.3d\n", sexa.NewFmtAngle(ε0))
+	fmt.Printf("%.3d\n", sexa.NewFmtAngle(ε))
 	// Output:
 	// -3″.788
 	// +9″.443

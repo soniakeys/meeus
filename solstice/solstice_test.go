@@ -5,9 +5,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/solstice"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleJune() {
@@ -84,7 +84,7 @@ func Test2000(t *testing.T) {
 		e := &mar[i]
 		approx := solstice.March(e.y)
 		vsop87 := julian.CalendarGregorianToJD(e.y, 3, e.d) +
-			base.NewTime(false, e.h, e.m, e.s).Day()
+			sexa.NewTime(false, e.h, e.m, e.s).Day()
 		if math.Abs(vsop87-approx) > 1./24/60 {
 			t.Logf("mar %d: got %.5f expected %.5f", e.y, approx, vsop87)
 			t.Errorf("%.0f second error", math.Abs(vsop87-approx)*24*60*60)
@@ -94,7 +94,7 @@ func Test2000(t *testing.T) {
 		e := &jun[i]
 		approx := solstice.June(e.y)
 		vsop87 := julian.CalendarGregorianToJD(e.y, 6, e.d) +
-			base.NewTime(false, e.h, e.m, e.s).Day()
+			sexa.NewTime(false, e.h, e.m, e.s).Day()
 		if math.Abs(vsop87-approx) > 1./24/60 {
 			t.Logf("jun %d: got %.5f expected %.5f", e.y, approx, vsop87)
 			t.Errorf("%.0f second error", math.Abs(vsop87-approx)*24*60*60)
@@ -104,7 +104,7 @@ func Test2000(t *testing.T) {
 		e := &sep[i]
 		approx := solstice.September(e.y)
 		vsop87 := julian.CalendarGregorianToJD(e.y, 9, e.d) +
-			base.NewTime(false, e.h, e.m, e.s).Day()
+			sexa.NewTime(false, e.h, e.m, e.s).Day()
 		if math.Abs(vsop87-approx) > 1./24/60 {
 			t.Logf("sep %d: got %.5f expected %.5f", e.y, approx, vsop87)
 			t.Errorf("%.0f day error", math.Abs(vsop87-approx))
@@ -114,7 +114,7 @@ func Test2000(t *testing.T) {
 		e := &dec[i]
 		approx := solstice.December(e.y)
 		vsop87 := julian.CalendarGregorianToJD(e.y, 12, e.d) +
-			base.NewTime(false, e.h, e.m, e.s).Day()
+			sexa.NewTime(false, e.h, e.m, e.s).Day()
 		if math.Abs(vsop87-approx) > 1./24/60 {
 			t.Logf("dec %d: got %.5f expected %.5f", e.y, approx, vsop87)
 			t.Errorf("%.0f second error", math.Abs(vsop87-approx)*24*60*60)

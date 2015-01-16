@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/sidereal"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleMean_a() {
@@ -17,8 +17,8 @@ func ExampleMean_a() {
 	jd := 2446895.5
 	s := sidereal.Mean(jd)
 	sa := sidereal.Apparent(jd)
-	fmt.Printf("%.4d\n", base.NewFmtTime(s))
-	fmt.Printf("%.4d\n", base.NewFmtTime(sa))
+	fmt.Printf("%.4d\n", sexa.NewFmtTime(s))
+	fmt.Printf("%.4d\n", sexa.NewFmtTime(sa))
 	// Output:
 	// 13ʰ10ᵐ46ˢ.3668
 	// 13ʰ10ᵐ46ˢ.1351
@@ -27,7 +27,7 @@ func ExampleMean_a() {
 func ExampleMean_b() {
 	// Example 12.b, p. 89.
 	jd := julian.TimeToJD(time.Date(1987, 4, 10, 19, 21, 0, 0, time.UTC))
-	fmt.Printf("%.4d\n", base.NewFmtTime(sidereal.Mean(jd)))
+	fmt.Printf("%.4d\n", sexa.NewFmtTime(sidereal.Mean(jd)))
 	// Output:
 	// 8ʰ34ᵐ57ˢ.0896
 }

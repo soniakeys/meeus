@@ -5,9 +5,9 @@ package pluto_test
 import (
 	"fmt"
 
-	"github.com/soniakeys/meeus/base"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/pluto"
+	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleAstrometric() {
@@ -18,8 +18,8 @@ func ExampleAstrometric() {
 		return
 	}
 	α, δ := pluto.Astrometric(2448908.5, e)
-	fmt.Printf("α: %.1d\n", base.NewFmtRA(α))
-	fmt.Printf("δ: %.0d\n", base.NewFmtAngle(δ))
+	fmt.Printf("α: %.1d\n", sexa.NewFmtRA(α))
+	fmt.Printf("δ: %.0d\n", sexa.NewFmtAngle(δ))
 	// Output:
 	// α: 15ʰ31ᵐ43ˢ.8
 	// δ: -4°27′29″

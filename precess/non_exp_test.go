@@ -10,6 +10,7 @@ import (
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/nutation"
+	"github.com/soniakeys/sexagesimal"
 )
 
 // test data from p. 132.
@@ -43,19 +44,19 @@ func TestEqProperMotionToEcl(t *testing.T) {
 	ε := coord.NewObliquity(nutation.MeanObliquity(base.J2000))
 	mλ, mβ := eqProperMotionToEcl(
 		// eq motions from p. 132.
-		base.NewHourAngle(true, 0, 0, 0.0169).Rad(),
-		base.NewAngle(false, 0, 0, 0.006).Rad(),
+		sexa.NewHourAngle(true, 0, 0, 0.0169).Rad(),
+		sexa.NewAngle(false, 0, 0, 0.006).Rad(),
 		2000.0,
 		// eq coordinates from p. 132.
 		new(coord.Ecliptic).EqToEcl(&coord.Equatorial{
-			RA:  base.NewRA(10, 8, 22.3).Rad(),
-			Dec: base.NewAngle(false, 11, 58, 2).Rad(),
+			RA:  sexa.NewRA(10, 8, 22.3).Rad(),
+			Dec: sexa.NewAngle(false, 11, 58, 2).Rad(),
 		}, ε))
-	d := math.Abs((mλ - base.NewAngle(true, 0, 0, .2348).Rad()) / mλ)
+	d := math.Abs((mλ - sexa.NewAngle(true, 0, 0, .2348).Rad()) / mλ)
 	if d*169 > 1 { // 169 = significant digits of given lon
 		t.Fatal("mλ")
 	}
-	d = math.Abs((mβ - base.NewAngle(true, 0, 0, 0.0813).Rad()) / mβ)
+	d = math.Abs((mβ - sexa.NewAngle(true, 0, 0, 0.0813).Rad()) / mβ)
 	if d*6 > 1 { // 6 = significant digit of given lat
 		t.Fatal("mβ")
 	}
