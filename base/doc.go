@@ -8,7 +8,7 @@
 //
 // Bessellian and Julian Year
 //
-// Chapter 21, Precession actually contains these defintions.  They are moved
+// Chapter 21, Precession actually contains these definitions.  They are moved
 // here because of their general utility.
 //
 // Chapter 22, Nutation contains the function for Julian centuries since J2000.

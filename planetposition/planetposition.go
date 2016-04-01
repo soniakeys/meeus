@@ -15,7 +15,7 @@
 // 2.  The formula for accuracy of results is not implemented.  It is
 // not needed for full VSOP87 solutions.
 //
-// 3.  Polynomial expressions are not implemented.  Again, implemention
+// 3.  Polynomial expressions are not implemented.  Again, implementation
 // would involve typing rather large tables of numbers with associated
 // risk of typographical errors.
 package planetposition

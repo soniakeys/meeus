@@ -37,7 +37,7 @@ func Radius(E, e, a float64) float64 {
 //
 //	E1 = M + e * sin(E0)
 //
-// Argument e is eccentricity, M is mean anomoly in radians,
+// Argument e is eccentricity, M is mean anomaly in radians,
 // places is the desired number of decimal places in the result.
 //
 // Result E is eccentric anomaly in radians.
@@ -57,7 +57,7 @@ func Kepler1(e, M float64, places int) (E float64, err error) {
 //
 //	E1 = E0 + (M + e * sin(E0) - E0) / (1 - e * cos(E0))
 //
-// Argument e is eccentricity, M is mean anomoly in radians,
+// Argument e is eccentricity, M is mean anomaly in radians,
 // places is the desired number of decimal places in the result.
 //
 // Result E is eccentric anomaly in radians.
@@ -77,7 +77,7 @@ func Kepler2(e, M float64, places int) (E float64, err error) {
 // The iterated formula is the same as in Kepler2 but a limiting function
 // avoids divergence.
 //
-// Argument e is eccentricity, M is mean anomoly in radians,
+// Argument e is eccentricity, M is mean anomaly in radians,
 // places is the desired number of decimal places in the result.
 //
 // Result E is eccentric anomaly in radians.
@@ -95,7 +95,7 @@ func Kepler2a(e, M float64, places int) (E float64, err error) {
 // The iterated formula is the same as in Kepler2 but a (different) limiting
 // function avoids divergence.
 //
-// Argument e is eccentricity, M is mean anomoly in radians,
+// Argument e is eccentricity, M is mean anomaly in radians,
 // places is the desired number of decimal places in the result.
 //
 // Result E is eccentric anomaly in radians.
@@ -116,7 +116,7 @@ func Kepler2b(e, M float64, places int) (E float64, err error) {
 
 // Kepler3 solves Kepler's equation by binary search.
 //
-// Argument e is eccentricity, M is mean anomoly in radians.
+// Argument e is eccentricity, M is mean anomaly in radians.
 //
 // Result E is eccentric anomaly in radians.
 func Kepler3(e, M float64) (E float64) {
@@ -148,7 +148,7 @@ func Kepler3(e, M float64) (E float64) {
 //
 // It is valid only for small values of e.
 //
-// Argument e is eccentricity, M is mean anomoly in radians.
+// Argument e is eccentricity, M is mean anomaly in radians.
 //
 // Result E is eccentric anomaly in radians.
 func Kepler4(e, M float64) (E float64) {

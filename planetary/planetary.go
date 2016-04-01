@@ -184,7 +184,7 @@ var (
 	noA = &ca{2451753.122, 367.486703, 202.6544, 2.194998}
 )
 
-// caa holds coefficents for "additional angles" for outer planets
+// caa holds coefficients for "additional angles" for outer planets
 // as given on p. 251
 type caa struct {
 	c, f float64

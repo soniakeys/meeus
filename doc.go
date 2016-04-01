@@ -44,7 +44,7 @@
 // By Go convention, each package is in its own subdirectory.  The
 // "subdirectories" list of this documentation page lists all packages of
 // of the library.  Each package also corresponds to exacly one chapter of
-// the book.  The package documenation heading references the chapter number
+// the book.  The package documentation heading references the chapter number
 // and a cross reference is given below of chapter numbers and package names.
 //
 // Within a chapter of the book, Meeus presents explanatory text, numbered
@@ -78,12 +78,12 @@
 // In addition to the chapter packages, there is a package called "base".
 // This contains a few definitions that are provided by Meeus but are of such
 // general use that they really don't belong with any one chapter.  The much
-// greater bulk of base however, are functions which Meeus does not explicity
+// greater bulk of base however, are functions which Meeus does not explicitly
 // provide, but again are of general use.  The nature of these functions is
 // as helper subroutines or IO subroutines.  The functions do not offer
 // additional astronomy algorithms beyond those provided by Meeus.
 //
-// Identifers
+// Identifiers
 //
 // To more closely follow the book's use of Greek letters and other symbols,
 // Unicode is freely used in the source code.  Recognizing that these symbols

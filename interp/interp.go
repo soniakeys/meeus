@@ -311,7 +311,7 @@ func (d *Len5) InterpolateN(n float64) (y float64) {
 // InterpolateNStrict interpolates for a given interpolating factor n.
 //
 // N is restricted to the range [-1..1].  This is only half the range given
-// to the constructor NewLen5, but is the recomendation given on p. 31.
+// to the constructor NewLen5, but is the recommendation given on p. 31.
 func (d *Len5) InterpolateNStrict(n float64) (y float64, err error) {
 	if n < -1 || n > 1 {
 		return 0, ErrorNOutOfRange

@@ -7,7 +7,7 @@
 // is in the package common.  The sections of the chapter are briefly
 // discussed here.
 //
-// Trigonometric funtions of large angles:  The function common.PMod reduces
+// Trigonometric functions of large angles:  The function common.PMod reduces
 // angles (or any floating point quantity) to a range from 0 to a given
 // positive number.  This satisfies the suggestion of this section, but see
 // the Go examples for this function.  Reducing the range of a number may
