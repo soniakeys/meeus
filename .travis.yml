@@ -2,6 +2,6 @@ language: go
 
 go:
   - go1.1.2
-  - go1.6
+  - tip
 
 script: go test -tags nopp ./...
