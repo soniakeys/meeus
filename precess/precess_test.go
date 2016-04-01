@@ -168,7 +168,7 @@ func ExampleProperMotion3D() {
 	fmt.Printf("Δr = %.9f, Δα = %.10f, Δδ = %.10f\n", mr, mra, mdec)
 	for _, epoch := range []float64{1000, 0, -1000, -2000, -10000} {
 		precess.ProperMotion3D(eqFrom, eqTo, 2000, epoch, r, mr, mra, mdec)
-		fmt.Printf("%8.1f  %0.2d  %-0.1d\n", epoch,
+		fmt.Printf("%8.1f  %0.2d  %0.1d\n", epoch,
 			sexa.NewFmtRA(eqTo.RA), sexa.NewFmtAngle(eqTo.Dec))
 	}
 	// Output:
