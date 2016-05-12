@@ -44,11 +44,12 @@ func Horner(x float64, c ...float64) float64 {
 // It uses integer math only, so is more efficient than using floating point
 // intermediate values.  This function can be used in many places where INT()
 // appears in AA.  As with built in integer division, it panics with y == 0.
-func FloorDiv(x, y int) int {
-	if (x < 0) == (y < 0) {
-		return x / y
+func FloorDiv(x, y int) (q int) {
+	q = x / y
+	if (x < 0) != (y < 0) && x%y != 0 {
+		q--
 	}
-	return x/y - 1
+	return
 }
 
 // FloorDiv64 returns the integer floor of the fractional value (x / y).
@@ -56,11 +57,12 @@ func FloorDiv(x, y int) int {
 // It uses integer math only, so is more efficient than using floating point
 // intermediate values.  This function can be used in many places where INT()
 // appears in AA.  As with built in integer division, it panics with y == 0.
-func FloorDiv64(x, y int64) int64 {
-	if (x < 0) == (y < 0) {
-		return x / y
+func FloorDiv64(x, y int64) (q int64) {
+	q = x / y
+	if (x < 0) != (y < 0) && x%y != 0 {
+		q--
 	}
-	return x/y - 1
+	return
 }
 
 // Cmp compares two float64s and returns -1, 0, or 1 if a is <, ==, or > b,

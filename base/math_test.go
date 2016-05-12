@@ -11,6 +11,56 @@ import (
 	"github.com/soniakeys/meeus/base"
 )
 
+func ExampleFloorDiv() {
+	// compare to / operator examples in Go spec at
+	// https://golang.org/ref/spec#Arithmetic_operators
+	fmt.Println(base.FloorDiv(+5, +3))
+	fmt.Println(base.FloorDiv(-5, +3))
+	fmt.Println(base.FloorDiv(+5, -3))
+	fmt.Println(base.FloorDiv(-5, -3))
+	fmt.Println()
+	// exact divisors, no remainders
+	fmt.Println(base.FloorDiv(+6, +3))
+	fmt.Println(base.FloorDiv(-6, +3))
+	fmt.Println(base.FloorDiv(+6, -3))
+	fmt.Println(base.FloorDiv(-6, -3))
+	// Output:
+	// 1
+	// -2
+	// -2
+	// 1
+	//
+	// 2
+	// -2
+	// -2
+	// 2
+}
+
+func ExampleFloorDiv64() {
+	// compare to / operator examples in Go spec at
+	// https://golang.org/ref/spec#Arithmetic_operators
+	fmt.Println(base.FloorDiv64(+5, +3))
+	fmt.Println(base.FloorDiv64(-5, +3))
+	fmt.Println(base.FloorDiv64(+5, -3))
+	fmt.Println(base.FloorDiv64(-5, -3))
+	fmt.Println()
+	// exact divisors, no remainders
+	fmt.Println(base.FloorDiv64(+6, +3))
+	fmt.Println(base.FloorDiv64(-6, +3))
+	fmt.Println(base.FloorDiv64(+6, -3))
+	fmt.Println(base.FloorDiv64(-6, -3))
+	// Output:
+	// 1
+	// -2
+	// -2
+	// 1
+	//
+	// 2
+	// -2
+	// -2
+	// 2
+}
+
 // Section "Trigonometric functions of large angles":
 //
 // Meeus makes his point, but an example with integer values is a bit unfair
