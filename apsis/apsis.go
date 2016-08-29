@@ -2,10 +2,7 @@
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Apsis: Chapter 50, Perigee and apogee of the Moon
-//
-// Incomplete:  PerigeeParallax not implemented for lack of test cases.
-// Implementation involves copying a table of coefficients, involving
-// risk of typographical error.
+
 package apsis
 
 import (
@@ -16,6 +13,9 @@ import (
 
 // conversion factor from k to T, given in (50.3) p. 356
 const ck = 1 / 1325.55
+
+// from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+const EarthRadius = 6378.137 // km
 
 // (50.1) p. 355
 func mean(T float64) float64 {
@@ -66,6 +66,24 @@ func Apogee(year float64) float64 {
 // Result in radians.
 func ApogeeParallax(year float64) float64 {
 	return newLa(year, .5).ap()
+}
+
+// PerigeeParallax returns equatorial horizontal parallax of the Moon at the Perigee nearest the given date.
+//
+// Year is a decimal year specifying a date.
+//
+// Result in radians.
+func PerigeeParallax(year float64) float64 {
+	return newLa(year, 0).pp()
+}
+
+// Distance returns the distance earth - moon (center to center) using the parallax angle in radians
+//
+// parallax angle in radians
+//
+// Result is distance in `km`
+func Distance (parallax float64) float64 {
+  return EarthRadius / math.Sin(parallax)
 }
 
 type la struct {
@@ -208,4 +226,56 @@ func (l *la) ap() float64 {
 		-.016*s*math.Cos(2*l.M) +
 		.014*s*math.Cos(6*l.D-l.M) +
 		.01*s*math.Cos(8*l.D)
+}
+
+// perigee parallax
+func (l *la) pp() float64 {
+	const s = math.Pi / 180 / 3600
+	return 3629.215*s +
+		63.224*s*math.Cos(2*l.D) +
+		-6.990*s*math.Cos(4*l.D) +
+		(2.834*s-0.0071*l.T*s)*math.Cos(2*l.D-l.M) +
+		1.927*s*math.Cos(6*l.D) +
+		-1.263*s*math.Cos(l.D) +
+		-0.702*s*math.Cos(8*l.D) +
+		(0.696*s-0.0017*l.T*s)*math.Cos(l.M) +
+		-0.690*s*math.Cos(2*l.F) +
+		(-0.629*s+0.0016*l.T*s)*math.Cos(4*l.D-l.M) +
+		-0.392*s*math.Cos(2*(l.D-l.F)) +
+		0.297*s*math.Cos(10*l.D) +
+		0.260*s*math.Cos(6*l.D-l.M) +
+		0.201*s*math.Cos(3*l.D) +
+		-0.161*s*math.Cos(2*l.D+l.M) +
+		0.157*s*math.Cos(l.D+l.M) +
+		-0.138*s*math.Cos(12*l.D) +
+		-0.127*s*math.Cos(8*l.D-l.M) +
+		0.104*s*math.Cos(2*(l.D+l.F)) +
+		0.104*s*math.Cos(2*(l.D-l.M)) +
+		-0.079*s*math.Cos(5*l.D) +
+		0.068*s*math.Cos(14*l.D) +
+		0.067*s*math.Cos(10*l.D-l.M) +
+		0.054*s*math.Cos(4*l.D+l.M) +
+		-0.038*s*math.Cos(12*l.D-l.M) +
+		-0.038*s*math.Cos(4*l.D-2*l.M) +
+		0.037*s*math.Cos(7*l.D) +
+		-0.037*s*math.Cos(4*l.D+2*l.F) +
+		-0.035*s*math.Cos(16*l.D) +
+		-0.030*s*math.Cos(3*l.D+l.M) +
+		0.029*s*math.Cos(l.D-l.M) +
+		-0.025*s*math.Cos(6*l.D+l.M) +
+		0.023*s*math.Cos(2*l.M) +
+		0.023*s*math.Cos(14*l.D-l.M) +
+		-0.023*s*math.Cos(2*(l.D+l.M)) +
+		0.022*s*math.Cos(6*l.D-2*l.M) +
+		-0.021*s*math.Cos(2*l.D-2*l.F-l.M) +
+		-0.020*s*math.Cos(9*l.D) +
+		0.019*s*math.Cos(18*l.D) +
+		0.017*s*math.Cos(6*l.D+2*l.F) +
+		0.014*s*math.Cos(2*l.F-l.M) +
+		-0.014*s*math.Cos(16*l.D-l.M) +
+		0.013*s*math.Cos(4*l.D-2*l.F) +
+		0.012*s*math.Cos(8*l.D+l.M) +
+		0.011*s*math.Cos(11*l.D) +
+		0.010*s*math.Cos(5*l.D+l.M) +
+		-0.010*s*math.Cos(20*l.D)
 }

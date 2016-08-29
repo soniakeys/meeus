@@ -59,3 +59,32 @@ func TestPerigee(t *testing.T) {
 		}
 	}
 }
+
+func ExamplePerigeeParallax() {
+	p := apsis.PerigeeParallax(1997.93)
+	fmt.Printf("%.3f\n", p*180/math.Pi*3600)
+	fmt.Printf("%0.3d\n", sexa.NewFmtAngle(p))
+	// Output:
+	// 3566.637
+	// 59′26″.637
+}
+
+// verified with https://www.fourmilab.ch/earthview/pacalc.html
+// Perigee Dec  9 16:56 368877 km
+func ExamplePerigeeDistance() {
+	p := apsis.PerigeeParallax(1997.93)
+	d := apsis.Distance(p)
+	fmt.Printf("%.0f km\n", d)
+	// Output:
+	// 368877 km
+}
+
+// verified with https://www.fourmilab.ch/earthview/pacalc.html
+// Apogee Nov 24  2:28 404695 km
+func ExampleApogeeDistance() {
+	p := apsis.ApogeeParallax(1997.90)
+	d := apsis.Distance(p)
+	fmt.Printf("%.0f km\n", d)
+	// Output:
+	// 404695 km
+}
