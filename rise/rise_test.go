@@ -75,7 +75,7 @@ func ExampleTimes() {
 	fmt.Println("transit:", sexa.NewFmtTime(transit))
 	fmt.Println("seting: ", sexa.NewFmtTime(set))
 	// Output:
-	// rising:  12ʰ26ᵐ9ˢ
+	// rising:  12ʰ25ᵐ26ˢ
 	// transit: 19ʰ40ᵐ30ˢ
-	// seting:  2ʰ54ᵐ26ˢ
+	// seting:  2ʰ54ᵐ40ˢ
 }

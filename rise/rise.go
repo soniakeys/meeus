@@ -131,9 +131,11 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 		α := d3α.InterpolateX(ut)
 		δ := d3δ.InterpolateX(ut)
 		H := th0 - (p.Lon+α)*43200/math.Pi
+		Hrad := H/240*math.Pi/180
 		sδ, cδ := math.Sincos(δ)
-		h := sLat*sδ + cLat*cδ*math.Cos(H)
-		return m + (h-h0)/cδ*cLat*math.Sin(H), nil
+		h := math.Asin(sLat*sδ + cLat*cδ*math.Cos(Hrad))
+		md := (h-h0)*43200/(math.Pi*cδ*cLat*math.Sin(Hrad))
+		return m + md, nil
 	}
 	mRise, err = adjustRS(mRise)
 	if err != nil {
