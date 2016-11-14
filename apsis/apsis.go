@@ -14,9 +14,6 @@ import (
 // conversion factor from k to T, given in (50.3) p. 356
 const ck = 1 / 1325.55
 
-// from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
-const EarthRadius = 6378.137 // km
-
 // (50.1) p. 355
 func mean(T float64) float64 {
 	return base.Horner(T, 2451534.6698, 27.55454989/ck,
@@ -75,15 +72,6 @@ func ApogeeParallax(year float64) float64 {
 // Result in radians.
 func PerigeeParallax(year float64) float64 {
 	return newLa(year, 0).pp()
-}
-
-// Distance returns the distance earth - moon (center to center) using the parallax angle in radians
-//
-// parallax angle in radians
-//
-// Result is distance in `km`
-func Distance (parallax float64) float64 {
-  return EarthRadius / math.Sin(parallax)
 }
 
 type la struct {

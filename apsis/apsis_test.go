@@ -8,6 +8,7 @@ import (
 
 	"github.com/soniakeys/meeus/apsis"
 	"github.com/soniakeys/meeus/julian"
+	"github.com/soniakeys/meeus/moonposition"
 	"github.com/soniakeys/sexagesimal"
 )
 
@@ -60,31 +61,14 @@ func TestPerigee(t *testing.T) {
 	}
 }
 
-func ExamplePerigeeParallax() {
-	p := apsis.PerigeeParallax(1997.93)
-	fmt.Printf("%.3f\n", p*180/math.Pi*3600)
-	fmt.Printf("%0.3d\n", sexa.NewFmtAngle(p))
-	// Output:
-	// 3566.637
-	// 59′26″.637
-}
-
-// verified with https://www.fourmilab.ch/earthview/pacalc.html
-// Perigee Dec  9 16:56 368877 km
-func ExamplePerigeeDistance() {
-	p := apsis.PerigeeParallax(1997.93)
-	d := apsis.Distance(p)
-	fmt.Printf("%.0f km\n", d)
-	// Output:
-	// 368877 km
-}
-
-// verified with https://www.fourmilab.ch/earthview/pacalc.html
-// Apogee Nov 24  2:28 404695 km
-func ExampleApogeeDistance() {
-	p := apsis.ApogeeParallax(1997.90)
-	d := apsis.Distance(p)
-	fmt.Printf("%.0f km\n", d)
-	// Output:
-	// 404695 km
+// Lacking a worked example from the text, test using meeus/moonposition.
+func TestPerigeeParallax(t *testing.T) {
+	got := apsis.PerigeeParallax(1997.93)
+	_, _, d := moonposition.Position(apsis.Perigee(1997.93))
+	want := moonposition.Parallax(d)
+	Δ := math.Abs(got-want) / math.Pi * 180 * 3600 // difference in arc seconds
+	// for this case anyway it's within a tenth of an arc second
+	if Δ > .1 {
+		t.Fatal("got", got, "want (about)", want)
+	}
 }
