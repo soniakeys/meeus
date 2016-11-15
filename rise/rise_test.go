@@ -6,24 +6,19 @@ package rise_test
 import (
 	"fmt"
 
-	"github.com/soniakeys/meeus/deltat"
 	"github.com/soniakeys/meeus/globe"
-	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/rise"
-	"github.com/soniakeys/meeus/sidereal"
 	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleApproxTimes() {
 	// Example 15.a, p. 103.
-	jd := julian.CalendarGregorianToJD(1988, 3, 20)
+	// Venus on 1988 March 20
 	p := globe.Coord{
 		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
 		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
 	}
-	// Meeus gives us the value of 11h 50m 58.1s but we have a package
-	// function for this:
-	Th0 := sidereal.Apparent0UT(jd)
+	Th0 := sexa.NewTime(false, 11, 50, 58.1).Sec()
 	α := sexa.NewRA(2, 46, 55.51).Rad()
 	δ := sexa.NewAngle(false, 18, 26, 27.3).Rad()
 	h0 := rise.Stdh0Stellar
@@ -33,25 +28,23 @@ func ExampleApproxTimes() {
 		return
 	}
 	// Units for approximate values given near top of p. 104 are circles.
-	fmt.Printf("rising:  %+.5f\n", rise/86400)
-	fmt.Printf("transit: %+.5f\n", transit/86400)
-	fmt.Printf("seting:  %+.5f\n", set/86400)
+	fmt.Printf("rising:  %+.5f  %02s\n", rise/86400, sexa.NewFmtTime(rise))
+	fmt.Printf("transit: %+.5f  %02s\n", transit/86400, sexa.NewFmtTime(transit))
+	fmt.Printf("seting:  %+.5f  %02s\n", set/86400, sexa.NewFmtTime(set))
 	// Output:
-	// rising:  +0.51816
-	// transit: +0.81965
-	// seting:  +0.12113
+	// rising:  +0.51816  12ʰ26ᵐ09ˢ
+	// transit: +0.81965  19ʰ40ᵐ17ˢ
+	// seting:  +0.12113  02ʰ54ᵐ26ˢ
 }
 
 func ExampleTimes() {
 	// Example 15.a, p. 103.
-	jd := julian.CalendarGregorianToJD(1988, 3, 20)
+	// Venus on 1988 March 20
 	p := globe.Coord{
 		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
 		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
 	}
-	// Meeus gives us the value of 11h 50m 58.1s but we have a package
-	// function for this:
-	Th0 := sidereal.Apparent0UT(jd)
+	Th0 := sexa.NewTime(false, 11, 50, 58.1).Sec()
 	α3 := []float64{
 		sexa.NewRA(2, 42, 43.25).Rad(),
 		sexa.NewRA(2, 46, 55.51).Rad(),
@@ -63,19 +56,17 @@ func ExampleTimes() {
 		sexa.NewAngle(false, 18, 49, 38.7).Rad(),
 	}
 	h0 := rise.Stdh0Stellar
-	// Similarly as with Th0, Meeus gives us the value of 56 for ΔT but
-	// let's use our package function.
-	ΔT := deltat.Interp10A(jd)
+	ΔT := 56.
 	rise, transit, set, err := rise.Times(p, ΔT, h0, Th0, α3, δ3)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("rising: ", sexa.NewFmtTime(rise))
-	fmt.Println("transit:", sexa.NewFmtTime(transit))
-	fmt.Println("seting: ", sexa.NewFmtTime(set))
+	fmt.Printf("rising:  %+.5f  %02s\n", rise/86400, sexa.NewFmtTime(rise))
+	fmt.Printf("transit: %+.5f  %02s\n", transit/86400, sexa.NewFmtTime(transit))
+	fmt.Printf("seting:  %+.5f  %02s\n", set/86400, sexa.NewFmtTime(set))
 	// Output:
-	// rising:  12ʰ25ᵐ26ˢ
-	// transit: 19ʰ40ᵐ30ˢ
-	// seting:  2ʰ54ᵐ40ˢ
+	// rising:  +0.51766  12ʰ25ᵐ26ˢ
+	// transit: +0.81980  19ʰ40ᵐ30ˢ
+	// seting:  +0.12130  02ʰ54ᵐ40ˢ
 }
