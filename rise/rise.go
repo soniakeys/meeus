@@ -23,13 +23,17 @@ var meanRefraction = sexa.NewAngle(false, 0, 34, 0).Rad()
 var (
 	Stdh0Stellar   = sexa.NewAngle(true, 0, 34, 0).Rad()
 	Stdh0Solar     = sexa.NewAngle(true, 0, 50, 0).Rad()
-	Stdh0LunarMean = sexa.NewAngle(false, 0, 0, .125).Rad()
+	Stdh0LunarMean = .125 * math.Pi / 180
 )
 
 // Stdh0Lunar is the standard altitude of the Moon considering π, the
 // Moon's horizontal parallax.
+//
+// Argument π is radians.
+//
+// Result in radians.
 func Stdh0Lunar(π float64) float64 {
-	return sexa.NewAngle(false, 0, 0, .7275).Rad()*π - meanRefraction
+	return .7275*π - meanRefraction
 }
 
 // ErrorCircumpolar returned by Times when the object does not rise and
@@ -55,7 +59,7 @@ var ErrorCircumpolar = errors.New("Circumpolar")
 // α, δ must be values at 0h dynamical time for the day of interest.
 // Units are radians.
 //
-// Result units are seconds and are in the range [0,86400)
+// Result units are seconds and are in the range [0,86400).
 func ApproxTimes(p globe.Coord, h0, Th0 float64, α, δ float64) (mRise, mTransit, mSet float64, err error) {
 	// Meeus works in a crazy mix of units.
 	// This function and Times work with seconds of time as much as possible.
@@ -101,7 +105,7 @@ func ApproxTimes(p globe.Coord, h0, Th0 float64, α, δ float64) (mRise, mTransi
 // α3, δ3 must be values at 0h dynamical time for the day before, the day of,
 // and the day after the day of interest.  Units are radians.
 //
-// Result units are seconds and are in the range [0,86400)
+// Result units are seconds and are in the range [0,86400).
 func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTransit, mSet float64, err error) {
 	mRise, mTransit, mSet, err = ApproxTimes(p, h0, Th0, α3[1], δ3[1])
 	if err != nil {
