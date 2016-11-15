@@ -9,8 +9,12 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/meeus/deltat"
+	"github.com/soniakeys/meeus/elliptic"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/meeus/interp"
+	pp "github.com/soniakeys/meeus/planetposition"
+	"github.com/soniakeys/meeus/sidereal"
 	"github.com/soniakeys/sexagesimal"
 )
 
@@ -147,4 +151,19 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 	}
 	mSet, err = adjustRS(mSet)
 	return
+}
+
+func ApproxPlanet(jd float64, pos globe.Coord, e, pl *pp.V87Planet) (mRise, mTransit, mSet float64, err error) {
+	α, δ := elliptic.Position(pl, e, jd)
+	return ApproxTimes(pos, Stdh0Stellar, sidereal.Apparent0UT(jd), α, δ)
+}
+
+func Planet(jd float64, pos globe.Coord, e, pl *pp.V87Planet) (mRise, mTransit, mSet float64, err error) {
+	α := make([]float64, 3)
+	δ := make([]float64, 3)
+	α[0], δ[0] = elliptic.Position(pl, e, jd-1)
+	α[1], δ[1] = elliptic.Position(pl, e, jd)
+	α[2], δ[2] = elliptic.Position(pl, e, jd+1)
+	return Times(pos, deltat.Interp10A(jd), Stdh0Stellar, sidereal.Apparent0UT(jd),
+		α, δ)
 }

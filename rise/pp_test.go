@@ -52,7 +52,6 @@ func ExampleApproxTimes_computed() {
 		fmt.Println(err)
 		return
 	}
-	// Units for approximate values given near top of p. 104 are circles.
 	fmt.Printf("rising:   %+.5f  %02s\n", rise/86400, sexa.NewFmtTime(rise))
 	fmt.Printf("transit:  %+.5f  %02s\n", transit/86400, sexa.NewFmtTime(transit))
 	fmt.Printf("seting:   %+.5f  %02s\n", set/86400, sexa.NewFmtTime(set))
@@ -60,6 +59,38 @@ func ExampleApproxTimes_computed() {
 	// Th0: 11ʰ50ᵐ58.09ˢ
 	// α: 2ʰ46ᵐ55.51ˢ
 	// δ: 18°26′27.3″
+	// rising:   +0.51816  12ʰ26ᵐ09ˢ
+	// transit:  +0.81965  19ʰ40ᵐ17ˢ
+	// seting:   +0.12113  02ʰ54ᵐ26ˢ
+}
+
+func ExampleApproxPlanet() {
+	// Example 15.a, p. 103.
+	jd := julian.CalendarGregorianToJD(1988, 3, 20)
+	p := globe.Coord{
+		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
+		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
+	}
+	e, err := pp.LoadPlanet(pp.Earth)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	v, err := pp.LoadPlanet(pp.Venus)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	mRise, mTransit, mSet, err := rise.ApproxPlanet(jd, p, e, v)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// Units for approximate values given near top of p. 104 are circles.
+	fmt.Printf("rising:   %+.5f  %02s\n", mRise/86400, sexa.NewFmtTime(mRise))
+	fmt.Printf("transit:  %+.5f  %02s\n", mTransit/86400, sexa.NewFmtTime(mTransit))
+	fmt.Printf("seting:   %+.5f  %02s\n", mSet/86400, sexa.NewFmtTime(mSet))
+	// Output:
 	// rising:   +0.51816  12ʰ26ᵐ09ˢ
 	// transit:  +0.81965  19ʰ40ᵐ17ˢ
 	// seting:   +0.12113  02ʰ54ᵐ26ˢ
@@ -115,6 +146,37 @@ func ExampleTimes_computed() {
 	// March 20  α: 2ʰ46ᵐ55.51ˢ  δ: 18°26′27.3″
 	// March 21  α: 2ʰ51ᵐ07.69ˢ  δ: 18°49′38.7″
 	// ΔT: 55.9
+	// rising:  12ʰ25ᵐ26ˢ
+	// transit: 19ʰ40ᵐ30ˢ
+	// seting:   2ʰ54ᵐ40ˢ
+}
+
+func ExamplePlanet() {
+	// Example 15.a, p. 103.
+	jd := julian.CalendarGregorianToJD(1988, 3, 20)
+	p := globe.Coord{
+		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
+		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
+	}
+	e, err := pp.LoadPlanet(pp.Earth)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	v, err := pp.LoadPlanet(pp.Venus)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	mRise, mTransit, mSet, err := rise.Planet(jd, p, e, v)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("rising: ", sexa.NewFmtTime(mRise))
+	fmt.Println("transit:", sexa.NewFmtTime(mTransit))
+	fmt.Println("seting:  ", sexa.NewFmtTime(mSet))
+	// Output:
 	// rising:  12ʰ25ᵐ26ˢ
 	// transit: 19ʰ40ᵐ30ˢ
 	// seting:   2ʰ54ᵐ40ˢ
