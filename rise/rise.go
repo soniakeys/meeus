@@ -118,9 +118,9 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 	}
 	// adjust mTransit
 	{
-		th0 := base.PMod(Th0+mTransit*360.985647/360, 86400)
+		th0 := base.PMod(Th0+mTransit*360.985647/360, 86400) // seconds of day
 		α := d3α.InterpolateX(mTransit + ΔT)
-		H := th0 - (p.Lon+α)*43200/math.Pi
+		H := th0 - (p.Lon+α)*43200/math.Pi // local hour angle in seconds of day
 		mTransit -= H
 	}
 	// adjust mRise, mSet
@@ -130,11 +130,11 @@ func Times(p globe.Coord, ΔT, h0, Th0 float64, α3, δ3 []float64) (mRise, mTra
 		ut := m + ΔT
 		α := d3α.InterpolateX(ut)
 		δ := d3δ.InterpolateX(ut)
-		H := th0 - (p.Lon+α)*43200/math.Pi
-		Hrad := H/240*math.Pi/180
+		Hrad := th0*math.Pi/43200 - (p.Lon + α) // local hour angle in radians
 		sδ, cδ := math.Sincos(δ)
-		h := math.Asin(sLat*sδ + cLat*cδ*math.Cos(Hrad))
-		md := (h-h0)*43200/(math.Pi*cδ*cLat*math.Sin(Hrad))
+		sH, cH := math.Sincos(Hrad)
+		h := math.Asin(sLat*sδ + cLat*cδ*cH)
+		md := (h - h0) * 43200 / (math.Pi * cδ * cLat * sH)
 		return m + md, nil
 	}
 	mRise, err = adjustRS(mRise)
