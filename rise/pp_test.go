@@ -20,7 +20,8 @@ import (
 )
 
 func ExampleApproxTimes_computed() {
-	// Example 15.a, p. 103.
+	// Example 15.a, p. 103, but using meeus packages to compute values
+	// given in the text.
 	jd := julian.CalendarGregorianToJD(1988, 3, 20)
 	p := globe.Coord{
 		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
@@ -47,14 +48,14 @@ func ExampleApproxTimes_computed() {
 	fmt.Printf("δ: %.1s\n", sexa.NewFmtAngle(δ))
 
 	h0 := rise.Stdh0Stellar
-	rise, transit, set, err := rise.ApproxTimes(p, h0, Th0, α, δ)
+	tRise, tTransit, tSet, err := rise.ApproxTimes(p, h0, Th0, α, δ)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("rising:   %+.5f  %02s\n", rise/86400, sexa.NewFmtTime(rise))
-	fmt.Printf("transit:  %+.5f  %02s\n", transit/86400, sexa.NewFmtTime(transit))
-	fmt.Printf("seting:   %+.5f  %02s\n", set/86400, sexa.NewFmtTime(set))
+	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
+	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
+	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
 	// Output:
 	// Th0: 11ʰ50ᵐ58.09ˢ
 	// α: 2ʰ46ᵐ55.51ˢ
@@ -66,7 +67,6 @@ func ExampleApproxTimes_computed() {
 
 func ExampleApproxPlanet() {
 	// Example 15.a, p. 103.
-	jd := julian.CalendarGregorianToJD(1988, 3, 20)
 	p := globe.Coord{
 		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
 		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
@@ -81,15 +81,15 @@ func ExampleApproxPlanet() {
 		fmt.Println(err)
 		return
 	}
-	mRise, mTransit, mSet, err := rise.ApproxPlanet(jd, p, e, v)
+	tRise, tTransit, tSet, err := rise.ApproxPlanet(1988, 3, 20, p, e, v)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	// Units for approximate values given near top of p. 104 are circles.
-	fmt.Printf("rising:   %+.5f  %02s\n", mRise/86400, sexa.NewFmtTime(mRise))
-	fmt.Printf("transit:  %+.5f  %02s\n", mTransit/86400, sexa.NewFmtTime(mTransit))
-	fmt.Printf("seting:   %+.5f  %02s\n", mSet/86400, sexa.NewFmtTime(mSet))
+	// Units for "m" values given near top of p. 104 are day fraction.
+	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
+	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
+	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
 	// Output:
 	// rising:   +0.51816  12ʰ26ᵐ09ˢ
 	// transit:  +0.81965  19ʰ40ᵐ17ˢ
@@ -97,7 +97,8 @@ func ExampleApproxPlanet() {
 }
 
 func ExampleTimes_computed() {
-	// Example 15.a, p. 103.
+	// Example 15.a, p. 103, but using meeus packages to compute values
+	// given in the text.
 	jd := julian.CalendarGregorianToJD(1988, 3, 20)
 	p := globe.Coord{
 		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
@@ -133,27 +134,26 @@ func ExampleTimes_computed() {
 	fmt.Printf("ΔT: %.1f\n", ΔT)
 
 	h0 := rise.Stdh0Stellar
-	rise, transit, set, err := rise.Times(p, ΔT, h0, Th0, α, δ)
+	tRise, tTransit, tSet, err := rise.Times(p, ΔT, h0, Th0, α, δ)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("rising: ", sexa.NewFmtTime(rise))
-	fmt.Println("transit:", sexa.NewFmtTime(transit))
-	fmt.Println("seting:  ", sexa.NewFmtTime(set))
+	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
+	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
+	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
 	// Output:
 	// March 19  α: 2ʰ42ᵐ43.25ˢ  δ: 18°02′51.4″
 	// March 20  α: 2ʰ46ᵐ55.51ˢ  δ: 18°26′27.3″
 	// March 21  α: 2ʰ51ᵐ07.69ˢ  δ: 18°49′38.7″
 	// ΔT: 55.9
-	// rising:  12ʰ25ᵐ26ˢ
-	// transit: 19ʰ40ᵐ30ˢ
-	// seting:   2ʰ54ᵐ40ˢ
+	// rising:   +0.51766  12ʰ25ᵐ26ˢ
+	// transit:  +0.81980  19ʰ40ᵐ30ˢ
+	// seting:   +0.12130  02ʰ54ᵐ40ˢ
 }
 
 func ExamplePlanet() {
 	// Example 15.a, p. 103.
-	jd := julian.CalendarGregorianToJD(1988, 3, 20)
 	p := globe.Coord{
 		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
 		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
@@ -168,16 +168,16 @@ func ExamplePlanet() {
 		fmt.Println(err)
 		return
 	}
-	mRise, mTransit, mSet, err := rise.Planet(jd, p, e, v)
+	tRise, tTransit, tSet, err := rise.Planet(1988, 3, 20, p, e, v)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("rising: ", sexa.NewFmtTime(mRise))
-	fmt.Println("transit:", sexa.NewFmtTime(mTransit))
-	fmt.Println("seting:  ", sexa.NewFmtTime(mSet))
+	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
+	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
+	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
 	// Output:
-	// rising:  12ʰ25ᵐ26ˢ
-	// transit: 19ʰ40ᵐ30ˢ
-	// seting:   2ʰ54ᵐ40ˢ
+	// rising:   +0.51766  12ʰ25ᵐ26ˢ
+	// transit:  +0.81980  19ʰ40ᵐ30ˢ
+	// seting:   +0.12130  02ʰ54ᵐ40ˢ
 }

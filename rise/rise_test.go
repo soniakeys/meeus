@@ -22,15 +22,15 @@ func ExampleApproxTimes() {
 	α := sexa.NewRA(2, 46, 55.51).Rad()
 	δ := sexa.NewAngle(false, 18, 26, 27.3).Rad()
 	h0 := rise.Stdh0Stellar
-	rise, transit, set, err := rise.ApproxTimes(p, h0, Th0, α, δ)
+	tRise, tTransit, tSet, err := rise.ApproxTimes(p, h0, Th0, α, δ)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	// Units for approximate values given near top of p. 104 are circles.
-	fmt.Printf("rising:  %+.5f  %02s\n", rise/86400, sexa.NewFmtTime(rise))
-	fmt.Printf("transit: %+.5f  %02s\n", transit/86400, sexa.NewFmtTime(transit))
-	fmt.Printf("seting:  %+.5f  %02s\n", set/86400, sexa.NewFmtTime(set))
+	// Units for "m" values given near top of p. 104 are day fraction.
+	fmt.Printf("rising:  %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
+	fmt.Printf("transit: %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
+	fmt.Printf("seting:  %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
 	// Output:
 	// rising:  +0.51816  12ʰ26ᵐ09ˢ
 	// transit: +0.81965  19ʰ40ᵐ17ˢ
@@ -57,14 +57,14 @@ func ExampleTimes() {
 	}
 	h0 := rise.Stdh0Stellar
 	ΔT := 56.
-	rise, transit, set, err := rise.Times(p, ΔT, h0, Th0, α3, δ3)
+	tRise, tTransit, tSet, err := rise.Times(p, ΔT, h0, Th0, α3, δ3)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("rising:  %+.5f  %02s\n", rise/86400, sexa.NewFmtTime(rise))
-	fmt.Printf("transit: %+.5f  %02s\n", transit/86400, sexa.NewFmtTime(transit))
-	fmt.Printf("seting:  %+.5f  %02s\n", set/86400, sexa.NewFmtTime(set))
+	fmt.Printf("rising:  %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
+	fmt.Printf("transit: %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
+	fmt.Printf("seting:  %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
 	// Output:
 	// rising:  +0.51766  12ʰ25ᵐ26ˢ
 	// transit: +0.81980  19ʰ40ᵐ30ˢ
