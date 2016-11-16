@@ -1,3 +1,6 @@
+// Copyright 2013 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
 package elliptic_test
 
 import (

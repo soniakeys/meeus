@@ -1,3 +1,6 @@
+// Copyright 2013 Sonia Keys
+// License MIT: http://www.opensource.org/licenses/MIT
+
 // Meeus implements algorithms from the book "Astronomical Algorithms" by Jean Meeus.
 //
 // It follows the second edition, copyright 1998, with corrections as of
