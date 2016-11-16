@@ -115,7 +115,7 @@ func ExamplePMod_mars() {
 
 	// Manually reduced to range 0-360.  This is presumably the "correct"
 	// answer, but note that the reduced number has a reduced number of
-	// significat digits.  The answer cannot have any more significant digits.
+	// significant digits.  The answer cannot have any more significant digits.
 	fmt.Println("Reduced: ", math.Sin(reduced*math.Pi/180))
 
 	// Accordingly, PMod cannot rescue any precision, whether done on degrees

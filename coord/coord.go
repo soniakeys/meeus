@@ -101,7 +101,7 @@ func (eq *Equatorial) EclToEq(ecl *Ecliptic, ε *Obliquity) *Equatorial {
 
 // EclToEq converts ecliptic coordinates to equatorial coordinates.
 //
-//	λ: ecliptic longitude coordinate to transfrom, in radians
+//	λ: ecliptic longitude coordinate to transform, in radians
 //	β: ecliptic latitude coordinate to transform, in radians
 //	sε: sine of obliquity of the ecliptic
 //	cε: cosine of obliquity of the ecliptic
