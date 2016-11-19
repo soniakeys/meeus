@@ -2,7 +2,6 @@
 // License MIT: http://www.opensource.org/licenses/MIT
 
 // Apsis: Chapter 50, Perigee and apogee of the Moon
-
 package apsis
 
 import (
