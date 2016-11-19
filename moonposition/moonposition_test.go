@@ -34,6 +34,16 @@ func ExampleParallax() {
 	// π = 0.991990
 }
 
+func TestParallax(t *testing.T) {
+	// test case from ch 40, p. 280
+	π := moonposition.Parallax(.37276 * base.AU)
+	got := π * 180 / math.Pi * 60 * 60 // radians to seconds
+	want := 23.592
+	if math.Abs(got-want) > .001 {
+		t.Error(got, want)
+	}
+}
+
 // Test data p. 344.
 var n0 = []float64{
 	julian.CalendarGregorianToJD(1913, 5, 27),
