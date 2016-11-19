@@ -15,7 +15,7 @@ import (
 func ExampleEllipsoid_ParallaxConstants() {
 	// Example 11.a, p 82.
 	// phi = geographic latitude of Palomar
-	φ := sexa.NewAngle(false, 33, 21, 22).Rad()
+	φ := sexa.NewAngle(' ', 33, 21, 22).Rad()
 	s, c := globe.Earth76.ParallaxConstants(φ, 1706)
 	fmt.Printf("ρ sin φ′ = %+.6f\n", s)
 	fmt.Printf("ρ cos φ′ = %+.6f\n", c)
@@ -26,7 +26,7 @@ func ExampleEllipsoid_ParallaxConstants() {
 
 // p. 83
 func TestLatDiff(t *testing.T) {
-	φ0 := sexa.NewAngle(false, 45, 5, 46.36).Rad()
+	φ0 := sexa.NewAngle(' ', 45, 5, 46.36).Rad()
 	diff := sexa.NewFmtAngle(globe.GeocentricLatitudeDifference(φ0))
 	if f := fmt.Sprintf("%.2d", diff); f != "11′32″.73" {
 		t.Fatal(f)
@@ -55,12 +55,12 @@ func ExampleEllipsoid_RadiusAtLatitude() {
 func ExampleEllipsoid_Distance() {
 	// Example 11.c p 85.
 	c1 := globe.Coord{
-		sexa.NewAngle(false, 48, 50, 11).Rad(), // geographic latitude
-		sexa.NewAngle(true, 2, 20, 14).Rad(),   // geographic longitude
+		sexa.NewAngle(' ', 48, 50, 11).Rad(), // geographic latitude
+		sexa.NewAngle('-', 2, 20, 14).Rad(),  // geographic longitude
 	}
 	c2 := globe.Coord{
-		sexa.NewAngle(false, 38, 55, 17).Rad(),
-		sexa.NewAngle(false, 77, 3, 56).Rad(),
+		sexa.NewAngle(' ', 38, 55, 17).Rad(),
+		sexa.NewAngle(' ', 77, 3, 56).Rad(),
 	}
 	fmt.Printf("%.2f km\n", globe.Earth76.Distance(c1, c2))
 	cos := globe.ApproxAngularDistance(c1, c2)

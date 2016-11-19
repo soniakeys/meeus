@@ -24,8 +24,8 @@ func ExampleApproxTimes_computed() {
 	// given in the text.
 	jd := julian.CalendarGregorianToJD(1988, 3, 20)
 	p := globe.Coord{
-		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
+		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
+		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
 	}
 
 	// Th0 computed rather than taken from the text.
@@ -68,8 +68,8 @@ func ExampleApproxTimes_computed() {
 func ExampleApproxPlanet() {
 	// Example 15.a, p. 103.
 	p := globe.Coord{
-		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
+		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
+		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
 	}
 	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
@@ -101,8 +101,8 @@ func ExampleTimes_computed() {
 	// given in the text.
 	jd := julian.CalendarGregorianToJD(1988, 3, 20)
 	p := globe.Coord{
-		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
+		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
+		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
 	}
 	// Th0 computed rather than taken from the text.
 	Th0 := sidereal.Apparent0UT(jd)
@@ -155,8 +155,8 @@ func ExampleTimes_computed() {
 func ExamplePlanet() {
 	// Example 15.a, p. 103.
 	p := globe.Coord{
-		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
+		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
+		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
 	}
 	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {

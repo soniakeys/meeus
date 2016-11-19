@@ -20,7 +20,7 @@ func ExampleApproxAnnualPrecession() {
 	// Example 21.a, p. 132.
 	eq := &coord.Equatorial{
 		sexa.NewRA(10, 8, 22.3).Rad(),
-		sexa.NewAngle(false, 11, 58, 2).Rad(),
+		sexa.NewAngle(' ', 11, 58, 2).Rad(),
 	}
 	epochFrom := 2000.0
 	epochTo := 1978.0
@@ -36,12 +36,12 @@ func ExampleApproxPosition() {
 	// Example 21.a, p. 132.
 	eq := &coord.Equatorial{
 		sexa.NewRA(10, 8, 22.3).Rad(),
-		sexa.NewAngle(false, 11, 58, 2).Rad(),
+		sexa.NewAngle(' ', 11, 58, 2).Rad(),
 	}
 	epochFrom := 2000.0
 	epochTo := 1978.0
-	mα := sexa.NewHourAngle(true, 0, 0, 0.0169)
-	mδ := sexa.NewAngle(false, 0, 0, 0.006)
+	mα := sexa.NewHourAngle('-', 0, 0, 0.0169)
+	mδ := sexa.NewAngle(' ', 0, 0, 0.006)
 	precess.ApproxPosition(eq, eq, epochFrom, epochTo, mα, mδ)
 	fmt.Printf("%0.1d\n", sexa.NewFmtRA(eq.RA))
 	fmt.Printf("%+0d\n", sexa.NewFmtAngle(eq.Dec))
@@ -64,14 +64,14 @@ func ExamplePosition() {
 	// Example 21.b, p. 135.
 	eq := &coord.Equatorial{
 		sexa.NewRA(2, 44, 11.986).Rad(),
-		sexa.NewAngle(false, 49, 13, 42.48).Rad(),
+		sexa.NewAngle(' ', 49, 13, 42.48).Rad(),
 	}
 	epochFrom := 2000.0
 	jdTo := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	epochTo := base.JDEToJulianYear(jdTo)
 	precess.Position(eq, eq, epochFrom, epochTo,
-		sexa.NewHourAngle(false, 0, 0, 0.03425),
-		sexa.NewAngle(true, 0, 0, 0.0895))
+		sexa.NewHourAngle(' ', 0, 0, 0.03425),
+		sexa.NewAngle('-', 0, 0, 0.0895))
 	fmt.Printf("%0.3d\n", sexa.NewFmtRA(eq.RA))
 	fmt.Printf("%+0.2d\n", sexa.NewFmtAngle(eq.Dec))
 	// Output:
@@ -83,11 +83,11 @@ func ExamplePosition() {
 func TestPosition(t *testing.T) {
 	eqFrom := &coord.Equatorial{
 		sexa.NewRA(2, 31, 48.704).Rad(),
-		sexa.NewAngle(false, 89, 15, 50.72).Rad(),
+		sexa.NewAngle(' ', 89, 15, 50.72).Rad(),
 	}
 	eqTo := &coord.Equatorial{}
-	mα := sexa.NewHourAngle(false, 0, 0, 0.19877)
-	mδ := sexa.NewAngle(true, 0, 0, 0.0152)
+	mα := sexa.NewHourAngle(' ', 0, 0, 0.19877)
+	mδ := sexa.NewAngle('-', 0, 0, 0.0152)
 	for _, tc := range []struct {
 		α, δ string
 		jde  float64
@@ -113,10 +113,10 @@ func TestPrecessor_Precess(t *testing.T) {
 	// Exercise, p. 136.
 	eqFrom := &coord.Equatorial{
 		RA:  sexa.NewRA(2, 31, 48.704).Rad(),
-		Dec: sexa.NewAngle(false, 89, 15, 50.72).Rad(),
+		Dec: sexa.NewAngle(' ', 89, 15, 50.72).Rad(),
 	}
-	mα := sexa.NewHourAngle(false, 0, 0, .19877)
-	mδ := sexa.NewAngle(false, 0, 0, -.0152)
+	mα := sexa.NewHourAngle(' ', 0, 0, .19877)
+	mδ := sexa.NewAngle(' ', 0, 0, -.0152)
 	epochs := []float64{
 		base.JDEToJulianYear(base.B1900),
 		2050,
@@ -158,10 +158,10 @@ func ExampleProperMotion3D() {
 	// Example 21.d, p. 141.
 	eqFrom := &coord.Equatorial{
 		RA:  sexa.NewRA(6, 45, 8.871).Rad(),
-		Dec: sexa.NewAngle(true, 16, 42, 57.99).Rad(),
+		Dec: sexa.NewAngle('-', 16, 42, 57.99).Rad(),
 	}
-	mra := sexa.NewHourAngle(false, 0, 0, -0.03847)
-	mdec := sexa.NewAngle(false, 0, 0, -1.2053)
+	mra := sexa.NewHourAngle(' ', 0, 0, -0.03847)
+	mdec := sexa.NewAngle(' ', 0, 0, -1.2053)
 	r := 2.64           // given in correct unit
 	mr := -7.6 / 977792 // magic conversion factor
 	eqTo := &coord.Equatorial{}

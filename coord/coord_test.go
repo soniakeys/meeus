@@ -20,7 +20,7 @@ func ExampleEcliptic_EqToEcl() {
 	// Example 13.a, p. 95.
 	eq := &coord.Equatorial{
 		sexa.NewRA(7, 45, 18.946).Rad(),
-		sexa.NewAngle(false, 28, 1, 34.26).Rad(),
+		sexa.NewAngle(' ', 28, 1, 34.26).Rad(),
 	}
 	obl := coord.NewObliquity(23.4392911 * math.Pi / 180)
 	ecl := new(coord.Ecliptic).EqToEcl(eq, obl)
@@ -37,7 +37,7 @@ func TestEquatorial_EclToEq(t *testing.T) {
 	// repeat example above
 	eq0 := &coord.Equatorial{
 		sexa.NewRA(7, 45, 18.946).Rad(),
-		sexa.NewAngle(false, 28, 1, 34.26).Rad(),
+		sexa.NewAngle(' ', 28, 1, 34.26).Rad(),
 	}
 	obl := coord.NewObliquity(23.4392911 * math.Pi / 180)
 	ecl := new(coord.Ecliptic).EqToEcl(eq0, obl)
@@ -56,11 +56,11 @@ func ExampleHorizontal_EqToHz() {
 	// Example 13.b, p. 95.
 	eq := &coord.Equatorial{
 		RA:  sexa.NewRA(23, 9, 16.641).Rad(),
-		Dec: sexa.NewAngle(true, 6, 43, 11.61).Rad(),
+		Dec: sexa.NewAngle('-', 6, 43, 11.61).Rad(),
 	}
 	g := &globe.Coord{
-		Lat: sexa.NewAngle(false, 38, 55, 17).Rad(),
-		Lon: sexa.NewAngle(false, 77, 3, 56).Rad(),
+		Lat: sexa.NewAngle(' ', 38, 55, 17).Rad(),
+		Lon: sexa.NewAngle(' ', 77, 3, 56).Rad(),
 	}
 	jd := julian.TimeToJD(time.Date(1987, 4, 10, 19, 21, 0, 0, time.UTC))
 	st := sidereal.Apparent(jd)
@@ -77,7 +77,7 @@ func ExampleHorizontal_EqToHz() {
 func TestEqToGal(t *testing.T) {
 	g := new(coord.Galactic).EqToGal(&coord.Equatorial{
 		RA:  sexa.NewRA(17, 48, 59.74).Rad(),
-		Dec: sexa.NewAngle(true, 14, 43, 8.2).Rad(),
+		Dec: sexa.NewAngle('-', 14, 43, 8.2).Rad(),
 	})
 	if s := fmt.Sprintf("%.4f", g.Lon*180/math.Pi); s != "12.9593" {
 		t.Fatal("lon:", s)

@@ -29,15 +29,15 @@ import (
 	"github.com/soniakeys/sexagesimal"
 )
 
-var meanRefraction = sexa.NewAngle(false, 0, 34, 0).Rad()
+var meanRefraction = sexa.NewAngle(' ', 0, 34, 0).Rad()
 
 // "Standard altitudes" for various bodies.
 //
 // The standard altitude is the geometric altitude of the center of body
 // at the time of apparent rising or setting.
 var (
-	Stdh0Stellar   = sexa.NewAngle(true, 0, 34, 0).Rad()
-	Stdh0Solar     = sexa.NewAngle(true, 0, 50, 0).Rad()
+	Stdh0Stellar   = sexa.NewAngle('-', 0, 34, 0).Rad()
+	Stdh0Solar     = sexa.NewAngle('-', 0, 50, 0).Rad()
 	Stdh0LunarMean = .125 * math.Pi / 180
 )
 

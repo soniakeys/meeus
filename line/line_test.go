@@ -52,11 +52,11 @@ func ExampleTime() {
 func ExampleAngle() {
 	// Example p. 123.
 	rδ := sexa.NewRA(5, 32, 0.40).Rad()
-	dδ := sexa.NewAngle(true, 0, 17, 56.9).Rad()
+	dδ := sexa.NewAngle('-', 0, 17, 56.9).Rad()
 	rε := sexa.NewRA(5, 36, 12.81).Rad()
-	dε := sexa.NewAngle(true, 1, 12, 7.0).Rad()
+	dε := sexa.NewAngle('-', 1, 12, 7.0).Rad()
 	rζ := sexa.NewRA(5, 40, 45.52).Rad()
-	dζ := sexa.NewAngle(true, 1, 56, 33.3).Rad()
+	dζ := sexa.NewAngle('-', 1, 56, 33.3).Rad()
 
 	n := line.Angle(rδ, dδ, rε, dε, rζ, dζ)
 	fmt.Printf("%.4f degrees\n", n*180/math.Pi)
@@ -69,11 +69,11 @@ func ExampleAngle() {
 func ExampleError() {
 	// Example p. 124.
 	rδ := sexa.NewRA(5, 32, 0.40).Rad()
-	dδ := sexa.NewAngle(true, 0, 17, 56.9).Rad()
+	dδ := sexa.NewAngle('-', 0, 17, 56.9).Rad()
 	rε := sexa.NewRA(5, 36, 12.81).Rad()
-	dε := sexa.NewAngle(true, 1, 12, 7.0).Rad()
+	dε := sexa.NewAngle('-', 1, 12, 7.0).Rad()
 	rζ := sexa.NewRA(5, 40, 45.52).Rad()
-	dζ := sexa.NewAngle(true, 1, 56, 33.3).Rad()
+	dζ := sexa.NewAngle('-', 1, 56, 33.3).Rad()
 
 	ω := line.Error(rζ, dζ, rδ, dδ, rε, dε)
 	e := sexa.NewFmtAngle(ω)
@@ -89,11 +89,11 @@ func ExampleError() {
 func ExampleAngleError() {
 	// Example p. 125.
 	rδ := sexa.NewRA(5, 32, 0.40).Rad()
-	dδ := sexa.NewAngle(true, 0, 17, 56.9).Rad()
+	dδ := sexa.NewAngle('-', 0, 17, 56.9).Rad()
 	rε := sexa.NewRA(5, 36, 12.81).Rad()
-	dε := sexa.NewAngle(true, 1, 12, 7.0).Rad()
+	dε := sexa.NewAngle('-', 1, 12, 7.0).Rad()
 	rζ := sexa.NewRA(5, 40, 45.52).Rad()
-	dζ := sexa.NewAngle(true, 1, 56, 33.3).Rad()
+	dζ := sexa.NewAngle('-', 1, 56, 33.3).Rad()
 
 	n, ω := line.AngleError(rδ, dδ, rε, dε, rζ, dζ)
 	fmt.Printf("%m\n", sexa.NewFmtAngle(n))

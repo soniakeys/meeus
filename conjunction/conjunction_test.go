@@ -34,11 +34,11 @@ func ExamplePlanetary() {
 		sexa.NewRA(10, 22, 57.024).Rad(),
 	}
 	d1 := []float64{
-		sexa.NewAngle(false, 4, 04, 41.83).Rad(),
-		sexa.NewAngle(false, 3, 55, 54.66).Rad(),
-		sexa.NewAngle(false, 3, 48, 03.51).Rad(),
-		sexa.NewAngle(false, 3, 41, 10.25).Rad(),
-		sexa.NewAngle(false, 3, 35, 16.61).Rad(),
+		sexa.NewAngle(' ', 4, 04, 41.83).Rad(),
+		sexa.NewAngle(' ', 3, 55, 54.66).Rad(),
+		sexa.NewAngle(' ', 3, 48, 03.51).Rad(),
+		sexa.NewAngle(' ', 3, 41, 10.25).Rad(),
+		sexa.NewAngle(' ', 3, 35, 16.61).Rad(),
 	}
 	// Mercury
 	r2 := []float64{
@@ -49,11 +49,11 @@ func ExamplePlanetary() {
 		sexa.NewRA(10, 24, 41.185).Rad(),
 	}
 	d2 := []float64{
-		sexa.NewAngle(false, 6, 26, 32.05).Rad(),
-		sexa.NewAngle(false, 6, 10, 57.72).Rad(),
-		sexa.NewAngle(false, 5, 57, 33.08).Rad(),
-		sexa.NewAngle(false, 5, 46, 27.07).Rad(),
-		sexa.NewAngle(false, 5, 37, 48.45).Rad(),
+		sexa.NewAngle(' ', 6, 26, 32.05).Rad(),
+		sexa.NewAngle(' ', 6, 10, 57.72).Rad(),
+		sexa.NewAngle(' ', 5, 57, 33.08).Rad(),
+		sexa.NewAngle(' ', 5, 46, 27.07).Rad(),
+		sexa.NewAngle(' ', 5, 37, 48.45).Rad(),
 	}
 	// compute conjunction
 	day, dd, err := conjunction.Planetary(day1, day5, r1, d1, r2, d2)
@@ -102,11 +102,11 @@ func ExampleStellar() {
 		sexa.NewRA(15, 25, 32.695).Rad(),
 	}
 	d2 := []float64{
-		sexa.NewAngle(true, 8, 57, 34.51).Rad(),
-		sexa.NewAngle(true, 9, 9, 03.88).Rad(),
-		sexa.NewAngle(true, 9, 17, 37.94).Rad(),
-		sexa.NewAngle(true, 9, 23, 16.25).Rad(),
-		sexa.NewAngle(true, 9, 26, 01.01).Rad(),
+		sexa.NewAngle('-', 8, 57, 34.51).Rad(),
+		sexa.NewAngle('-', 9, 9, 03.88).Rad(),
+		sexa.NewAngle('-', 9, 17, 37.94).Rad(),
+		sexa.NewAngle('-', 9, 23, 16.25).Rad(),
+		sexa.NewAngle('-', 9, 26, 01.01).Rad(),
 	}
 	jd := julian.CalendarGregorianToJD(1996, 2, 17)
 	dt := jd - base.J2000
@@ -122,7 +122,7 @@ func ExampleStellar() {
 	// component before converting to radians.  The dec here is negative
 	// so correction must be subtracted.  Alternative, less error-prone,
 	// way would be to convert both to radians, then add.
-	d1 := sexa.NewAngle(true, 9, 22, 58.54-pmd*dc).Rad()
+	d1 := sexa.NewAngle('-', 9, 22, 58.54-pmd*dc).Rad()
 	fmt.Printf("α′ = %.3d, δ′ = %.2d\n",
 		sexa.NewFmtRA(r1), sexa.NewFmtAngle(d1))
 

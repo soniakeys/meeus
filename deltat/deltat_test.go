@@ -37,7 +37,7 @@ func ExamplePoly1900to1997() {
 func ExamplePolyBefore948() {
 	// Example 10.b, p. 80.
 	ΔT := deltat.PolyBefore948(333.1)
-	UT := sexa.NewTime(false, 6, 0, 0).Sec()
+	UT := sexa.NewTime(' ', 6, 0, 0).Sec()
 	TD := UT + ΔT
 	fmt.Printf("%+.0f seconds\n", ΔT)
 	fmt.Printf("333 February 6 at %m TD", sexa.NewFmtTime(TD))

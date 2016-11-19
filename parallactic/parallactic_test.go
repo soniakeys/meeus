@@ -35,7 +35,7 @@ func TestDiurnalPathAtHorizon(t *testing.T) {
 		t.Fatal("0 dec:", sexa.NewFmtAngle(J))
 	}
 	J = parallactic.DiurnalPathAtHorizon(ε, φ)
-	Jexp = sexa.NewAngle(false, 45, 31, 0).Rad()
+	Jexp = sexa.NewAngle(' ', 45, 31, 0).Rad()
 	if math.Abs((J-Jexp)/Jexp) > 1e-3 {
 		t.Fatal("solstace:", sexa.NewFmtAngle(J))
 	}

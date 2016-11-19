@@ -14,7 +14,7 @@ import (
 )
 
 // constant for Horizontal.  p. 279.
-var hp = sexa.NewAngle(false, 0, 0, 8.794).Rad()
+var hp = sexa.NewAngle(' ', 0, 0, 8.794).Rad()
 
 // Horizontal returns equatorial horizontal parallax of a body.
 //

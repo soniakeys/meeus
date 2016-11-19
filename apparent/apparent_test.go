@@ -16,7 +16,7 @@ import (
 func ExampleNutation() {
 	// Example 23.a, p. 152
 	α := sexa.NewRA(2, 46, 11.331).Rad()
-	δ := sexa.NewAngle(false, 49, 20, 54.54).Rad()
+	δ := sexa.NewAngle(' ', 49, 20, 54.54).Rad()
 	jd := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	Δα1, Δδ1 := apparent.Nutation(α, δ, jd)
 	fmt.Printf("%.3s  %.3s\n", sexa.NewFmtAngle(Δα1), sexa.NewFmtAngle(Δδ1))
@@ -27,7 +27,7 @@ func ExampleNutation() {
 func ExampleAberration() {
 	// Example 23.a, p. 152
 	α := sexa.NewRA(2, 46, 11.331).Rad()
-	δ := sexa.NewAngle(false, 49, 20, 54.54).Rad()
+	δ := sexa.NewAngle(' ', 49, 20, 54.54).Rad()
 	jd := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	Δα2, Δδ2 := apparent.Aberration(α, δ, jd)
 	fmt.Printf("%.3s  %.3s\n", sexa.NewFmtAngle(Δα2), sexa.NewFmtAngle(Δδ2))
@@ -40,11 +40,11 @@ func ExamplePosition() {
 	jd := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	eq := &coord.Equatorial{
 		sexa.NewRA(2, 44, 11.986).Rad(),
-		sexa.NewAngle(false, 49, 13, 42.48).Rad(),
+		sexa.NewAngle(' ', 49, 13, 42.48).Rad(),
 	}
 	apparent.Position(eq, eq, 2000, base.JDEToJulianYear(jd),
-		sexa.NewHourAngle(false, 0, 0, 0.03425),
-		sexa.NewAngle(true, 0, 0, 0.0895))
+		sexa.NewHourAngle(' ', 0, 0, 0.03425),
+		sexa.NewAngle('-', 0, 0, 0.0895))
 	fmt.Printf("α = %0.3d\n", sexa.NewFmtRA(eq.RA))
 	fmt.Printf("δ = %0.2d\n", sexa.NewFmtAngle(eq.Dec))
 	// Output:
@@ -55,7 +55,7 @@ func ExamplePosition() {
 func ExampleAberrationRonVondrak() {
 	// Example 23.b, p. 156
 	α := sexa.NewRA(2, 44, 12.9747).Rad()
-	δ := sexa.NewAngle(false, 49, 13, 39.896).Rad()
+	δ := sexa.NewAngle(' ', 49, 13, 39.896).Rad()
 	jd := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	Δα, Δδ := apparent.AberrationRonVondrak(α, δ, jd)
 	fmt.Printf("Δα = %+.9f radian\n", Δα)
@@ -70,11 +70,11 @@ func ExamplePositionRonVondrak() {
 	jd := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	eq := &coord.Equatorial{
 		RA:  sexa.NewRA(2, 44, 11.986).Rad(),
-		Dec: sexa.NewAngle(false, 49, 13, 42.48).Rad(),
+		Dec: sexa.NewAngle(' ', 49, 13, 42.48).Rad(),
 	}
 	apparent.PositionRonVondrak(eq, eq, base.JDEToJulianYear(jd),
-		sexa.NewHourAngle(false, 0, 0, 0.03425),
-		sexa.NewAngle(true, 0, 0, 0.0895))
+		sexa.NewHourAngle(' ', 0, 0, 0.03425),
+		sexa.NewAngle('-', 0, 0, 0.0895))
 	fmt.Printf("α = %0.3d\n", sexa.NewFmtRA(eq.RA))
 	fmt.Printf("δ = %0.2d\n", sexa.NewFmtAngle(eq.Dec))
 	// Output:

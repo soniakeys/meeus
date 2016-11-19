@@ -15,12 +15,12 @@ func ExampleApproxTimes() {
 	// Example 15.a, p. 103.
 	// Venus on 1988 March 20
 	p := globe.Coord{
-		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
+		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
+		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
 	}
-	Th0 := sexa.NewTime(false, 11, 50, 58.1).Sec()
+	Th0 := sexa.NewTime(' ', 11, 50, 58.1).Sec()
 	α := sexa.NewRA(2, 46, 55.51).Rad()
-	δ := sexa.NewAngle(false, 18, 26, 27.3).Rad()
+	δ := sexa.NewAngle(' ', 18, 26, 27.3).Rad()
 	h0 := rise.Stdh0Stellar
 	tRise, tTransit, tSet, err := rise.ApproxTimes(p, h0, Th0, α, δ)
 	if err != nil {
@@ -41,19 +41,19 @@ func ExampleTimes() {
 	// Example 15.a, p. 103.
 	// Venus on 1988 March 20
 	p := globe.Coord{
-		Lon: sexa.NewAngle(false, 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(false, 42, 20, 0).Rad(),
+		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
+		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
 	}
-	Th0 := sexa.NewTime(false, 11, 50, 58.1).Sec()
+	Th0 := sexa.NewTime(' ', 11, 50, 58.1).Sec()
 	α3 := []float64{
 		sexa.NewRA(2, 42, 43.25).Rad(),
 		sexa.NewRA(2, 46, 55.51).Rad(),
 		sexa.NewRA(2, 51, 07.69).Rad(),
 	}
 	δ3 := []float64{
-		sexa.NewAngle(false, 18, 02, 51.4).Rad(),
-		sexa.NewAngle(false, 18, 26, 27.3).Rad(),
-		sexa.NewAngle(false, 18, 49, 38.7).Rad(),
+		sexa.NewAngle(' ', 18, 02, 51.4).Rad(),
+		sexa.NewAngle(' ', 18, 26, 27.3).Rad(),
+		sexa.NewAngle(' ', 18, 49, 38.7).Rad(),
 	}
 	h0 := rise.Stdh0Stellar
 	ΔT := 56.

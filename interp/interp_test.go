@@ -40,7 +40,7 @@ func ExampleLen3_InterpolateX() {
 		fmt.Println(err)
 		return
 	}
-	x := 8 + sexa.NewTime(false, 4, 21, 0).Day() // 8th day at 4:21
+	x := 8 + sexa.NewTime(' ', 4, 21, 0).Day() // 8th day at 4:21
 	y := d3.InterpolateX(x)
 	fmt.Printf("%.6f\n", y)
 	// Output:
@@ -80,9 +80,9 @@ func ExampleLen3_Zero() {
 	x3 := 28.
 	// the y unit doesn't matter.  working in degrees is fine
 	yTable := []float64{
-		sexa.DMSToDeg(true, 0, 28, 13.4),
-		sexa.DMSToDeg(false, 0, 6, 46.3),
-		sexa.DMSToDeg(false, 0, 38, 23.2),
+		sexa.DMSToDeg('-', 0, 28, 13.4),
+		sexa.DMSToDeg(' ', 0, 6, 46.3),
+		sexa.DMSToDeg(' ', 0, 38, 23.2),
 	}
 	d3, err := interp.NewLen3(x1, x3, yTable)
 	if err != nil {
@@ -129,11 +129,11 @@ func ExampleLen5_InterpolateX() {
 	x5 := 29.
 	// work in radians to get answer in radians
 	yTable := []float64{
-		sexa.NewAngle(false, 0, 54, 36.125).Rad(),
-		sexa.NewAngle(false, 0, 54, 24.606).Rad(),
-		sexa.NewAngle(false, 0, 54, 15.486).Rad(),
-		sexa.NewAngle(false, 0, 54, 08.694).Rad(),
-		sexa.NewAngle(false, 0, 54, 04.133).Rad(),
+		sexa.NewAngle(' ', 0, 54, 36.125).Rad(),
+		sexa.NewAngle(' ', 0, 54, 24.606).Rad(),
+		sexa.NewAngle(' ', 0, 54, 15.486).Rad(),
+		sexa.NewAngle(' ', 0, 54, 08.694).Rad(),
+		sexa.NewAngle(' ', 0, 54, 04.133).Rad(),
 	}
 	x := 28 + (3+20./60)/24
 	d5, err := interp.NewLen5(x1, x5, yTable)
@@ -153,11 +153,11 @@ func ExampleLen5_Zero() {
 	x1 := 25.
 	x5 := 29.
 	yTable := []float64{
-		sexa.DMSToDeg(true, 1, 11, 21.23),
-		sexa.DMSToDeg(true, 0, 28, 12.31),
-		sexa.DMSToDeg(false, 0, 16, 07.02),
-		sexa.DMSToDeg(false, 1, 01, 00.13),
-		sexa.DMSToDeg(false, 1, 45, 46.33),
+		sexa.DMSToDeg('-', 1, 11, 21.23),
+		sexa.DMSToDeg('-', 0, 28, 12.31),
+		sexa.DMSToDeg(' ', 0, 16, 07.02),
+		sexa.DMSToDeg(' ', 1, 01, 00.13),
+		sexa.DMSToDeg(' ', 1, 45, 46.33),
 	}
 	d5, err := interp.NewLen5(x1, x5, yTable)
 	if err != nil {

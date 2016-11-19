@@ -60,7 +60,7 @@ func ApproxAnnualPrecession(eq *coord.Equatorial, epochFrom, epochTo float64) (�
 	// (21.1) p. 132
 	Δαs := m + na*sa*math.Tan(eq.Dec) // seconds of RA
 	Δδs := nd * ca                    // seconds of Dec
-	return sexa.NewHourAngle(false, 0, 0, Δαs), sexa.NewAngle(false, 0, 0, Δδs)
+	return sexa.NewHourAngle(' ', 0, 0, Δαs), sexa.NewAngle(' ', 0, 0, Δδs)
 }
 
 // mn as separate function for testing purposes
