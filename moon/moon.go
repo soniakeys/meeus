@@ -20,7 +20,7 @@ import (
 )
 
 const p = math.Pi / 180
-const _I = 1.54242 * p // IAU value of inclination of mean lunar equator
+const _I = 1.54242 * p // IAU value of inclination of mean lunar equator, p. 372
 var sI, cI = math.Sincos(_I)
 
 // Physical returns quantities useful for physical observation of the Moon.
