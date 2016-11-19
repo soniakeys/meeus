@@ -13,13 +13,20 @@ import (
 	"github.com/soniakeys/sexagesimal"
 )
 
+// constant for Horizontal.  p. 279.
+var hp = sexa.NewAngle(false, 0, 0, 8.794).Rad()
+
 // Horizontal returns equatorial horizontal parallax of a body.
 //
 // Argument Δ is distance in AU.
 //
 // Result is parallax in radians.
+//
+// Meeus mentions use of this function for the Moon, Sun, planet, or comet.
+// That is, for relatively distant objects.  For parallax of the Moon (or
+// other relatively close object) see moonposition.Parallax.
 func Horizontal(Δ float64) (π float64) {
-	return 8.794 / 60 / 60 * math.Pi / 180 / Δ // (40.1) p. 279
+	return hp / Δ // (40.1) p. 279
 }
 
 // Topocentric returns topocentric positions including parallax.

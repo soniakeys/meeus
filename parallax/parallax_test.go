@@ -10,6 +10,7 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
+	"github.com/soniakeys/meeus/moonposition"
 	"github.com/soniakeys/meeus/parallax"
 	"github.com/soniakeys/meeus/sidereal"
 	"github.com/soniakeys/sexagesimal"
@@ -18,9 +19,21 @@ import (
 func ExampleHorizontal() {
 	// Example 40.a, p. 280
 	π := parallax.Horizontal(.37276)
-	fmt.Printf("%.3f\n", π*180/math.Pi*60*60)
+	fmt.Printf("%.3s", sexa.NewFmtAngle(π))
 	// Output:
-	// 23.592
+	// 23.592″
+}
+
+func TestHorizontal(t *testing.T) {
+	// example from moonposition.Parallax, ch 47, p. 342
+	_, _, Δ := moonposition.Position(julian.CalendarGregorianToJD(1992, 4, 12))
+	π := parallax.Horizontal(Δ/base.AU) * 180 / math.Pi // degrees
+	want := .99199
+	// we don't quite get all the digits here.
+	// for close objects we need that Arcsin that's in moonposition.Parallax.
+	if math.Abs(π-want) > .0001 {
+		t.Fatal("got", π, "want", want)
+	}
 }
 
 func ExampleTopocentric() {
@@ -29,7 +42,8 @@ func ExampleTopocentric() {
 		-15.771083*math.Pi/180,
 		.37276, .546861, .836339,
 		sexa.NewHourAngle(false, 7, 47, 27).Rad(),
-		julian.CalendarGregorianToJD(2003, 8, 28+(3+17./60)/24))
+		julian.CalendarGregorianToJD(2003, 8, 28+
+			sexa.NewTime(false, 3, 17, 0).Day()))
 	fmt.Printf("α' = %.2d\n", sexa.NewFmtRA(α))
 	fmt.Printf("δ' = %.1d\n", sexa.NewFmtAngle(δ))
 	// Output:
@@ -43,12 +57,13 @@ func ExampleTopocentric2() {
 		-15.771083*math.Pi/180,
 		.37276, .546861, .836339,
 		sexa.NewHourAngle(false, 7, 47, 27).Rad(),
-		julian.CalendarGregorianToJD(2003, 8, 28+(3+17./60)/24))
-	fmt.Printf("Δα = %.2f sec of RA\n", Δα*180/math.Pi*60*60/15)
-	fmt.Printf("Δδ = %.1f sec\n", Δδ*180/math.Pi*60*60)
+		julian.CalendarGregorianToJD(2003, 8, 28+
+			sexa.NewTime(false, 3, 17, 0).Day()))
+	fmt.Printf("Δα = %.2s (sec of RA)\n", sexa.NewFmtRA(Δα))
+	fmt.Printf("Δδ = %.1s (sec of Dec)\n", sexa.NewFmtAngle(Δδ))
 	// Output:
-	// Δα = 1.29 sec of RA
-	// Δδ = -14.1 sec
+	// Δα = 1.29ˢ (sec of RA)
+	// Δδ = -14.1″ (sec of Dec)
 }
 
 func TestTopocentric3(t *testing.T) {
@@ -59,7 +74,8 @@ func TestTopocentric3(t *testing.T) {
 	ρsφʹ := .546861
 	ρcφʹ := .836339
 	L := sexa.NewHourAngle(false, 7, 47, 27).Rad()
-	jde := julian.CalendarGregorianToJD(2003, 8, 28+(3+17./60)/24)
+	jde := julian.CalendarGregorianToJD(2003, 8, 28+
+		sexa.NewTime(false, 3, 17, 0).Day())
 	// reference result
 	αʹ, δʹ1 := parallax.Topocentric(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde)
 	// result to test
