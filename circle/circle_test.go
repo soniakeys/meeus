@@ -19,7 +19,7 @@ func ExampleSmallest_a() {
 	d2 := sexa.NewAngle('-', 4, 22, 26.2).Rad()
 	d3 := sexa.NewAngle('-', 1, 50, 3.7).Rad()
 	d, t := circle.Smallest(r1, d1, r2, d2, r3, d3)
-	fd := sexa.NewFmtAngle(d)
+	fd := sexa.Angle(d).Fmt()
 	fmt.Printf("Δ = %.5j = %m\n", fd, fd)
 	if t {
 		fmt.Println("type I")
@@ -40,7 +40,7 @@ func ExampleSmallest_b() {
 	d2 := sexa.NewAngle(' ', 17, 43, 56.7).Rad()
 	d3 := sexa.NewAngle(' ', 17, 49, 36.8).Rad()
 	d, t := circle.Smallest(r1, d1, r2, d2, r3, d3)
-	fmt.Printf("Δ = %m\n", sexa.NewFmtAngle(d))
+	fmt.Printf("Δ = %m\n", sexa.Angle(d).Fmt())
 	if t {
 		fmt.Println("type I")
 	} else {

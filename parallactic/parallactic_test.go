@@ -17,9 +17,9 @@ func ExampleEclipticAtHorizon() {
 	φ := 51 * math.Pi / 180
 	θ := 75 * math.Pi / 180
 	λ1, λ2, I := parallactic.EclipticAtHorizon(ε, φ, θ)
-	fmt.Println(sexa.NewFmtAngle(λ1))
-	fmt.Println(sexa.NewFmtAngle(λ2))
-	fmt.Println(sexa.NewFmtAngle(I))
+	fmt.Println(sexa.Angle(λ1).Fmt())
+	fmt.Println(sexa.Angle(λ2).Fmt())
+	fmt.Println(sexa.Angle(I).Fmt())
 	// Output:
 	// 169°21′30″
 	// 349°21′30″
@@ -32,11 +32,11 @@ func TestDiurnalPathAtHorizon(t *testing.T) {
 	J := parallactic.DiurnalPathAtHorizon(0, φ)
 	Jexp := math.Pi/2 - φ
 	if math.Abs((J-Jexp)/Jexp) > 1e-15 {
-		t.Fatal("0 dec:", sexa.NewFmtAngle(J))
+		t.Fatal("0 dec:", sexa.Angle(J).Fmt())
 	}
 	J = parallactic.DiurnalPathAtHorizon(ε, φ)
 	Jexp = sexa.NewAngle(' ', 45, 31, 0).Rad()
 	if math.Abs((J-Jexp)/Jexp) > 1e-3 {
-		t.Fatal("solstace:", sexa.NewFmtAngle(J))
+		t.Fatal("solstace:", sexa.Angle(J).Fmt())
 	}
 }

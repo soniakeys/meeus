@@ -30,7 +30,7 @@ func ExampleApproxTimes_computed() {
 
 	// Th0 computed rather than taken from the text.
 	Th0 := sidereal.Apparent0UT(jd)
-	fmt.Printf("Th0: %.2s\n", sexa.NewFmtTime(Th0))
+	fmt.Printf("Th0: %.2s\n", sexa.Time(Th0).Fmt())
 
 	// Venus α, δ computed rather than taken from the text.
 	e, err := pp.LoadPlanet(pp.Earth)
@@ -44,8 +44,8 @@ func ExampleApproxTimes_computed() {
 		return
 	}
 	α, δ := elliptic.Position(v, e, jd)
-	fmt.Printf("α: %.2s\n", sexa.NewFmtRA(α))
-	fmt.Printf("δ: %.1s\n", sexa.NewFmtAngle(δ))
+	fmt.Printf("α: %.2s\n", sexa.RA(α).Fmt())
+	fmt.Printf("δ: %.1s\n", sexa.Angle(δ).Fmt())
 
 	h0 := rise.Stdh0Stellar
 	tRise, tTransit, tSet, err := rise.ApproxTimes(p, h0, Th0, α, δ)
@@ -53,9 +53,9 @@ func ExampleApproxTimes_computed() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
-	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
-	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
+	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.Time(tRise).Fmt())
+	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.Time(tTransit).Fmt())
+	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.Time(tSet).Fmt())
 	// Output:
 	// Th0: 11ʰ50ᵐ58.09ˢ
 	// α: 2ʰ46ᵐ55.51ˢ
@@ -87,9 +87,9 @@ func ExampleApproxPlanet() {
 		return
 	}
 	// Units for "m" values given near top of p. 104 are day fraction.
-	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
-	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
-	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
+	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.Time(tRise).Fmt())
+	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.Time(tTransit).Fmt())
+	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.Time(tSet).Fmt())
 	// Output:
 	// rising:   +0.51816  12ʰ26ᵐ09ˢ
 	// transit:  +0.81965  19ʰ40ᵐ17ˢ
@@ -126,7 +126,7 @@ func ExampleTimes_computed() {
 	for i, j := range []float64{jd - 1, jd, jd + 1} {
 		_, m, d := julian.JDToCalendar(j)
 		fmt.Printf("%s %.0f  α: %0.2s  δ: %0.1s\n",
-			time.Month(m), d, sexa.NewFmtRA(α[i]), sexa.NewFmtAngle(δ[i]))
+			time.Month(m), d, sexa.RA(α[i]).Fmt(), sexa.Angle(δ[i]).Fmt())
 	}
 
 	// ΔT computed rather than taken from the text.
@@ -139,9 +139,9 @@ func ExampleTimes_computed() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
-	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
-	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
+	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.Time(tRise).Fmt())
+	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.Time(tTransit).Fmt())
+	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.Time(tSet).Fmt())
 	// Output:
 	// March 19  α: 2ʰ42ᵐ43.25ˢ  δ: 18°02′51.4″
 	// March 20  α: 2ʰ46ᵐ55.51ˢ  δ: 18°26′27.3″
@@ -173,9 +173,9 @@ func ExamplePlanet() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.NewFmtTime(tRise))
-	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.NewFmtTime(tTransit))
-	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.NewFmtTime(tSet))
+	fmt.Printf("rising:   %+.5f  %02s\n", tRise/86400, sexa.Time(tRise).Fmt())
+	fmt.Printf("transit:  %+.5f  %02s\n", tTransit/86400, sexa.Time(tTransit).Fmt())
+	fmt.Printf("seting:   %+.5f  %02s\n", tSet/86400, sexa.Time(tSet).Fmt())
 	// Output:
 	// rising:   +0.51766  12ʰ25ᵐ26ˢ
 	// transit:  +0.81980  19ʰ40ᵐ30ˢ

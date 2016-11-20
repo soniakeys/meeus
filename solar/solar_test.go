@@ -54,7 +54,7 @@ func ExampleRadius() {
 func ExampleApparentLongitude() {
 	// Example 25.a, p. 165.
 	T := base.J2000Century(julian.CalendarGregorianToJD(1992, 10, 13))
-	fmt.Println("λ:", sexa.NewFmtAngle(solar.ApparentLongitude(T)))
+	fmt.Println("λ:", sexa.Angle(solar.ApparentLongitude(T)).Fmt())
 	// Output:
 	// λ: 199°54′32″
 }
@@ -63,8 +63,8 @@ func ExampleApparentEquatorial() {
 	// Example 25.a, p. 165.
 	jde := julian.CalendarGregorianToJD(1992, 10, 13)
 	α, δ := solar.ApparentEquatorial(jde)
-	fmt.Printf("α: %.1d\n", sexa.NewFmtRA(α))
-	fmt.Printf("δ: %d\n", sexa.NewFmtAngle(δ))
+	fmt.Printf("α: %.1d\n", sexa.RA(α).Fmt())
+	fmt.Printf("δ: %d\n", sexa.Angle(δ).Fmt())
 	// Output:
 	// α: 13ʰ13ᵐ31ˢ.4
 	// δ: -7°47′6″

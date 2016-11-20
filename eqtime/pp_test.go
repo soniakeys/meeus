@@ -23,7 +23,7 @@ func ExampleE() {
 	}
 	j := julian.CalendarGregorianToJD(1992, 10, 13)
 	eq := eqtime.E(j, earth)
-	fmt.Printf("%+.1d", sexa.NewFmtHourAngle(eq))
+	fmt.Printf("%+.1d", sexa.HourAngle(eq).Fmt())
 	// Output:
 	// +13ᵐ42ˢ.6
 }

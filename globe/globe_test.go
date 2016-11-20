@@ -27,8 +27,8 @@ func ExampleEllipsoid_ParallaxConstants() {
 // p. 83
 func TestLatDiff(t *testing.T) {
 	φ0 := sexa.NewAngle(' ', 45, 5, 46.36).Rad()
-	diff := sexa.NewFmtAngle(globe.GeocentricLatitudeDifference(φ0))
-	if f := fmt.Sprintf("%.2d", diff); f != "11′32″.73" {
+	diff := globe.GeocentricLatitudeDifference(φ0)
+	if f := fmt.Sprintf("%.2d", sexa.Angle(diff).Fmt()); f != "11′32″.73" {
 		t.Fatal(f)
 	}
 }
@@ -66,7 +66,7 @@ func ExampleEllipsoid_Distance() {
 	cos := globe.ApproxAngularDistance(c1, c2)
 	fmt.Printf("cos d = %.6f\n", cos)
 	d := math.Acos(cos)
-	fmt.Printf("    d = %.5j\n", sexa.NewFmtAngle(d))
+	fmt.Printf("    d = %.5j\n", sexa.Angle(d).Fmt())
 	fmt.Printf("    s = %.0f km\n", globe.ApproxLinearDistance(d))
 	// Output:
 	// 6181.63 km

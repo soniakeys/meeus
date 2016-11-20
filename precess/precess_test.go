@@ -25,8 +25,8 @@ func ExampleApproxAnnualPrecession() {
 	epochFrom := 2000.0
 	epochTo := 1978.0
 	Δα, Δδ := precess.ApproxAnnualPrecession(eq, epochFrom, epochTo)
-	fmt.Printf("%+.3d\n", sexa.NewFmtHourAngle(Δα.Rad()))
-	fmt.Printf("%+.2d\n", sexa.NewFmtAngle(Δδ.Rad()))
+	fmt.Printf("%+.3d\n", sexa.HourAngle(Δα.Rad()).Fmt())
+	fmt.Printf("%+.2d\n", sexa.Angle(Δδ.Rad()).Fmt())
 	// Output:
 	// +3ˢ.207
 	// -17″.71
@@ -43,8 +43,8 @@ func ExampleApproxPosition() {
 	mα := sexa.NewHourAngle('-', 0, 0, 0.0169)
 	mδ := sexa.NewAngle(' ', 0, 0, 0.006)
 	precess.ApproxPosition(eq, eq, epochFrom, epochTo, mα, mδ)
-	fmt.Printf("%0.1d\n", sexa.NewFmtRA(eq.RA))
-	fmt.Printf("%+0d\n", sexa.NewFmtAngle(eq.Dec))
+	fmt.Printf("%0.1d\n", sexa.RA(eq.RA).Fmt())
+	fmt.Printf("%+0d\n", sexa.Angle(eq.Dec).Fmt())
 	// Output:
 	// 10ʰ07ᵐ12ˢ.1
 	// +12°04′32″
@@ -72,8 +72,8 @@ func ExamplePosition() {
 	precess.Position(eq, eq, epochFrom, epochTo,
 		sexa.NewHourAngle(' ', 0, 0, 0.03425),
 		sexa.NewAngle('-', 0, 0, 0.0895))
-	fmt.Printf("%0.3d\n", sexa.NewFmtRA(eq.RA))
-	fmt.Printf("%+0.2d\n", sexa.NewFmtAngle(eq.Dec))
+	fmt.Printf("%0.3d\n", sexa.RA(eq.RA).Fmt())
+	fmt.Printf("%+0.2d\n", sexa.Angle(eq.Dec).Fmt())
 	// Output:
 	// 2ʰ46ᵐ11ˢ.331
 	// +49°20′54″.54
@@ -98,8 +98,8 @@ func TestPosition(t *testing.T) {
 	} {
 		epochTo := base.JDEToJulianYear(tc.jde)
 		precess.Position(eqFrom, eqTo, 2000.0, epochTo, mα, mδ)
-		αStr := fmt.Sprintf("%.2s", sexa.NewFmtRA(eqTo.RA))
-		δStr := fmt.Sprintf("%.2s", sexa.NewFmtAngle(eqTo.Dec))
+		αStr := fmt.Sprintf("%.2s", sexa.RA(eqTo.RA).Fmt())
+		δStr := fmt.Sprintf("%.2s", sexa.Angle(eqTo.Dec).Fmt())
 		if αStr != tc.α {
 			t.Fatal("got:", αStr, "want:", tc.α)
 		}
@@ -131,7 +131,7 @@ func TestPrecessor_Precess(t *testing.T) {
 	for i, epochTo := range epochs {
 		precess.Position(eqFrom, eqTo, 2000, epochTo, mα, mδ)
 		if answer[i] != fmt.Sprintf("α = %0.2d   δ = %+0.2d",
-			sexa.NewFmtRA(eqTo.RA), sexa.NewFmtAngle(eqTo.Dec)) {
+			sexa.RA(eqTo.RA).Fmt(), sexa.Angle(eqTo.Dec).Fmt()) {
 			t.Fatal(i)
 		}
 	}
@@ -169,7 +169,7 @@ func ExampleProperMotion3D() {
 	for _, epoch := range []float64{1000, 0, -1000, -2000, -10000} {
 		precess.ProperMotion3D(eqFrom, eqTo, 2000, epoch, r, mr, mra, mdec)
 		fmt.Printf("%8.1f  %0.2d  %0.1d\n", epoch,
-			sexa.NewFmtRA(eqTo.RA), sexa.NewFmtAngle(eqTo.Dec))
+			sexa.RA(eqTo.RA).Fmt(), sexa.Angle(eqTo.Dec).Fmt())
 	}
 	// Output:
 	// Δr = -0.000007773, Δα = -0.0000027976, Δδ = -0.0000058435

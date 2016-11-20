@@ -20,7 +20,7 @@ func ExampleSep() {
 	r2 := sexa.NewRA(13, 25, 11.6).Rad()
 	d2 := sexa.NewAngle('-', 11, 9, 41).Rad()
 	d := angle.Sep(r1, d1, r2, d2)
-	fmt.Println(sexa.NewFmtAngle(d))
+	fmt.Println(sexa.Angle(d).Fmt())
 	// Output:
 	// 32°47′35″
 }
@@ -34,7 +34,7 @@ func TestSep(t *testing.T) {
 	d := angle.Sep(r1, d1, r2, d2)
 	answer := sexa.NewAngle(' ', 169, 58, 0).Rad()
 	if math.Abs(d-answer) > 1e-4 {
-		t.Fatal(sexa.NewFmtAngle(d))
+		t.Fatal(sexa.Angle(d).Fmt())
 	}
 }
 
@@ -71,7 +71,7 @@ func TestMinSep(t *testing.T) {
 	}
 	answer := .5017 * math.Pi / 180 // on p. 111
 	if math.Abs((sep-answer)/sep) > 1e-3 {
-		t.Fatal(sexa.NewFmtAngle(sep))
+		t.Fatal(sexa.Angle(sep).Fmt())
 	}
 }
 
@@ -83,7 +83,7 @@ func TestMinSepRect(t *testing.T) {
 	}
 	answer := 224 * math.Pi / 180 / 3600 // on p. 111
 	if math.Abs((sep-answer)/sep) > 1e-2 {
-		t.Fatal(sexa.NewFmtAngle(sep))
+		t.Fatal(sexa.Angle(sep).Fmt())
 	}
 
 }
@@ -95,7 +95,7 @@ func TestSepHav(t *testing.T) {
 	r2 := sexa.NewRA(13, 25, 11.6).Rad()
 	d2 := sexa.NewAngle('-', 11, 9, 41).Rad()
 	d := angle.SepHav(r1, d1, r2, d2)
-	s := fmt.Sprint(sexa.NewFmtAngle(d))
+	s := fmt.Sprint(sexa.Angle(d).Fmt())
 	if s != "32°47′35″" {
 		t.Fatal(s)
 	}
@@ -108,7 +108,7 @@ func ExampleSepPauwels() {
 	r2 := sexa.NewRA(13, 25, 11.6).Rad()
 	d2 := sexa.NewAngle('-', 11, 9, 41).Rad()
 	d := angle.SepPauwels(r1, d1, r2, d2)
-	fmt.Println(sexa.NewFmtAngle(d))
+	fmt.Println(sexa.Angle(d).Fmt())
 	// Output:
 	// 32°47′35″
 }

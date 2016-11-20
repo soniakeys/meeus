@@ -23,7 +23,7 @@ func ExampleJune2() {
 	j := solstice.June2(1962, e)
 	t := j - 2437836.5 // 0h 1962 June 21
 	// result is VSOP87 result given in example 27.a, p. 180
-	fmt.Println(sexa.NewFmtTime(t * 24 * 60 * 60))
+	fmt.Println(sexa.Time(t * 24 * 60 * 60).Fmt())
 	// Output:
 	// 21ʰ24ᵐ42ˢ
 }

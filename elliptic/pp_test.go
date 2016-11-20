@@ -28,8 +28,8 @@ func ExamplePosition() {
 		return
 	}
 	α, δ := elliptic.Position(venus, earth, 2448976.5)
-	fmt.Printf("α = %.3d\n", sexa.NewFmtRA(α))
-	fmt.Printf("δ = %.2d\n", sexa.NewFmtAngle(δ))
+	fmt.Printf("α = %.3d\n", sexa.RA(α).Fmt())
+	fmt.Printf("δ = %.2d\n", sexa.Angle(δ).Fmt())
 	// Output:
 	// α = 21ʰ4ᵐ41ˢ.454
 	// δ = -18°53′16″.84
@@ -52,9 +52,9 @@ func ExampleElements_Position() {
 	}
 	j := julian.CalendarGregorianToJD(1990, 10, 6)
 	α, δ, ψ := k.Position(j, earth)
-	fmt.Printf("α = %.1d\n", sexa.NewFmtRA(α))
-	fmt.Printf("δ = %.0d\n", sexa.NewFmtAngle(δ))
-	fmt.Printf("ψ = %.2f\n", ψ*180/math.Pi)
+	fmt.Printf("α = %.1d\n", sexa.RA(α).Fmt())
+	fmt.Printf("δ = %.0d\n", sexa.Angle(δ).Fmt())
+	fmt.Printf("ψ = %.2f\n", sexa.Angle(ψ).Deg())
 	// Output:
 	// α = 10ʰ34ᵐ14ˢ.2
 	// δ = 19°9′31″

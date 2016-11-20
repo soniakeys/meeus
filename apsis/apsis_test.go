@@ -29,7 +29,7 @@ func ExampleApogee() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d, at %m TD\n", y, time.Month(m), int(d),
-		sexa.NewFmtTime(f*24*3600))
+		sexa.TimeFromDays(f).Fmt())
 	// Output:
 	// JDE = 2447442.3543
 	// 1988 October 7, at 20ʰ30ᵐ TD
@@ -38,8 +38,8 @@ func ExampleApogee() {
 func ExampleApogeeParallax() {
 	// Example 50.a, p. 357.
 	p := apsis.ApogeeParallax(1988.75)
-	fmt.Printf("%.3f\n", p*180/math.Pi*3600)
-	fmt.Printf("%0.3d\n", sexa.NewFmtAngle(p))
+	fmt.Printf("%.3f\n", sexa.Angle(p).Sec())
+	fmt.Printf("%0.3d\n", sexa.Angle(p).Fmt())
 	// Output:
 	// 3240.679
 	// 54′00″.679

@@ -20,9 +20,9 @@ func ExampleNorth() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0m TD\n", y, time.Month(m), int(d),
-		sexa.NewFmtTime(f*24*3600))
-	fmt.Printf("δ = %.4f\n", δ*180/math.Pi)
-	fmt.Printf("%+0d\n", sexa.NewFmtAngle(δ))
+		sexa.TimeFromDays(f).Fmt())
+	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
+	fmt.Printf("%+0d\n", sexa.Angle(δ).Fmt())
 	// Output:
 	// JDE = 2447518.3346
 	// 1988 December 22 at 20ʰ02ᵐ TD
@@ -37,9 +37,9 @@ func ExampleSouth() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0h TD\n", y, time.Month(m), int(d),
-		sexa.NewFmtTime(f*24*3600))
-	fmt.Printf("δ = %.4f\n", δ*180/math.Pi)
-	fmt.Printf("%+0m\n", sexa.NewFmtAngle(δ))
+		sexa.TimeFromDays(f).Fmt())
+	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
+	fmt.Printf("%+0m\n", sexa.Angle(δ).Fmt())
 	// Output:
 	// JDE = 2469553.0834
 	// 2049 April 21 at 14ʰ TD
@@ -54,9 +54,9 @@ func ExampleNorth_c() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0h TD\n", y, time.Month(m), int(d),
-		sexa.NewFmtTime(f*24*3600))
-	fmt.Printf("δ = %.4f\n", δ*180/math.Pi)
-	fmt.Printf("%+0m\n", sexa.NewFmtAngle(δ))
+		sexa.TimeFromDays(f).Fmt())
+	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg()i)
+	fmt.Printf("%+0m\n", sexa.Angle(δ).Fmt())
 	// Output:
 	// JDE = 1719672.1412
 	// -4 March 16 at 15ʰ TD

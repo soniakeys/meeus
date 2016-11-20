@@ -24,10 +24,8 @@ func ExampleEcliptic_EqToEcl() {
 	}
 	obl := coord.NewObliquity(23.4392911 * math.Pi / 180)
 	ecl := new(coord.Ecliptic).EqToEcl(eq, obl)
-	λStr := fmt.Sprintf("%.5j", sexa.NewFmtAngle(ecl.Lon))
-	βStr := fmt.Sprintf("%+.6j", sexa.NewFmtAngle(ecl.Lat))
-	fmt.Println("λ =", λStr)
-	fmt.Println("β =", βStr)
+	fmt.Printf("λ = %.5j\n", sexa.Angle(ecl.Lon).Fmt())
+	fmt.Printf("β = %+.6j\n", sexa.Angle(ecl.Lat).Fmt())
 	// Output:
 	// λ = 113°.21563
 	// β = +6°.684170
@@ -65,10 +63,8 @@ func ExampleHorizontal_EqToHz() {
 	jd := julian.TimeToJD(time.Date(1987, 4, 10, 19, 21, 0, 0, time.UTC))
 	st := sidereal.Apparent(jd)
 	hz := new(coord.Horizontal).EqToHz(eq, g, st)
-	AStr := fmt.Sprintf("%+.3j", sexa.NewFmtAngle(hz.Az))
-	hStr := fmt.Sprintf("%+.3j", sexa.NewFmtAngle(hz.Alt))
-	fmt.Println("A =", AStr)
-	fmt.Println("h =", hStr)
+	fmt.Printf("A = %+.3j\n", sexa.Angle(hz.Az).Fmt())
+	fmt.Printf("h = %+.3j\n", sexa.Angle(hz.Alt).Fmt())
 	// Output:
 	// A = +68°.034
 	// h = +15°.125

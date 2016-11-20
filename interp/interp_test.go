@@ -67,7 +67,7 @@ func ExampleLen3_Extremum() {
 	fmt.Printf("date:     %.4f\n", x)
 	i, frac := math.Modf(x)
 	fmt.Printf("1992 May %d, at %h TD",
-		int(i), sexa.NewFmtTime(frac*24*3600))
+		int(i), sexa.TimeFromDays(frac).Fmt())
 	// Output:
 	// distance:  1.3812030 AU
 	// date:     17.5864
@@ -97,7 +97,7 @@ func ExampleLen3_Zero() {
 	fmt.Printf("February %.5f\n", x)
 	i, frac := math.Modf(x)
 	fmt.Printf("February %d, at %m TD",
-		int(i), sexa.NewFmtTime(frac*24*3600))
+		int(i), sexa.TimeFromDays(frac).Fmt())
 	// Output:
 	// February 26.79873
 	// February 26, at 19ʰ10ᵐ TD
@@ -143,7 +143,7 @@ func ExampleLen5_InterpolateX() {
 	}
 	y := d5.InterpolateX(x)
 	// radians easy to format
-	fmt.Printf("%.3d", sexa.NewFmtAngle(y))
+	fmt.Printf("%.3d", sexa.Angle(y).Fmt())
 	// Output:
 	// 54′13″.369
 }
@@ -172,7 +172,7 @@ func ExampleLen5_Zero() {
 	fmt.Printf("1988 January %.6f\n", z)
 	zInt, zFrac := math.Modf(z)
 	fmt.Printf("1988 January %d at %m TD\n", int(zInt),
-		sexa.NewFmtTime(zFrac*24*3600))
+		sexa.TimeFromDays(zFrac).Fmt())
 
 	// compare result to that from just three central values
 	d3, err := interp.NewLen3(26, 28, yTable[1:4])
@@ -207,7 +207,7 @@ func ExampleLen4Half() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("%.3d", sexa.NewFmtRA(half))
+	fmt.Printf("%.3d", sexa.RA(half).Fmt())
 	// Output:
 	// 10ʰ25ᵐ40ˢ.001
 }

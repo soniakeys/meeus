@@ -19,7 +19,7 @@ import (
 func ExampleHorizontal() {
 	// Example 40.a, p. 280
 	π := parallax.Horizontal(.37276)
-	fmt.Printf("%.3s", sexa.NewFmtAngle(π))
+	fmt.Printf("%.3s", sexa.Angle(π).Fmt())
 	// Output:
 	// 23.592″
 }
@@ -44,8 +44,8 @@ func ExampleTopocentric() {
 		sexa.NewHourAngle(' ', 7, 47, 27).Rad(),
 		julian.CalendarGregorianToJD(2003, 8, 28+
 			sexa.NewTime(' ', 3, 17, 0).Day()))
-	fmt.Printf("α' = %.2d\n", sexa.NewFmtRA(α))
-	fmt.Printf("δ' = %.1d\n", sexa.NewFmtAngle(δ))
+	fmt.Printf("α' = %.2d\n", sexa.RA(α).Fmt())
+	fmt.Printf("δ' = %.1d\n", sexa.Angle(δ).Fmt())
 	// Output:
 	// α' = 22ʰ38ᵐ8ˢ.54
 	// δ' = -15°46′30″.0
@@ -59,8 +59,8 @@ func ExampleTopocentric2() {
 		sexa.NewHourAngle(' ', 7, 47, 27).Rad(),
 		julian.CalendarGregorianToJD(2003, 8, 28+
 			sexa.NewTime(' ', 3, 17, 0).Day()))
-	fmt.Printf("Δα = %.2s (sec of RA)\n", sexa.NewFmtRA(Δα))
-	fmt.Printf("Δδ = %.1s (sec of Dec)\n", sexa.NewFmtAngle(Δδ))
+	fmt.Printf("Δα = %.2s (sec of RA)\n", sexa.RA(Δα).Fmt())
+	fmt.Printf("Δδ = %.1s (sec of Dec)\n", sexa.Angle(Δδ).Fmt())
 	// Output:
 	// Δα = 1.29ˢ (sec of RA)
 	// Δδ = -14.1″ (sec of Dec)

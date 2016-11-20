@@ -43,7 +43,7 @@ func ExampleTime() {
 	dInt, dFrac := math.Modf(d)
 	fmt.Printf("%d %s %.4f\n", y, time.Month(m), d)
 	fmt.Printf("%d %s %d, at %h TD(UT)\n", y, time.Month(m), int(dInt),
-		sexa.NewFmtTime(dFrac*24*3600))
+		sexa.TimeFromDays(dFrac).Fmt())
 	// Output:
 	// 1994 October 1.2233
 	// 1994 October 1, at 5ʰ TD(UT)
@@ -59,8 +59,8 @@ func ExampleAngle() {
 	dζ := sexa.NewAngle('-', 1, 56, 33.3).Rad()
 
 	n := line.Angle(rδ, dδ, rε, dε, rζ, dζ)
-	fmt.Printf("%.4f degrees\n", n*180/math.Pi)
-	fmt.Printf("%m\n", sexa.NewFmtAngle(n))
+	fmt.Printf("%.4f degrees\n", sexa.Angle(n).Deg())
+	fmt.Printf("%m\n", sexa.Angle(n).Fmt())
 	// Output:
 	// 172.4830 degrees
 	// 172°29′
@@ -76,10 +76,10 @@ func ExampleError() {
 	dζ := sexa.NewAngle('-', 1, 56, 33.3).Rad()
 
 	ω := line.Error(rζ, dζ, rδ, dδ, rε, dε)
-	e := sexa.NewFmtAngle(ω)
-	fmt.Printf("%.6j\n", e)
-	fmt.Printf("%.0f″\n", ω*180/math.Pi*3600)
-	fmt.Println(e)
+	e := sexa.Angle(ω)
+	fmt.Printf("%.6j\n", e.Fmt())
+	fmt.Printf("%.0f″\n", e.Sec())
+	fmt.Println(e.Fmt())
 	// Output:
 	// 0°.089876
 	// 324″
@@ -96,8 +96,8 @@ func ExampleAngleError() {
 	dζ := sexa.NewAngle('-', 1, 56, 33.3).Rad()
 
 	n, ω := line.AngleError(rδ, dδ, rε, dε, rζ, dζ)
-	fmt.Printf("%m\n", sexa.NewFmtAngle(n))
-	fmt.Println(sexa.NewFmtAngle(ω))
+	fmt.Printf("%m\n", sexa.Angle(n).Fmt())
+	fmt.Println(sexa.Angle(ω).Fmt())
 	// Output:
 	// 7°31′
 	// -5′24″
