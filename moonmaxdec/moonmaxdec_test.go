@@ -20,7 +20,7 @@ func ExampleNorth() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0m TD\n", y, time.Month(m), int(d),
-		sexa.TimeFromDays(f).Fmt())
+		sexa.TimeFromDay(f).Fmt())
 	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
 	fmt.Printf("%+0d\n", sexa.Angle(δ).Fmt())
 	// Output:
@@ -37,7 +37,7 @@ func ExampleSouth() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0h TD\n", y, time.Month(m), int(d),
-		sexa.TimeFromDays(f).Fmt())
+		sexa.TimeFromDay(f).Fmt())
 	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
 	fmt.Printf("%+0m\n", sexa.Angle(δ).Fmt())
 	// Output:
@@ -54,7 +54,7 @@ func ExampleNorth_c() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0h TD\n", y, time.Month(m), int(d),
-		sexa.TimeFromDays(f).Fmt())
+		sexa.TimeFromDay(f).Fmt())
 	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
 	fmt.Printf("%+0m\n", sexa.Angle(δ).Fmt())
 	// Output:

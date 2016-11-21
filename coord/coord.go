@@ -244,7 +244,7 @@ type Galactic struct {
 }
 
 var galacticNorth = &Equatorial{
-	RA:  base.RAFromHours(base.FromSexa(0, 12, 49, 0)).Rad(),
+	RA:  base.RAFromHour(base.FromSexa(0, 12, 49, 0)).Rad(),
 	Dec: base.AngleFromDeg(27.4).Rad(),
 }
 

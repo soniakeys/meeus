@@ -20,7 +20,7 @@ func ExampleAscending() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d, at %d TD\n", y, time.Month(m), int(d),
-		sexa.TimeFromDays(f).Fmt())
+		sexa.TimeFromDay(f).Fmt())
 	// Output:
 	// 2446938.76803
 	// 1987 May 23, at 6ʰ25ᵐ58ˢ TD

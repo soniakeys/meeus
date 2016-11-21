@@ -43,7 +43,7 @@ func ExampleTime() {
 	dInt, dFrac := math.Modf(d)
 	fmt.Printf("%d %s %.4f\n", y, time.Month(m), d)
 	fmt.Printf("%d %s %d, at %h TD(UT)\n", y, time.Month(m), int(dInt),
-		sexa.TimeFromDays(dFrac).Fmt())
+		sexa.TimeFromDay(dFrac).Fmt())
 	// Output:
 	// 1994 October 1.2233
 	// 1994 October 1, at 5ʰ TD(UT)

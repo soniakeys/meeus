@@ -14,7 +14,7 @@ func Example() {
 	// Example 1.a, p. 8
 	h := base.FromSexa(' ', 9, 14, 55.8)
 	fmt.Printf("%.9f\n", h)
-	α := base.RAFromHours(h)
+	α := base.RAFromHour(h)
 	fmt.Printf("%.5f\n", α.Deg())
 	fmt.Printf("%.6f\n", math.Tan(α.Rad()))
 	// Output:

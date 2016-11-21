@@ -29,7 +29,7 @@ func ExampleApogee() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d, at %m TD\n", y, time.Month(m), int(d),
-		sexa.TimeFromDays(f).Fmt())
+		sexa.TimeFromDay(f).Fmt())
 	// Output:
 	// JDE = 2447442.3543
 	// 1988 October 7, at 20ʰ30ᵐ TD

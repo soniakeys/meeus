@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/interp"
 	"github.com/soniakeys/sexagesimal"
 )
@@ -22,10 +23,13 @@ func ExampleLen3_InterpolateN() {
 		fmt.Println(err)
 		return
 	}
-	n := 4.35 / 24
+	h := base.FromSexa(0, 4, 21, 0)
+	fmt.Println(h, "hours")
+	n := h / 24
 	y := d3.InterpolateN(n)
 	fmt.Printf("%.6f\n", y)
 	// Output:
+	// 4.35 hours
 	// 0.876125
 }
 
@@ -40,7 +44,7 @@ func ExampleLen3_InterpolateX() {
 		fmt.Println(err)
 		return
 	}
-	x := 8 + sexa.NewTime(' ', 4, 21, 0).Day() // 8th day at 4:21
+	x := 8 + base.NewTime(' ', 4, 21, 0).Day() // 8th day at 4:21
 	y := d3.InterpolateX(x)
 	fmt.Printf("%.6f\n", y)
 	// Output:
@@ -67,7 +71,7 @@ func ExampleLen3_Extremum() {
 	fmt.Printf("date:     %.4f\n", x)
 	i, frac := math.Modf(x)
 	fmt.Printf("1992 May %d, at %h TD",
-		int(i), sexa.TimeFromDays(frac).Fmt())
+		int(i), sexa.TimeFromDay(frac).Fmt())
 	// Output:
 	// distance:  1.3812030 AU
 	// date:     17.5864
@@ -80,9 +84,9 @@ func ExampleLen3_Zero() {
 	x3 := 28.
 	// the y unit doesn't matter.  working in degrees is fine
 	yTable := []float64{
-		sexa.DMSToDeg('-', 0, 28, 13.4),
-		sexa.DMSToDeg(' ', 0, 6, 46.3),
-		sexa.DMSToDeg(' ', 0, 38, 23.2),
+		base.FromSexa('-', 0, 28, 13.4),
+		base.FromSexa(' ', 0, 6, 46.3),
+		base.FromSexa(' ', 0, 38, 23.2),
 	}
 	d3, err := interp.NewLen3(x1, x3, yTable)
 	if err != nil {
@@ -97,7 +101,7 @@ func ExampleLen3_Zero() {
 	fmt.Printf("February %.5f\n", x)
 	i, frac := math.Modf(x)
 	fmt.Printf("February %d, at %m TD",
-		int(i), sexa.TimeFromDays(frac).Fmt())
+		int(i), sexa.TimeFromDay(frac).Fmt())
 	// Output:
 	// February 26.79873
 	// February 26, at 19ʰ10ᵐ TD
@@ -127,23 +131,24 @@ func ExampleLen5_InterpolateX() {
 	// Example 3.e, p. 28.
 	x1 := 27.
 	x5 := 29.
-	// work in radians to get answer in radians
+	// work in degrees
 	yTable := []float64{
-		sexa.NewAngle(' ', 0, 54, 36.125).Rad(),
-		sexa.NewAngle(' ', 0, 54, 24.606).Rad(),
-		sexa.NewAngle(' ', 0, 54, 15.486).Rad(),
-		sexa.NewAngle(' ', 0, 54, 08.694).Rad(),
-		sexa.NewAngle(' ', 0, 54, 04.133).Rad(),
+		base.FromSexa(' ', 0, 54, 36.125),
+		base.FromSexa(' ', 0, 54, 24.606),
+		base.FromSexa(' ', 0, 54, 15.486),
+		base.FromSexa(' ', 0, 54, 08.694),
+		base.FromSexa(' ', 0, 54, 04.133),
 	}
-	x := 28 + (3+20./60)/24
 	d5, err := interp.NewLen5(x1, x5, yTable)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	n := (3 + 20./60) / 24
+	x := 28 + n
 	y := d5.InterpolateX(x)
 	// radians easy to format
-	fmt.Printf("%.3d", sexa.Angle(y).Fmt())
+	fmt.Printf("%.3d", sexa.AngleFromDeg(y).Fmt())
 	// Output:
 	// 54′13″.369
 }
@@ -172,7 +177,7 @@ func ExampleLen5_Zero() {
 	fmt.Printf("1988 January %.6f\n", z)
 	zInt, zFrac := math.Modf(z)
 	fmt.Printf("1988 January %d at %m TD\n", int(zInt),
-		sexa.TimeFromDays(zFrac).Fmt())
+		sexa.TimeFromDay(zFrac).Fmt())
 
 	// compare result to that from just three central values
 	d3, err := interp.NewLen3(26, 28, yTable[1:4])

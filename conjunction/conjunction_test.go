@@ -67,7 +67,7 @@ func ExamplePlanetary() {
 	// more useful clock format
 	dInt, dFrac := math.Modf(day)
 	fmt.Printf("1991 August %d at %s TD\n", int(dInt),
-		sexa.TimeFromDays(dFrac).Fmt())
+		sexa.TimeFromDay(dFrac).Fmt())
 
 	// deltat func needs jd
 	jd := julian.CalendarGregorianToJD(1991, 8, day)
@@ -78,7 +78,7 @@ func ExamplePlanetary() {
 	// format as before
 	dInt, dFrac = math.Modf(d)
 	fmt.Printf("%d %s %d at %s UT\n", y, time.Month(m), int(dInt),
-		sexa.TimeFromDays(dFrac).Fmt())
+		sexa.TimeFromDay(dFrac).Fmt())
 
 	// Δδ
 	fmt.Printf("Δδ = %s\n", sexa.Angle(dd).Fmt())
@@ -134,7 +134,7 @@ func ExampleStellar() {
 	fmt.Println(sexa.Angle(dd).Fmt())
 	dInt, dFrac := math.Modf(day)
 	fmt.Printf("1996 February %d at %s TD\n", int(dInt),
-		sexa.TimeFromDays(dFrac).Fmt())
+		sexa.TimeFromDay(dFrac).Fmt())
 
 	// Output:
 	// -3.87 years
