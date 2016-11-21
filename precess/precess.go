@@ -18,7 +18,7 @@
 // Meeus gives some example annual proper motions in units of seconds of
 // right ascension and seconds of declination.  To make units clear,
 // functions in this package take proper motions with argument types of
-// sexa.HourAngle and sexa.Angle respectively.  Error-prone conversions
+// base.HourAngle and base.Angle respectively.  Error-prone conversions
 // can be avoided by using the constructors for these base types.
 //
 // For example, given an annual proper motion in right ascension of -0ˢ.03847,
@@ -46,7 +46,6 @@ import (
 	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/elementequinox"
 	"github.com/soniakeys/meeus/nutation"
-	"github.com/soniakeys/sexagesimal"
 )
 
 // ApproxAnnualPrecession returns approximate annual precision in right
@@ -54,13 +53,13 @@ import (
 //
 // The two epochs should be within a few hundred years.
 // The declinations should not be too close to the poles.
-func ApproxAnnualPrecession(eq *coord.Equatorial, epochFrom, epochTo float64) (Δα sexa.HourAngle, Δδ sexa.Angle) {
+func ApproxAnnualPrecession(eq *coord.Equatorial, epochFrom, epochTo float64) (Δα base.HourAngle, Δδ base.Angle) {
 	m, na, nd := mn(epochFrom, epochTo)
 	sa, ca := math.Sincos(eq.RA)
 	// (21.1) p. 132
-	Δαs := m + na*sa*math.Tan(eq.Dec) // seconds of RA
-	Δδs := nd * ca                    // seconds of Dec
-	return sexa.NewHourAngle(' ', 0, 0, Δαs), sexa.NewAngle(' ', 0, 0, Δδs)
+	Δα = base.HourAngleFromSec(m + na*sa*math.Tan(eq.Dec)) // seconds of RA
+	Δδ = base.AngleFromSec(nd * ca)                        // seconds of Dec
+	return
 }
 
 // mn as separate function for testing purposes
@@ -77,7 +76,7 @@ func mn(epochFrom, epochTo float64) (m, na, nd float64) {
 //
 // Both eqFrom and eqTo must be non-nil, although they may point to the same
 // struct.  EqTo is returned for convenience.
-func ApproxPosition(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα sexa.HourAngle, mδ sexa.Angle) *coord.Equatorial {
+func ApproxPosition(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
 	Δα, Δδ := ApproxAnnualPrecession(eqFrom, epochFrom, epochTo)
 	dy := epochTo - epochFrom
 	eqTo.RA = eqFrom.RA + (Δα+mα).Rad()*dy
@@ -172,7 +171,7 @@ func (p *Precessor) Precess(eqFrom, eqTo *coord.Equatorial) *coord.Equatorial {
 //
 // Both eqFrom and eqTo must be non-nil, although they may point to the same
 // struct.  EqTo is returned for convenience.
-func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα sexa.HourAngle, mδ sexa.Angle) *coord.Equatorial {
+func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
 	p := NewPrecessor(epochFrom, epochTo)
 	t := epochTo - epochFrom
 	eqTo.RA = eqFrom.RA + mα.Rad()*t
@@ -280,7 +279,7 @@ func (p *EclipticPrecessor) ReduceElements(eFrom, eTo *elementequinox.Elements) 
 //
 // Both eclFrom and eclTo must be non-nil, although they may point to the same
 // struct.  EclTo is returned for convenience.
-func EclipticPosition(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo float64, mα sexa.HourAngle, mδ sexa.Angle) *coord.Ecliptic {
+func EclipticPosition(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Ecliptic {
 	p := NewEclipticPrecessor(epochFrom, epochTo)
 	*eclTo = *eclFrom
 	if mα != 0 || mδ != 0 {
@@ -313,7 +312,7 @@ func eqProperMotionToEcl(mα, mδ, epoch float64, pos *coord.Ecliptic) (mλ, mβ
 //
 // Both eqFrom and eqTo must be non-nil, although they may point to the same
 // struct.  EqTo is returned for convenience.
-func ProperMotion3D(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, r, mr float64, mα sexa.HourAngle, mδ sexa.Angle) *coord.Equatorial {
+func ProperMotion3D(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, r, mr float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
 	sα, cα := math.Sincos(eqFrom.RA)
 	sδ, cδ := math.Sincos(eqFrom.Dec)
 	x := r * cδ * cα

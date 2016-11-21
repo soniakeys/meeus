@@ -31,4 +31,15 @@
 //
 // FloorDiv and FloorDiv64 are optimizations for the INT function described
 // on p. 60, chapter 7.
+//
+// Unit types and conversions
+//
+// While the library uses float64s for many parameter and return values, it
+// sometimes uses a defined type to clarify interpretation of a value.
+// Types Angle, RA, HourAngle, and Time are defined here for this purpose.
+// These defined types have a number of constructors and methods that perform
+// useful conversions.
+//
+// Also the function FromSexa takes sexagesimal components such as degrees
+// minutes and seconds and returns a single value.
 package base

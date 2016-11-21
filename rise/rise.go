@@ -26,19 +26,18 @@ import (
 	"github.com/soniakeys/meeus/julian"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/sidereal"
-	"github.com/soniakeys/sexagesimal"
 )
 
-var meanRefraction = sexa.NewAngle(' ', 0, 34, 0).Rad()
+var meanRefraction = base.AngleFromMin(34).Rad()
 
 // "Standard altitudes" for various bodies.
 //
 // The standard altitude is the geometric altitude of the center of body
 // at the time of apparent rising or setting.
 var (
-	Stdh0Stellar   = sexa.NewAngle('-', 0, 34, 0).Rad()
-	Stdh0Solar     = sexa.NewAngle('-', 0, 50, 0).Rad()
-	Stdh0LunarMean = .125 * math.Pi / 180
+	Stdh0Stellar   = base.AngleFromMin(-34).Rad()
+	Stdh0Solar     = base.AngleFromMin(-50).Rad()
+	Stdh0LunarMean = base.AngleFromDeg(.125).Rad()
 )
 
 // Stdh0Lunar is the standard altitude of the Moon considering π, the

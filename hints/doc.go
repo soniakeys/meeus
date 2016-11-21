@@ -4,10 +4,10 @@
 // Hints: Chapter 1, Hints and Tips.
 //
 // This is a documentation only package.  Code suggested by this chapter
-// is in the package common.  The sections of the chapter are briefly
+// is in the package base.  The sections of the chapter are briefly
 // discussed here.
 //
-// Trigonometric functions of large angles:  The function common.PMod reduces
+// Trigonometric functions of large angles:  The function base.PMod reduces
 // angles (or any floating point quantity) to a range from 0 to a given
 // positive number.  This satisfies the suggestion of this section, but see
 // the Go examples for this function.  Reducing the range of a number may
@@ -22,28 +22,24 @@
 // For computational reasons, interal formats, function arguments, and return
 // values are almost always radians.
 //
-// Right ascensions:  Like angles expressed as degrees, minutes, and seconds,
-// right ascensions are expressed in a sexagesimal format.  The common package
-// supports both parsing and formatting of sexagesimal quantities.  Actually
-// four quantities are handled and treated as separate types: Angles, Hour
-// angles, right ascensions, and times.  See package common for full
-// documentation.  Also find example 1.a of this chapter implemented as a Go
-// example for common.NewRA.
+// Right ascensions:  The base package has the function FromSexa for ingesting
+// sexagesimal quantities such as right ascensions, and it defines types for
+// angles, hour angles, right ascensions, and times.  Example 1.a of this
+// chapter is implemented as a package example below.
 //
 // The correct quadrant:  Go has a complete set of inverse trigonometric
 // functions, including math.Atan2.
 //
-// The input of negative angles:  A number of functions in common take
-// separate sexagesimal components as arguments.  These functions generally
-// also take a "neg" argument to indicate that the overall quantity is
-// negative.  The numeric components are thus generally passed as positive
-// numbers.
+// The input of negative angles:  The function base.FromSexa has a "neg"
+// parameter to negate the overall quantity.  The numeric components are
+// generally passed as positive numbers.  This avoids the problems described
+// in the text.
 //
 // Powers of time:  Meeus offers some cautionary anecdotes here, but provides
 // no concrete rules to follow, no algorithms for determining when periodic
 // terms might be neglected.  There is no code from this section.
 //
-// Avoiding powers:  The function common.Horner implements Horner's method,
+// Avoiding powers:  The function base.Horner implements Horner's method,
 // and is used heavily by other packages.
 //
 // To shorten a program:  Shortening a program is rarely a goal these days.

@@ -10,11 +10,10 @@ import (
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/meeus/sidereal"
-	"github.com/soniakeys/sexagesimal"
 )
 
 // constant for Horizontal.  p. 279.
-var hp = sexa.NewAngle(' ', 0, 0, 8.794).Rad()
+var hp = base.AngleFromSec(8.794).Rad()
 
 // Horizontal returns equatorial horizontal parallax of a body.
 //
@@ -39,7 +38,7 @@ func Horizontal(Δ float64) (π float64) {
 // Results are observed topocentric ra and dec in radians.
 func Topocentric(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (αʹ, δʹ float64) {
 	π := Horizontal(Δ)
-	θ0 := sexa.Time(sidereal.Apparent(jde)).Rad()
+	θ0 := base.Time(sidereal.Apparent(jde)).Rad()
 	H := base.PMod(θ0-L-α, 2*math.Pi)
 	sπ := math.Sin(π)
 	sH, cH := math.Sincos(H)
@@ -57,7 +56,7 @@ func Topocentric(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (αʹ, δʹ float
 // Note that results are corrections, not corrected coordinates.
 func Topocentric2(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (Δα, Δδ float64) {
 	π := Horizontal(Δ)
-	θ0 := sexa.Time(sidereal.Apparent(jde)).Rad()
+	θ0 := base.Time(sidereal.Apparent(jde)).Rad()
 	H := base.PMod(θ0-L-α, 2*math.Pi)
 	sH, cH := math.Sincos(H)
 	sδ, cδ := math.Sincos(δ)
@@ -73,7 +72,7 @@ func Topocentric2(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (Δα, Δδ floa
 // should be virtually consistent.
 func Topocentric3(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (Hʹ, δʹ float64) {
 	π := Horizontal(Δ)
-	θ0 := sexa.Time(sidereal.Apparent(jde)).Rad()
+	θ0 := base.Time(sidereal.Apparent(jde)).Rad()
 	H := base.PMod(θ0-L-α, 2*math.Pi)
 	sπ := math.Sin(π)
 	sH, cH := math.Sincos(H)

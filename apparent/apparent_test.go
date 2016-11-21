@@ -43,8 +43,8 @@ func ExamplePosition() {
 		sexa.NewAngle(' ', 49, 13, 42.48).Rad(),
 	}
 	apparent.Position(eq, eq, 2000, base.JDEToJulianYear(jd),
-		sexa.NewHourAngle(' ', 0, 0, 0.03425),
-		sexa.NewAngle('-', 0, 0, 0.0895))
+		base.HourAngleFromSec(.03425),
+		base.AngleFromSec(-.0895))
 	fmt.Printf("α = %0.3d\n", sexa.RA(eq.RA).Fmt())
 	fmt.Printf("δ = %0.2d\n", sexa.Angle(eq.Dec).Fmt())
 	// Output:
@@ -73,8 +73,8 @@ func ExamplePositionRonVondrak() {
 		Dec: sexa.NewAngle(' ', 49, 13, 42.48).Rad(),
 	}
 	apparent.PositionRonVondrak(eq, eq, base.JDEToJulianYear(jd),
-		sexa.NewHourAngle(' ', 0, 0, 0.03425),
-		sexa.NewAngle('-', 0, 0, 0.0895))
+		base.HourAngleFromSec(.03425),
+		base.AngleFromSec(-.0895))
 	fmt.Printf("α = %0.3d\n", sexa.RA(eq.RA).Fmt())
 	fmt.Printf("δ = %0.2d\n", sexa.Angle(eq.Dec).Fmt())
 	// Output:

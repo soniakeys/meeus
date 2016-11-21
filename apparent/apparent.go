@@ -12,7 +12,6 @@ import (
 	"github.com/soniakeys/meeus/nutation"
 	"github.com/soniakeys/meeus/precess"
 	"github.com/soniakeys/meeus/solar"
-	"github.com/soniakeys/sexagesimal"
 )
 
 // Nutation returns corrections due to nutation for equatorial coordinates
@@ -83,7 +82,7 @@ func Aberration(α, δ, jd float64) (Δα2, Δδ2 float64) {
 // Position is computed for equatorial coordinates in eqFrom, considering
 // proper motion, precession, nutation, and aberration.  Result is in
 // eqTo.  EqFrom and eqTo must be non-nil, but may point to the same struct.
-func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα sexa.HourAngle, mδ sexa.Angle) *coord.Equatorial {
+func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
 	precess.Position(eqFrom, eqTo, epochFrom, epochTo, mα, mδ)
 	jd := base.JulianYearToJDE(epochTo)
 	Δα1, Δδ1 := Nutation(eqTo.RA, eqTo.Dec, jd)
@@ -295,7 +294,7 @@ var rvTerm = [36]rvFunc{
 //
 // Note the Ron-Vondrák expression is only valid for the epoch J2000.
 // EqFrom must be coordinates at epoch J2000.
-func PositionRonVondrak(eqFrom, eqTo *coord.Equatorial, epochTo float64, mα sexa.HourAngle, mδ sexa.Angle) *coord.Equatorial {
+func PositionRonVondrak(eqFrom, eqTo *coord.Equatorial, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
 	t := epochTo - 2000
 	eqTo.RA = eqFrom.RA + mα.Rad()*t
 	eqTo.Dec = eqFrom.Dec + mδ.Rad()*t

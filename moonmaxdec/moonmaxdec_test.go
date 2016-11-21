@@ -55,7 +55,7 @@ func ExampleNorth_c() {
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0h TD\n", y, time.Month(m), int(d),
 		sexa.TimeFromDays(f).Fmt())
-	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg()i)
+	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
 	fmt.Printf("%+0m\n", sexa.Angle(δ).Fmt())
 	// Output:
 	// JDE = 1719672.1412
