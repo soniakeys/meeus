@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/deltat"
 	"github.com/soniakeys/meeus/elliptic"
 	"github.com/soniakeys/meeus/globe"
@@ -24,8 +25,8 @@ func ExampleApproxTimes_computed() {
 	// given in the text.
 	jd := julian.CalendarGregorianToJD(1988, 3, 20)
 	p := globe.Coord{
-		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
+		Lon: base.NewAngle(' ', 71, 5, 0),
+		Lat: base.NewAngle(' ', 42, 20, 0),
 	}
 
 	// Th0 computed rather than taken from the text.
@@ -68,8 +69,8 @@ func ExampleApproxTimes_computed() {
 func ExampleApproxPlanet() {
 	// Example 15.a, p. 103.
 	p := globe.Coord{
-		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
+		Lon: base.NewAngle(' ', 71, 5, 0),
+		Lat: base.NewAngle(' ', 42, 20, 0),
 	}
 	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {
@@ -101,8 +102,8 @@ func ExampleTimes_computed() {
 	// given in the text.
 	jd := julian.CalendarGregorianToJD(1988, 3, 20)
 	p := globe.Coord{
-		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
+		Lon: base.NewAngle(' ', 71, 5, 0),
+		Lat: base.NewAngle(' ', 42, 20, 0),
 	}
 	// Th0 computed rather than taken from the text.
 	Th0 := sidereal.Apparent0UT(jd)
@@ -118,8 +119,8 @@ func ExampleTimes_computed() {
 		fmt.Println(err)
 		return
 	}
-	α := make([]float64, 3)
-	δ := make([]float64, 3)
+	α := make([]base.RA, 3)
+	δ := make([]base.Angle, 3)
 	α[0], δ[0] = elliptic.Position(v, e, jd-1)
 	α[1], δ[1] = elliptic.Position(v, e, jd)
 	α[2], δ[2] = elliptic.Position(v, e, jd+1)
@@ -155,8 +156,8 @@ func ExampleTimes_computed() {
 func ExamplePlanet() {
 	// Example 15.a, p. 103.
 	p := globe.Coord{
-		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
+		Lon: base.NewAngle(' ', 71, 5, 0),
+		Lat: base.NewAngle(' ', 42, 20, 0),
 	}
 	e, err := pp.LoadPlanet(pp.Earth)
 	if err != nil {

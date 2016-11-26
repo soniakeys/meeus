@@ -5,7 +5,6 @@ package pluto_test
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/soniakeys/meeus/pluto"
 )
@@ -13,8 +12,8 @@ import (
 func ExampleHeliocentric() {
 	// Example 37.a, p. 266
 	l, b, r := pluto.Heliocentric(2448908.5)
-	fmt.Printf("l: %.5f\n", l*180/math.Pi)
-	fmt.Printf("b: %.5f\n", b*180/math.Pi)
+	fmt.Printf("l: %.5f\n", l.Deg())
+	fmt.Printf("b: %.5f\n", b.Deg())
 	fmt.Printf("r: %.6f\n", r)
 	// Output:
 	// l: 232.74071

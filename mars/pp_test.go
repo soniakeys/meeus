@@ -7,7 +7,6 @@ package mars_test
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/soniakeys/meeus/mars"
 	pp "github.com/soniakeys/meeus/planetposition"
@@ -25,15 +24,15 @@ func ExamplePhysical() {
 		fmt.Println(err)
 		return
 	}
-	DE, DS, ω, P, Q, d, k, q := mars.Physical(2448935.500683, e, m)
-	fmt.Printf("DE = %+.2f\n", DE*180/math.Pi)
-	fmt.Printf("DS = %+.2f\n", DS*180/math.Pi)
-	fmt.Printf("ω = %.2f\n", ω*180/math.Pi)
-	fmt.Printf("P = %.2f\n", P*180/math.Pi)
-	fmt.Printf("Q = %.2f\n", Q*180/math.Pi)
-	fmt.Printf("d = %.2f\n", d*180/math.Pi*60*60) // display as arc sec
+	DE, DS, ω, P, Q, d, q, k := mars.Physical(2448935.500683, e, m)
+	fmt.Printf("DE = %+.2f\n", DE.Deg())
+	fmt.Printf("DS = %+.2f\n", DS.Deg())
+	fmt.Printf("ω = %.2f\n", ω.Deg())
+	fmt.Printf("P = %.2f\n", P.Deg())
+	fmt.Printf("Q = %.2f\n", Q.Deg())
+	fmt.Printf("d = %.2f\n", d.Sec()) // display as arc sec
 	fmt.Printf("k = %.4f\n", k)
-	fmt.Printf("q = %.2f\n", q*180/math.Pi*60*60) // display as arc sec
+	fmt.Printf("q = %.2f\n", q.Sec()) // display as arc sec
 	// Output:
 	// DE = +12.44
 	// DS = -2.76

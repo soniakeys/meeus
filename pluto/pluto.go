@@ -16,31 +16,31 @@ import (
 //
 // Results l, b are solar longitude and latitude in radians.
 // Result r is distance in AU.
-func Heliocentric(jde float64) (l, b, r float64) {
+func Heliocentric(jde float64) (l, b base.Angle, r float64) {
 	T := base.J2000Century(jde)
-	J := 34.35 + 3034.9057*T
-	S := 50.08 + 1222.1138*T
-	P := 238.96 + 144.96*T
+	J := base.AngleFromDeg(34.35 + 3034.9057*T)
+	S := base.AngleFromDeg(50.08 + 1222.1138*T)
+	P := base.AngleFromDeg(238.96 + 144.96*T)
 	for i := range t37 {
 		t := &t37[i]
-		sα, cα := math.Sincos((t.i*J + t.j*S + t.k*P) * math.Pi / 180)
-		l += t.lA*sα + t.lB*cα
-		b += t.bA*sα + t.bB*cα
+		sα, cα := math.Sincos((J.Mul(t.i) + S.Mul(t.j) + P.Mul(t.k)).Rad())
+		l += t.lA.Mul(sα) + t.lB.Mul(cα)
+		b += t.bA.Mul(sα) + t.bB.Mul(cα)
 		r += t.rA*sα + t.rB*cα
 	}
-	l = (l + 238.958116 + 144.96*T) * math.Pi / 180
-	b = (b - 3.908239) * math.Pi / 180
+	l += base.AngleFromDeg(238.958116 + 144.96*T)
+	b -= base.AngleFromDeg(3.908239)
 	r += 40.7241346
 	return
 }
 
 // Astrometric returns J2000 astrometric coordinates of Pluto.
-func Astrometric(jde float64, e *pp.V87Planet) (α, δ float64) {
+func Astrometric(jde float64, e *pp.V87Planet) (α base.RA, δ base.Angle) {
 	const sε, cε = base.SOblJ2000, base.COblJ2000
 	f := func(jde float64) (x, y, z float64) {
 		l, b, r := Heliocentric(jde)
-		sl, cl := math.Sincos(l)
-		sb, cb := math.Sincos(b)
+		sl, cl := math.Sincos(l.Rad())
+		sb, cb := math.Sincos(b.Rad())
 		// (37.1) p. 264
 		x = r * cl * cb
 		y = r * (sl*cb*cε - sb*sε)
@@ -51,14 +51,22 @@ func Astrometric(jde float64, e *pp.V87Planet) (α, δ float64) {
 	return
 }
 
-type pt struct {
-	i, j, k float64
-	lA, lB  float64
-	bA, bB  float64
-	rA, rB  float64
+func init() {
+	for i := range t37 {
+		t := &t37[i]
+		t.lA *= math.Pi / 180
+		t.lB *= math.Pi / 180
+		t.bA *= math.Pi / 180
+		t.bB *= math.Pi / 180
+	}
 }
 
-var t37 = []pt{
+var t37 = []struct {
+	i, j, k float64
+	lA, lB  base.Angle
+	bA, bB  base.Angle
+	rA, rB  float64
+}{
 	{0, 0, 1, -19.799805, 19.850055, -5.452852, -14.974862, 6.6865439, 6.8951812},
 	{0, 0, 2, .897144, -4.954829, 3.527812, 1.67279, -1.1827535, -.0332538},
 	{0, 0, 3, .611149, 1.211027, -1.050748, .327647, .1593179, -.143889},

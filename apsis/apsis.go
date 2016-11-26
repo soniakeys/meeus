@@ -58,18 +58,14 @@ func Apogee(year float64) float64 {
 // ApogeeParallax returns equatorial horizontal parallax of the Moon at the Apogee nearest the given date.
 //
 // Year is a decimal year specifying a date.
-//
-// Result in radians.
-func ApogeeParallax(year float64) float64 {
+func ApogeeParallax(year float64) base.Angle {
 	return newLa(year, .5).ap()
 }
 
 // PerigeeParallax returns equatorial horizontal parallax of the Moon at the Perigee nearest the given date.
 //
 // Year is a decimal year specifying a date.
-//
-// Result in radians.
-func PerigeeParallax(year float64) float64 {
+func PerigeeParallax(year float64) base.Angle {
 	return newLa(year, 0).pp()
 }
 
@@ -193,76 +189,76 @@ func (l *la) ac() float64 {
 }
 
 // apogee parallax
-func (l *la) ap() float64 {
-	const s = math.Pi / 180 / 3600
-	return 3245.251*s +
-		-9.147*s*math.Cos(2*l.D) +
-		-.841*s*math.Cos(l.D) +
-		.697*s*math.Cos(2*l.F) +
-		(-.656*s+.0016*s*l.T)*math.Cos(l.M) +
-		.355*s*math.Cos(4*l.D) +
-		.159*s*math.Cos(2*l.D-l.M) +
-		.127*s*math.Cos(l.D+l.M) +
-		.065*s*math.Cos(4*l.D-l.M) +
-		.052*s*math.Cos(6*l.D) +
-		.043*s*math.Cos(2*l.D+l.M) +
-		.031*s*math.Cos(2*(l.D+l.F)) +
-		-.023*s*math.Cos(2*(l.D-l.F)) +
-		.022*s*math.Cos(2*(l.D-l.M)) +
-		.019*s*math.Cos(2*(l.D+l.M)) +
-		-.016*s*math.Cos(2*l.M) +
-		.014*s*math.Cos(6*l.D-l.M) +
-		.01*s*math.Cos(8*l.D)
+func (l *la) ap() base.Angle {
+	return base.AngleFromSec(
+		3245.251 +
+			-9.147*math.Cos(2*l.D) +
+			-.841*math.Cos(l.D) +
+			.697*math.Cos(2*l.F) +
+			(-.656+.0016*l.T)*math.Cos(l.M) +
+			.355*math.Cos(4*l.D) +
+			.159*math.Cos(2*l.D-l.M) +
+			.127*math.Cos(l.D+l.M) +
+			.065*math.Cos(4*l.D-l.M) +
+			.052*math.Cos(6*l.D) +
+			.043*math.Cos(2*l.D+l.M) +
+			.031*math.Cos(2*(l.D+l.F)) +
+			-.023*math.Cos(2*(l.D-l.F)) +
+			.022*math.Cos(2*(l.D-l.M)) +
+			.019*math.Cos(2*(l.D+l.M)) +
+			-.016*math.Cos(2*l.M) +
+			.014*math.Cos(6*l.D-l.M) +
+			.01*math.Cos(8*l.D))
 }
 
 // perigee parallax
-func (l *la) pp() float64 {
-	const s = math.Pi / 180 / 3600
-	return 3629.215*s +
-		63.224*s*math.Cos(2*l.D) +
-		-6.990*s*math.Cos(4*l.D) +
-		(2.834*s-0.0071*l.T*s)*math.Cos(2*l.D-l.M) +
-		1.927*s*math.Cos(6*l.D) +
-		-1.263*s*math.Cos(l.D) +
-		-0.702*s*math.Cos(8*l.D) +
-		(0.696*s-0.0017*l.T*s)*math.Cos(l.M) +
-		-0.690*s*math.Cos(2*l.F) +
-		(-0.629*s+0.0016*l.T*s)*math.Cos(4*l.D-l.M) +
-		-0.392*s*math.Cos(2*(l.D-l.F)) +
-		0.297*s*math.Cos(10*l.D) +
-		0.260*s*math.Cos(6*l.D-l.M) +
-		0.201*s*math.Cos(3*l.D) +
-		-0.161*s*math.Cos(2*l.D+l.M) +
-		0.157*s*math.Cos(l.D+l.M) +
-		-0.138*s*math.Cos(12*l.D) +
-		-0.127*s*math.Cos(8*l.D-l.M) +
-		0.104*s*math.Cos(2*(l.D+l.F)) +
-		0.104*s*math.Cos(2*(l.D-l.M)) +
-		-0.079*s*math.Cos(5*l.D) +
-		0.068*s*math.Cos(14*l.D) +
-		0.067*s*math.Cos(10*l.D-l.M) +
-		0.054*s*math.Cos(4*l.D+l.M) +
-		-0.038*s*math.Cos(12*l.D-l.M) +
-		-0.038*s*math.Cos(4*l.D-2*l.M) +
-		0.037*s*math.Cos(7*l.D) +
-		-0.037*s*math.Cos(4*l.D+2*l.F) +
-		-0.035*s*math.Cos(16*l.D) +
-		-0.030*s*math.Cos(3*l.D+l.M) +
-		0.029*s*math.Cos(l.D-l.M) +
-		-0.025*s*math.Cos(6*l.D+l.M) +
-		0.023*s*math.Cos(2*l.M) +
-		0.023*s*math.Cos(14*l.D-l.M) +
-		-0.023*s*math.Cos(2*(l.D+l.M)) +
-		0.022*s*math.Cos(6*l.D-2*l.M) +
-		-0.021*s*math.Cos(2*l.D-2*l.F-l.M) +
-		-0.020*s*math.Cos(9*l.D) +
-		0.019*s*math.Cos(18*l.D) +
-		0.017*s*math.Cos(6*l.D+2*l.F) +
-		0.014*s*math.Cos(2*l.F-l.M) +
-		-0.014*s*math.Cos(16*l.D-l.M) +
-		0.013*s*math.Cos(4*l.D-2*l.F) +
-		0.012*s*math.Cos(8*l.D+l.M) +
-		0.011*s*math.Cos(11*l.D) +
-		0.010*s*math.Cos(5*l.D+l.M) +
-		-0.010*s*math.Cos(20*l.D)
+func (l *la) pp() base.Angle {
+	return base.AngleFromSec(
+		3629.215 +
+			63.224*math.Cos(2*l.D) +
+			-6.990*math.Cos(4*l.D) +
+			(2.834-0.0071*l.T)*math.Cos(2*l.D-l.M) +
+			1.927*math.Cos(6*l.D) +
+			-1.263*math.Cos(l.D) +
+			-0.702*math.Cos(8*l.D) +
+			(0.696-0.0017*l.T)*math.Cos(l.M) +
+			-0.690*math.Cos(2*l.F) +
+			(-0.629+0.0016*l.T)*math.Cos(4*l.D-l.M) +
+			-0.392*math.Cos(2*(l.D-l.F)) +
+			0.297*math.Cos(10*l.D) +
+			0.260*math.Cos(6*l.D-l.M) +
+			0.201*math.Cos(3*l.D) +
+			-0.161*math.Cos(2*l.D+l.M) +
+			0.157*math.Cos(l.D+l.M) +
+			-0.138*math.Cos(12*l.D) +
+			-0.127*math.Cos(8*l.D-l.M) +
+			0.104*math.Cos(2*(l.D+l.F)) +
+			0.104*math.Cos(2*(l.D-l.M)) +
+			-0.079*math.Cos(5*l.D) +
+			0.068*math.Cos(14*l.D) +
+			0.067*math.Cos(10*l.D-l.M) +
+			0.054*math.Cos(4*l.D+l.M) +
+			-0.038*math.Cos(12*l.D-l.M) +
+			-0.038*math.Cos(4*l.D-2*l.M) +
+			0.037*math.Cos(7*l.D) +
+			-0.037*math.Cos(4*l.D+2*l.F) +
+			-0.035*math.Cos(16*l.D) +
+			-0.030*math.Cos(3*l.D+l.M) +
+			0.029*math.Cos(l.D-l.M) +
+			-0.025*math.Cos(6*l.D+l.M) +
+			0.023*math.Cos(2*l.M) +
+			0.023*math.Cos(14*l.D-l.M) +
+			-0.023*math.Cos(2*(l.D+l.M)) +
+			0.022*math.Cos(6*l.D-2*l.M) +
+			-0.021*math.Cos(2*l.D-2*l.F-l.M) +
+			-0.020*math.Cos(9*l.D) +
+			0.019*math.Cos(18*l.D) +
+			0.017*math.Cos(6*l.D+2*l.F) +
+			0.014*math.Cos(2*l.F-l.M) +
+			-0.014*math.Cos(16*l.D-l.M) +
+			0.013*math.Cos(4*l.D-2*l.F) +
+			0.012*math.Cos(8*l.D+l.M) +
+			0.011*math.Cos(11*l.D) +
+			0.010*math.Cos(5*l.D+l.M) +
+			-0.010*math.Cos(20*l.D))
 }

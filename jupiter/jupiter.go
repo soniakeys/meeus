@@ -22,9 +22,7 @@ import (
 //	ω2  Longitude of the System II central meridian of the illuminated disk,
 //	    as seen from Earth.
 //	P   Geocentric position angle of Jupiter's northern rotation pole.
-//
-// All angular results in radians.
-func Physical(jde float64, earth, jupiter *pp.V87Planet) (DS, DE, ω1, ω2, P float64) {
+func Physical(jde float64, earth, jupiter *pp.V87Planet) (DS, DE, ω1, ω2, P base.Angle) {
 	// Step 1.
 	d := jde - 2433282.5
 	T1 := d / base.JulianCentury
@@ -38,16 +36,17 @@ func Physical(jde float64, earth, jupiter *pp.V87Planet) (DS, DE, ω1, ω2, P fl
 	l0, b0, R := earth.Position(jde)
 	l0, b0 = pp.ToFK5(l0, b0, jde)
 	// Steps 4-7.
-	sl0, cl0 := math.Sincos(l0)
-	sb0 := math.Sin(b0)
+	sl0, cl0 := math.Sincos(l0.Rad())
+	sb0 := math.Sin(b0.Rad())
 	Δ := 4. // surely better than 0.
-	var l, b, r, x, y, z float64
+	var l, b base.Angle
+	var r, x, y, z float64
 	f := func() {
 		τ := base.LightTime(Δ)
 		l, b, r = jupiter.Position(jde - τ)
 		l, b = pp.ToFK5(l, b, jde)
-		sb, cb := math.Sincos(b)
-		sl, cl := math.Sincos(l)
+		sb, cb := math.Sincos(b.Rad())
+		sl, cl := math.Sincos(l.Rad())
 		// (42.2) p. 289
 		x = r*cb*cl - R*cl0
 		y = r*cb*sl - R*sl0
@@ -60,15 +59,15 @@ func Physical(jde float64, earth, jupiter *pp.V87Planet) (DS, DE, ω1, ω2, P fl
 	// Step 8.
 	ε0 := nutation.MeanObliquity(jde)
 	// Step 9.
-	sε0, cε0 := math.Sincos(ε0)
-	sl, cl := math.Sincos(l)
-	sb, cb := math.Sincos(b)
+	sε0, cε0 := math.Sincos(ε0.Rad())
+	sl, cl := math.Sincos(l.Rad())
+	sb, cb := math.Sincos(b.Rad())
 	αs := math.Atan2(cε0*sl-sε0*sb/cb, cl)
 	δs := math.Asin(cε0*sb + sε0*cb*sl)
 	// Step 10.
 	sδs, cδs := math.Sincos(δs)
 	sδ0, cδ0 := math.Sincos(δ0)
-	DS = math.Asin(-sδ0*sδs - cδ0*cδs*math.Cos(α0-αs))
+	DS = base.Angle(math.Asin(-sδ0*sδs - cδ0*cδs*math.Cos(α0-αs)))
 	// Step 11.
 	u := y*cε0 - z*sε0
 	v := y*sε0 + z*cε0
@@ -78,35 +77,35 @@ func Physical(jde float64, earth, jupiter *pp.V87Planet) (DS, DE, ω1, ω2, P fl
 	sα0α, cα0α := math.Sincos(α0 - α)
 	ζ := math.Atan2(sδ0*cδ*cα0α-sδ*cδ0, cδ*sα0α)
 	// Step 12.
-	DE = math.Asin(-sδ0*sδ - cδ0*cδ*math.Cos(α0-α))
+	DE = base.Angle(math.Asin(-sδ0*sδ - cδ0*cδ*math.Cos(α0-α)))
 	// Step 13.
-	ω1 = W1 - ζ - 5.07033*p*Δ
-	ω2 = W2 - ζ - 5.02626*p*Δ
+	ω1 = base.Angle(W1 - ζ - 5.07033*p*Δ)
+	ω2 = base.Angle(W2 - ζ - 5.02626*p*Δ)
 	// Step 14.
 	C := (2*r*Δ + R*R - r*r - Δ*Δ) / (4 * r * Δ)
-	if math.Sin(l-l0) < 0 {
+	if math.Sin((l - l0).Rad()) < 0 {
 		C = -C
 	}
-	ω1 = base.PMod(ω1+C, 2*math.Pi)
-	ω2 = base.PMod(ω2+C, 2*math.Pi)
+	ω1 = base.Angle(base.PMod(ω1.Rad()+C, 2*math.Pi))
+	ω2 = base.Angle(base.PMod(ω2.Rad()+C, 2*math.Pi))
 	// Step 15.
 	Δψ, Δε := nutation.Nutation(jde)
 	ε := ε0 + Δε
 	// Step 16.
-	sε, cε := math.Sincos(ε)
+	sε, cε := math.Sincos(ε.Rad())
 	sα, cα := math.Sincos(α)
 	α += .005693 * p * (cα*cl0*cε + sα*sl0) / cδ
 	δ += .005693 * p * (cl0*cε*(sε/cε*cδ-sα*sδ) + cα*sδ*sl0)
 	// Step 17.
 	tδ := sδ / cδ
-	Δα := (cε+sε*sα*tδ)*Δψ - cα*tδ*Δε
-	Δδ := sε*cα*Δψ + sα*Δε
+	Δα := (cε+sε*sα*tδ)*Δψ.Rad() - cα*tδ*Δε.Rad()
+	Δδ := sε*cα*Δψ.Rad() + sα*Δε.Rad()
 	αʹ := α + Δα
 	δʹ := δ + Δδ
 	sα0, cα0 := math.Sincos(α0)
 	tδ0 := sδ0 / cδ0
-	Δα0 := (cε+sε*sα0*tδ0)*Δψ - cα0*tδ0*Δε
-	Δδ0 := sε*cα0*Δψ + sα0*Δε
+	Δα0 := (cε+sε*sα0*tδ0)*Δψ.Rad() - cα0*tδ0*Δε.Rad()
+	Δδ0 := sε*cα0*Δψ.Rad() + sα0*Δε.Rad()
 	α0ʹ := α0 + Δα0
 	δ0ʹ := δ0 + Δδ0
 	// Step 18.
@@ -114,7 +113,7 @@ func Physical(jde float64, earth, jupiter *pp.V87Planet) (DS, DE, ω1, ω2, P fl
 	sδ0ʹ, cδ0ʹ := math.Sincos(δ0ʹ)
 	sα0ʹαʹ, cα0ʹαʹ := math.Sincos(α0ʹ - αʹ)
 	// (42.4) p. 290
-	P = math.Atan2(cδ0ʹ*sα0ʹαʹ, sδ0ʹ*cδʹ-cδ0ʹ*sδʹ*cα0ʹαʹ)
+	P = base.Angle(math.Atan2(cδ0ʹ*sα0ʹαʹ, sδ0ʹ*cδʹ-cδ0ʹ*sδʹ*cα0ʹαʹ))
 	if P < 0 {
 		P += 2 * math.Pi
 	}
@@ -134,7 +133,7 @@ func Physical(jde float64, earth, jupiter *pp.V87Planet) (DS, DE, ω1, ω2, P fl
 //	    as seen from Earth.
 //
 // All angular results in radians.
-func Physical2(jde float64) (DS, DE, ω1, ω2 float64) {
+func Physical2(jde float64) (DS, DE, ω1, ω2 base.Angle) {
 	d := jde - base.J2000
 	const p = math.Pi / 180
 	V := 172.74*p + .00111588*p*d
@@ -155,18 +154,18 @@ func Physical2(jde float64) (DS, DE, ω1, ω2 float64) {
 	Δ := math.Sqrt(r*r + R*R - 2*r*R*cK)
 	ψ := math.Asin(R / Δ * sK)
 	dd := d - Δ/173
-	ω1 = 210.98*p + 877.8169088*p*dd + ψ - B
-	ω2 = 187.23*p + 870.1869088*p*dd + ψ - B
+	ω1 = base.Angle(210.98*p + 877.8169088*p*dd + ψ - B)
+	ω2 = base.Angle(187.23*p + 870.1869088*p*dd + ψ - B)
 	C := math.Sin(ψ / 2)
 	C *= C
 	if sK > 0 {
 		C = -C
 	}
-	ω1 = base.PMod(ω1+C, 2*math.Pi)
-	ω2 = base.PMod(ω2+C, 2*math.Pi)
+	ω1 = base.Angle(base.PMod(ω1.Rad()+C, 2*math.Pi))
+	ω2 = base.Angle(base.PMod(ω2.Rad()+C, 2*math.Pi))
 	λ := 34.35*p + .083091*p*d + .329*p*sV + B
-	DS = 3.12 * p * math.Sin(λ+42.8*p)
-	DE = DS - 2.22*p*math.Sin(ψ)*math.Cos(λ+22*p) -
-		1.3*p*(r-Δ)/Δ*math.Sin(λ-100.5*p)
+	DS = base.Angle(3.12 * p * math.Sin(λ+42.8*p))
+	DE = DS - base.Angle(2.22*p*math.Sin(ψ)*math.Cos(λ+22*p)) -
+		base.Angle(1.3*p*(r-Δ)/Δ*math.Sin(λ-100.5*p))
 	return
 }

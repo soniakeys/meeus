@@ -26,8 +26,8 @@ const d = math.Pi / 180
 // Result units are Saturn radii.
 func Positions(jde float64, earth, saturn *pp.V87Planet, pos *[8]XY) {
 	s, β, R := solar.TrueVSOP87(earth, jde)
-	ss, cs := math.Sincos(s)
-	sβ := math.Sin(β)
+	ss, cs := math.Sincos(s.Rad())
+	sβ := math.Sin(β.Rad())
 	Δ := 9.
 	var x, y, z float64
 	var JDE float64
@@ -36,8 +36,8 @@ func Positions(jde float64, earth, saturn *pp.V87Planet, pos *[8]XY) {
 		JDE = jde - τ
 		l, b, r := saturn.Position(JDE)
 		l, b = pp.ToFK5(l, b, JDE)
-		sl, cl := math.Sincos(l)
-		sb, cb := math.Sincos(b)
+		sl, cl := math.Sincos(l.Rad())
+		sb, cb := math.Sincos(b.Rad())
 		x = r*cb*cl + R*cs
 		y = r*cb*sl + R*ss
 		z = r*sb + R*sβ
@@ -45,8 +45,8 @@ func Positions(jde float64, earth, saturn *pp.V87Planet, pos *[8]XY) {
 	}
 	f()
 	f()
-	λ0 := math.Atan2(y, x)
-	β0 := math.Atan(z / math.Hypot(x, y))
+	λ0 := base.Angle(math.Atan2(y, x))
+	β0 := base.Angle(math.Atan(z / math.Hypot(x, y)))
 	ecl := &coord.Ecliptic{λ0, β0}
 	precess.EclipticPosition(ecl, ecl,
 		base.JDEToJulianYear(jde), base.JDEToJulianYear(base.B1950), 0, 0)
@@ -75,8 +75,8 @@ func Positions(jde float64, earth, saturn *pp.V87Planet, pos *[8]XY) {
 		Z[j] = r * su * sγ
 	}
 	Z[0] = 1
-	sλ0, cλ0 := math.Sincos(λ0)
-	sβ0, cβ0 := math.Sincos(β0)
+	sλ0, cλ0 := math.Sincos(λ0.Rad())
+	sβ0, cβ0 := math.Sincos(β0.Rad())
 	var A, B, C [9]float64
 	for j := range X {
 		a := X[j]
@@ -303,7 +303,7 @@ func (q *qs) hyperion() (r r4) {
 	scs, ccs := math.Sincos(cs)
 	a := 24.50601 - .08686*cη - .00166*cζpη + .00175*cζmη
 	e := .103458 - .004099*cη - .000167*cζpη + .000235*cζmη +
-		.02303*cζ - .00212*c2ζ + .000151*c3ζ + .00013*cφ
+		.02303*cζ - .00212*c2ζ + 0.000151*c3ζ + .00013*cφ
 	p := ϖ + .15648*d*sχ - .4457*d*sη - .2657*d*sζpη - .3573*d*sζmη -
 		12.872*d*sζ + 1.668*d*s2ζ - .2419*d*s3ζ - .07*d*sφ
 	λʹ := 177.047*d + 16.91993829*d*q.t6 + .15648*d*sχ + 9.142*d*sη +

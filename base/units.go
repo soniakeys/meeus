@@ -42,14 +42,32 @@ func (a Angle) Rad() float64 { return float64(a) }
 // Deg returns the angle in degrees.
 func (a Angle) Deg() float64 { return float64(a) * 180 / math.Pi }
 
+// Div returns the scalar quotient a/d
+func (a Angle) Div(d float64) Angle { return a / Angle(d) }
+
 // Min returns the angle in minutes.
 func (a Angle) Min() float64 { return float64(a) * 60 * 180 / math.Pi }
+
+// Mul returns the scalar product a*f
+func (a Angle) Mul(f float64) Angle { return a * Angle(f) }
+
+func (a Angle) Mod1() Angle { return Angle(PMod(a.Rad(), 2*math.Pi)) }
 
 // Sec returns the angle in seconds.
 func (a Angle) Sec() float64 { return float64(a) * 3600 * 180 / math.Pi }
 
+func (a Angle) Sin() float64               { return math.Sin(a.Rad()) }
+func (a Angle) Cos() float64               { return math.Cos(a.Rad()) }
+func (a Angle) Tan() float64               { return math.Tan(a.Rad()) }
+func (a Angle) Sincos() (float64, float64) { return math.Sincos(a.Rad()) }
+
+func (a Angle) Time() Time { return TimeFromRad(a.Rad()) }
+
 // FromSexa converts from parsed sexagesimal angle components to a single
 // float64 value.
+//
+// The result is in the units of d, the first or "largest" sexagesimal
+// component.
 //
 // Typically you pass non-negative values for d, m, and s, and to indicate
 // a negative value, pass '-' for neg.  Any other value, such as ' ', '+',
@@ -59,11 +77,23 @@ func (a Angle) Sec() float64 { return float64(a) * 3600 * 180 / math.Pi }
 // > 60 for m and s are allowed for example.  The segment values are
 // combined and then if neg is '-' that sum is negated.
 //
-// Also, the interpretation of d as degrees is arbitrary.  The function works
-// as well on hours minutes and seconds.  Generally, m is a sexagesimal part
-// of d and s is a sexagesimal part of m.
+// This function would commonly be called something like DMSToDegrees, but
+// the interpretation of d as degrees is arbitrary.  The function works
+// as well on hours minutes and seconds.  Regardless of the units of d,
+// m is a sexagesimal part of d and s is a sexagesimal part of m.
 func FromSexa(neg byte, d, m int, s float64) float64 {
-	s = (float64((d*60+m)*60) + s) / 3600
+	return FromSexaSec(neg, d, m, s) / 3600
+}
+
+// FromSexaSec converts from parsed sexagesimal angle components to a single
+// float64 value.
+//
+// The result is in the units of s, the last or "smallest" sexagesimal
+// component.
+//
+// Otherwise FromSexaSec works as FromSexa.  See FromSexa.
+func FromSexaSec(neg byte, d, m int, s float64) float64 {
+	s = (float64((d*60+m)*60) + s)
 	if neg == '-' {
 		return -s
 	}
@@ -101,6 +131,8 @@ func HourAngleFromSec(s float64) HourAngle {
 	return HourAngle(s / 3600 / 12 * math.Pi)
 }
 
+func (h HourAngle) RA() RA { return RAFromRad(h.Rad()) }
+
 // Rad returns the hour angle as an angle in radians.
 //
 // This is the underlying representation and involves no scaling.
@@ -110,7 +142,16 @@ func (h HourAngle) Rad() float64 { return float64(h) }
 func (h HourAngle) Hour() float64 { return float64(h) * 12 / math.Pi }
 
 func (h HourAngle) Min() float64 { return float64(h) * 60 * 12 / math.Pi }
+
+// Mul returns the scalar product h*f
+func (h HourAngle) Mul(f float64) HourAngle { return h * HourAngle(f) }
+
 func (h HourAngle) Sec() float64 { return float64(h) * 3600 * 12 / math.Pi }
+
+func (h HourAngle) Sin() float64               { return math.Sin(h.Rad()) }
+func (h HourAngle) Cos() float64               { return math.Cos(h.Rad()) }
+func (h HourAngle) Tan() float64               { return math.Tan(h.Rad()) }
+func (h HourAngle) Sincos() (float64, float64) { return math.Sincos(h.Rad()) }
 
 // RA represents a value of right ascension.
 //
@@ -148,6 +189,11 @@ func (ra RA) Hour() float64 { return float64(ra) * 12 / math.Pi }
 
 func (ra RA) Min() float64 { return float64(ra) * 60 * 12 / math.Pi }
 func (ra RA) Sec() float64 { return float64(ra) * 3600 * 12 / math.Pi }
+
+func (ra RA) Sin() float64               { return math.Sin(ra.Rad()) }
+func (ra RA) Cos() float64               { return math.Cos(ra.Rad()) }
+func (ra RA) Tan() float64               { return math.Tan(ra.Rad()) }
+func (ra RA) Sincos() (float64, float64) { return math.Sincos(ra.Rad()) }
 
 // Time represents a duration or relative time.
 //
@@ -188,14 +234,24 @@ func TimeFromRad(rad float64) Time {
 	return Time(rad * 3600 * 12 / math.Pi)
 }
 
+// Angle returns time t as an equivalent angle where 1 day = 2 Pi radians.
+func (t Time) Angle() Angle { return Angle(t.Rad()) }
+
 // Day returns time in days.
 func (t Time) Day() float64 { return float64(t) / 3600 / 24 }
+
+func (t Time) Div(d float64) Time { return Time(t.Sec() / d) }
 
 // Hour returns time in hours.
 func (t Time) Hour() float64 { return float64(t) / 3600 }
 
 // Min returns time in minutes.
 func (t Time) Min() float64 { return float64(t) / 60 }
+
+// Mod1 returns a new Time wrapped to one day, the range [0,86400) seconds.
+func (t Time) Mod1() Time { return Time(PMod(float64(t), 3600*24)) }
+
+func (t Time) Mul(f float64) Time { return Time(t.Sec() * f) }
 
 // Rad returns time in radians, where 1 day = 2 Pi radians of rotation.
 func (t Time) Rad() float64 { return float64(t) / 3600 / 12 * math.Pi }

@@ -16,17 +16,25 @@ import (
 )
 
 func ExamplePhaseAngleEq() {
-	const p = math.Pi / 180
-	i := moonillum.PhaseAngleEq(134.6885*p, 13.7684*p, 368410,
-		20.6579*p, 8.6964*p, 149971520)
-	fmt.Printf("i = %.4f\n", i/p)
+	i := moonillum.PhaseAngleEq(
+		base.RAFromDeg(134.6885),
+		base.AngleFromDeg(13.7684),
+		368410,
+		base.RAFromDeg(20.6579),
+		base.AngleFromDeg(8.6964),
+		149971520)
+	fmt.Printf("i = %.4f\n", i.Deg())
 	// Output:
 	// i = 69.0756
 }
 
 func ExamplePhaseAngleEq2() {
 	const p = math.Pi / 180
-	i := moonillum.PhaseAngleEq2(134.6885*p, 13.7684*p, 20.6579*p, 8.6964*p)
+	i := moonillum.PhaseAngleEq2(
+		base.RAFromDeg(134.6885),
+		base.AngleFromDeg(13.7684),
+		base.RAFromDeg(20.6579),
+		base.AngleFromDeg(8.6964))
 	k := base.Illuminated(i)
 	fmt.Printf("k = %.4f\n", k)
 	// Output:
@@ -40,9 +48,9 @@ func TestPhaseAngleEcl(t *testing.T) {
 	λ0 := solar.ApparentLongitude(T)
 	R := solar.Radius(T) * base.AU
 	i := moonillum.PhaseAngleEcl(λ, β, Δ, λ0, R)
-	ref := 69.0756 * math.Pi / 180
-	if math.Abs((i-ref)/ref) > 1e-4 {
-		t.Errorf("i = %.4f", i*180/math.Pi)
+	ref := base.AngleFromDeg(69.0756)
+	if math.Abs(((i - ref) / ref).Rad()) > 1e-4 {
+		t.Errorf("i = %.4f", i.Deg())
 	}
 }
 
@@ -61,7 +69,7 @@ func TestPhaseAngleEcl2(t *testing.T) {
 func ExamplePhaseAngle3() {
 	i := moonillum.PhaseAngle3(julian.CalendarGregorianToJD(1992, 4, 12))
 	k := base.Illuminated(i)
-	fmt.Printf("i = %.2f\n", i*180/math.Pi)
+	fmt.Printf("i = %.2f\n", i.Deg())
 	fmt.Printf("k = %.4f\n", k)
 	// Output:
 	// i = 68.88

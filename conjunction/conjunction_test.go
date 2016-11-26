@@ -74,7 +74,7 @@ func ExamplePlanetary() {
 	// compute UT = TD - ΔT, and separate back into calendar components.
 	// (we could use our known calendar components, but this illustrates
 	// the more general technique that would allow for rollovers.)
-	y, m, d := julian.JDToCalendar(jd - deltat.Interp10A(jd)/(3600*24))
+	y, m, d := julian.JDToCalendar(jd - deltat.Interp10A(jd).Day())
 	// format as before
 	dInt, dFrac = math.Modf(d)
 	fmt.Printf("%d %s %d at %s UT\n", y, time.Month(m), int(dInt),

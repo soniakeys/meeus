@@ -37,7 +37,7 @@ func ExamplePoly1900to1997() {
 func ExamplePolyBefore948() {
 	// Example 10.b, p. 80.
 	ΔT := deltat.PolyBefore948(333.1)
-	UT := sexa.NewTime(' ', 6, 0, 0).Sec()
+	UT := base.TimeFromHour(6)
 	TD := UT + ΔT
 	fmt.Printf("%+.0f seconds\n", ΔT)
 	fmt.Printf("333 February 6 at %m TD", sexa.Time(TD).Fmt())
@@ -50,7 +50,7 @@ func ExamplePolyBefore948() {
 func TestPoly1800to1997(t *testing.T) {
 	for _, tp := range []struct {
 		year int
-		ΔT   float64
+		ΔT   base.Time
 	}{
 		{1800, 13.1},
 		{1900, -2.8},
@@ -58,7 +58,7 @@ func TestPoly1800to1997(t *testing.T) {
 	} {
 		jd := julian.CalendarGregorianToJD(tp.year, 0, 0)
 		ΔT := deltat.Poly1800to1997(jd)
-		if math.Abs(ΔT-tp.ΔT) > 2.3 {
+		if math.Abs((ΔT - tp.ΔT).Sec()) > 2.3 {
 			t.Fatalf("%#v, got %.1f", tp, ΔT)
 		}
 	}
@@ -67,14 +67,14 @@ func TestPoly1800to1997(t *testing.T) {
 func TestPoly1800to1899(t *testing.T) {
 	for _, tp := range []struct {
 		year int
-		ΔT   float64
+		ΔT   base.Time
 	}{
 		{1800, 13.1},
 		{1850, 6.8},
 		{1898, -4.7},
 	} {
 		jd := julian.CalendarGregorianToJD(tp.year, 0, 0)
-		if math.Abs(deltat.Poly1800to1899(jd)-tp.ΔT) > 1 {
+		if math.Abs((deltat.Poly1800to1899(jd) - tp.ΔT).Sec()) > 1 {
 			t.Fatalf("%#v", tp)
 		}
 	}
@@ -87,7 +87,7 @@ func TestPoly1900to1997(t *testing.T) {
 	}
 	for _, tp := range []struct {
 		year int
-		ΔT   float64
+		ΔT   base.Time
 	}{
 		{1900, -2.8},
 		{1950, 29.1},
@@ -95,7 +95,7 @@ func TestPoly1900to1997(t *testing.T) {
 	} {
 		jd := julian.CalendarGregorianToJD(tp.year, 0, 0)
 		ΔT := deltat.Poly1900to1997(jd)
-		if math.Abs(ΔT-tp.ΔT) > 1 {
+		if math.Abs((ΔT - tp.ΔT).Sec()) > 1 {
 			t.Fatalf("%#v, got %.1f", tp, ΔT)
 		}
 	}

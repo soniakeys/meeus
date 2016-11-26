@@ -187,11 +187,11 @@ func December2(y int, e *pp.V87Planet) float64 {
 	return eq2(y-2000, e, math.Pi*3/2, dc2)
 }
 
-func eq2(y int, e *pp.V87Planet, q float64, c []float64) float64 {
+func eq2(y int, e *pp.V87Planet, q base.Angle, c []float64) float64 {
 	J0 := base.Horner(float64(y)*.001, c...)
 	for {
 		λ, _, _ := solar.ApparentVSOP87(e, J0)
-		c := 58 * math.Sin(q-λ) // (27.1) p. 180
+		c := 58 * (q - λ).Sin() // (27.1) p. 180
 		J0 += c
 		if math.Abs(c) < .000005 {
 			break

@@ -55,10 +55,10 @@ import (
 // The declinations should not be too close to the poles.
 func ApproxAnnualPrecession(eq *coord.Equatorial, epochFrom, epochTo float64) (Δα base.HourAngle, Δδ base.Angle) {
 	m, na, nd := mn(epochFrom, epochTo)
-	sa, ca := math.Sincos(eq.RA)
+	sa, ca := math.Sincos(eq.RA.Rad())
 	// (21.1) p. 132
-	Δα = base.HourAngleFromSec(m + na*sa*math.Tan(eq.Dec)) // seconds of RA
-	Δδ = base.AngleFromSec(nd * ca)                        // seconds of Dec
+	Δα = base.HourAngleFromSec(m + na*sa*math.Tan(eq.Dec.Rad()))
+	Δδ = base.AngleFromSec(nd * ca)
 	return
 }
 
@@ -79,8 +79,8 @@ func mn(epochFrom, epochTo float64) (m, na, nd float64) {
 func ApproxPosition(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
 	Δα, Δδ := ApproxAnnualPrecession(eqFrom, epochFrom, epochTo)
 	dy := epochTo - epochFrom
-	eqTo.RA = eqFrom.RA + (Δα+mα).Rad()*dy
-	eqTo.Dec = eqFrom.Dec + (Δδ+mδ).Rad()*dy
+	eqTo.RA = eqFrom.RA.Add((Δα + mα) * base.HourAngle(dy))
+	eqTo.Dec = eqFrom.Dec + (Δδ+mδ)*base.Angle(dy)
 	return eqTo
 }
 
@@ -90,7 +90,8 @@ func ApproxPosition(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, 
 // After construction, Precess may be called multiple times to precess
 // different coordinates with the same initial and final epochs.
 type Precessor struct {
-	ζ, z, sθ, cθ float64
+	ζ, z   base.Angle
+	sθ, cθ float64
 }
 
 const d = math.Pi / 180
@@ -135,8 +136,8 @@ func NewPrecessor(epochFrom, epochTo float64) *Precessor {
 	}
 	t := (epochTo - epochFrom) * .01
 	p := &Precessor{
-		ζ: base.Horner(t, ζCoeff...) * t,
-		z: base.Horner(t, zCoeff...) * t,
+		ζ: base.Angle(base.Horner(t, ζCoeff...) * t),
+		z: base.Angle(base.Horner(t, zCoeff...) * t),
 	}
 	θ := base.Horner(t, θCoeff...) * t
 	p.sθ, p.cθ = math.Sincos(θ)
@@ -149,16 +150,16 @@ func NewPrecessor(epochFrom, epochTo float64) *Precessor {
 // EqTo is returned for convenience.
 func (p *Precessor) Precess(eqFrom, eqTo *coord.Equatorial) *coord.Equatorial {
 	// (21.4) p. 134
-	sδ, cδ := math.Sincos(eqFrom.Dec)
-	sαζ, cαζ := math.Sincos(eqFrom.RA + p.ζ)
+	sδ, cδ := math.Sincos(eqFrom.Dec.Rad())
+	sαζ, cαζ := math.Sincos(eqFrom.RA.Rad() + p.ζ.Rad())
 	A := cδ * sαζ
 	B := p.cθ*cδ*cαζ - p.sθ*sδ
 	C := p.sθ*cδ*cαζ + p.cθ*sδ
-	eqTo.RA = math.Atan2(A, B) + p.z
+	eqTo.RA = base.RAFromRad(math.Atan2(A, B) + p.z.Rad())
 	if C < base.CosSmallAngle {
-		eqTo.Dec = math.Asin(C)
+		eqTo.Dec = base.Angle(math.Asin(C))
 	} else {
-		eqTo.Dec = math.Acos(math.Hypot(A, B)) // near pole
+		eqTo.Dec = base.Angle(math.Acos(math.Hypot(A, B))) // near pole
 	}
 	return eqTo
 }
@@ -174,8 +175,8 @@ func (p *Precessor) Precess(eqFrom, eqTo *coord.Equatorial) *coord.Equatorial {
 func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
 	p := NewPrecessor(epochFrom, epochTo)
 	t := epochTo - epochFrom
-	eqTo.RA = eqFrom.RA + mα.Rad()*t
-	eqTo.Dec = eqFrom.Dec + mδ.Rad()*t
+	eqTo.RA = base.RAFromRad(eqFrom.RA.Rad() + mα.Rad()*t)
+	eqTo.Dec = eqFrom.Dec + mδ*base.Angle(t)
 	return p.Precess(eqTo, eqTo)
 }
 
@@ -238,16 +239,16 @@ func NewEclipticPrecessor(epochFrom, epochTo float64) *EclipticPrecessor {
 // EclTo is returned for convenience.
 func (p *EclipticPrecessor) Precess(eclFrom, eclTo *coord.Ecliptic) *coord.Ecliptic {
 	// (21.7) p. 137
-	sβ, cβ := math.Sincos(eclFrom.Lat)
-	sd, cd := math.Sincos(p.π - eclFrom.Lon)
+	sβ, cβ := math.Sincos(eclFrom.Lat.Rad())
+	sd, cd := math.Sincos(p.π - eclFrom.Lon.Rad())
 	A := p.cη*cβ*sd - p.sη*sβ
 	B := cβ * cd
 	C := p.cη*sβ + p.sη*cβ*sd
-	eclTo.Lon = p.p + p.π - math.Atan2(A, B)
+	eclTo.Lon = base.Angle(p.p + p.π - math.Atan2(A, B))
 	if C < base.CosSmallAngle {
-		eclTo.Lat = math.Asin(C)
+		eclTo.Lat = base.Angle(math.Asin(C))
 	} else {
-		eclTo.Lat = math.Acos(math.Hypot(A, B)) // near pole
+		eclTo.Lat = base.Angle(math.Acos(math.Hypot(A, B))) // near pole
 	}
 	return eclTo
 }
@@ -285,19 +286,19 @@ func EclipticPosition(eclFrom, eclTo *coord.Ecliptic, epochFrom, epochTo float64
 	if mα != 0 || mδ != 0 {
 		mλ, mβ := eqProperMotionToEcl(mα.Rad(), mδ.Rad(), epochFrom, eclFrom)
 		t := epochTo - epochFrom
-		eclTo.Lon += mλ * t
-		eclTo.Lat += mβ * t
+		eclTo.Lon += base.Angle(mλ * t)
+		eclTo.Lat += base.Angle(mβ * t)
 	}
 	return p.Precess(eclTo, eclTo)
 }
 
 func eqProperMotionToEcl(mα, mδ, epoch float64, pos *coord.Ecliptic) (mλ, mβ float64) {
 	ε := nutation.MeanObliquity(base.JulianYearToJDE(epoch))
-	sε, cε := math.Sincos(ε)
+	sε, cε := math.Sincos(ε.Rad())
 	α, δ := coord.EclToEq(pos.Lon, pos.Lat, sε, cε)
-	sα, cα := math.Sincos(α)
-	sδ, cδ := math.Sincos(δ)
-	cβ := math.Cos(pos.Lat)
+	sα, cα := math.Sincos(α.Rad())
+	sδ, cδ := math.Sincos(δ.Rad())
+	cβ := math.Cos(pos.Lat.Rad())
 	mλ = (mδ*sε*cα + mα*cδ*(cε*cδ+sε*sδ*sα)) / (cβ * cβ)
 	mβ = (mδ*(cε*cδ+sε*sδ*sα) - mα*sε*cα*cδ) / cβ
 	return
@@ -313,8 +314,8 @@ func eqProperMotionToEcl(mα, mδ, epoch float64, pos *coord.Ecliptic) (mλ, mβ
 // Both eqFrom and eqTo must be non-nil, although they may point to the same
 // struct.  EqTo is returned for convenience.
 func ProperMotion3D(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, r, mr float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
-	sα, cα := math.Sincos(eqFrom.RA)
-	sδ, cδ := math.Sincos(eqFrom.Dec)
+	sα, cα := math.Sincos(eqFrom.RA.Rad())
+	sδ, cδ := math.Sincos(eqFrom.Dec.Rad())
 	x := r * cδ * cα
 	y := r * cδ * sα
 	z := r * sδ
@@ -327,7 +328,7 @@ func ProperMotion3D(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo, r, mr fl
 	xp := x + t*mx
 	yp := y + t*my
 	zp := z + t*mz
-	eqTo.RA = math.Atan2(yp, xp)
-	eqTo.Dec = math.Atan2(zp, math.Hypot(xp, yp))
+	eqTo.RA = base.RAFromRad(math.Atan2(yp, xp))
+	eqTo.Dec = base.Angle(math.Atan2(zp, math.Hypot(xp, yp)))
 	return eqTo
 }

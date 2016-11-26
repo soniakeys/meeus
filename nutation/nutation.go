@@ -16,9 +16,7 @@ import (
 // JDE = UT + ΔT, see package deltat.
 //
 // Computation is by 1980 IAU theory, with terms < .0003″ neglected.
-//
-// Result units are radians.
-func Nutation(jde float64) (Δψ, Δε float64) {
+func Nutation(jde float64) (Δψ, Δε base.Angle) {
 	T := base.J2000Century(jde)
 	D := base.Horner(T,
 		297.85036, 445267.11148, -0.0019142, 1./189474) * math.Pi / 180
@@ -31,15 +29,16 @@ func Nutation(jde float64) (Δψ, Δε float64) {
 	Ω := base.Horner(T,
 		125.04452, -1934.136261, 0.0020708, 1./450000) * math.Pi / 180
 	// sum in reverse order to accumulate smaller terms first
+	var Δψs, Δεs float64
 	for i := len(table22A) - 1; i >= 0; i-- {
 		row := table22A[i]
 		arg := row.d*D + row.m*M + row.n*N + row.f*F + row.ω*Ω
 		s, c := math.Sincos(arg)
-		Δψ += s * (row.s0 + row.s1*T)
-		Δε += c * (row.c0 + row.c1*T)
+		Δψs += s * (row.s0 + row.s1*T)
+		Δεs += c * (row.c0 + row.c1*T)
 	}
-	Δψ *= .0001 / 3600 * (math.Pi / 180)
-	Δε *= .0001 / 3600 * (math.Pi / 180)
+	Δψ = base.AngleFromSec(Δψs * .0001)
+	Δε = base.AngleFromSec(Δεs * .0001)
 	return
 }
 
@@ -47,9 +46,7 @@ func Nutation(jde float64) (Δψ, Δε float64) {
 // and nutation in obliquity (Δε) for a given JDE.
 //
 // Accuracy is 0.5″ in Δψ, 0.1″ in Δε.
-//
-// Result units are radians.
-func ApproxNutation(jde float64) (Δψ, Δε float64) {
+func ApproxNutation(jde float64) (Δψ, Δε base.Angle) {
 	T := (jde - base.J2000) / 36525
 	Ω := (125.04452 - 1934.136261*T) * math.Pi / 180
 	L := (280.4665 + 36000.7698*T) * math.Pi / 180
@@ -58,8 +55,8 @@ func ApproxNutation(jde float64) (Δψ, Δε float64) {
 	s2L, c2L := math.Sincos(2 * L)
 	s2N, c2N := math.Sincos(2 * N)
 	s2Ω, c2Ω := math.Sincos(2 * Ω)
-	Δψ = (-17.2*sΩ - 1.32*s2L - 0.23*s2N + 0.21*s2Ω) / 3600 * (math.Pi / 180)
-	Δε = (9.2*cΩ + 0.57*c2L + 0.1*c2N - 0.09*c2Ω) / 3600 * (math.Pi / 180)
+	Δψ = base.AngleFromSec(-17.2*sΩ - 1.32*s2L - 0.23*s2N + 0.21*s2Ω)
+	Δε = base.AngleFromSec(9.2*cΩ + 0.57*c2L + 0.1*c2N - 0.09*c2Ω)
 	return
 }
 
@@ -68,15 +65,13 @@ func ApproxNutation(jde float64) (Δψ, Δε float64) {
 //
 // Accuracy is 1″ over the range 1000 to 3000 years and 10″ over the range
 // 0 to 4000 years.
-//
-// Result unit is radians.
-func MeanObliquity(jde float64) float64 {
+func MeanObliquity(jde float64) base.Angle {
 	// (22.2) p. 147
-	return base.Horner(base.J2000Century(jde),
-		base.FromSexa(' ', 23, 26, 21.448)*math.Pi/180,
-		-46.815/3600*(math.Pi/180),
-		-0.00059/3600*(math.Pi/180),
-		0.001813/3600*(math.Pi/180))
+	return base.AngleFromSec(base.Horner(base.J2000Century(jde),
+		base.FromSexaSec(' ', 23, 26, 21.448),
+		-46.815,
+		-0.00059,
+		0.001813))
 }
 
 // MeanObliquityLaskar returns mean obliquity (ε₀) following the Laskar
@@ -86,32 +81,29 @@ func MeanObliquity(jde float64) float64 {
 //
 // Accuracy over the valid date range of -8000 to +12000 years is
 // "a few seconds."
-//
-// Result unit is radians.
-func MeanObliquityLaskar(jde float64) float64 {
+func MeanObliquityLaskar(jde float64) base.Angle {
 	// (22.3) p. 147
-	return base.Horner(base.J2000Century(jde)*.01,
-		base.FromSexa(' ', 23, 26, 21.448)*math.Pi/180,
-		-4680.93/3600*(math.Pi/180),
-		-1.55/3600*(math.Pi/180),
-		1999.25/3600*(math.Pi/180),
-		-51.38/3600*(math.Pi/180),
-		-249.67/3600*(math.Pi/180),
-		-39.05/3600*(math.Pi/180),
-		7.12/3600*(math.Pi/180),
-		27.87/3600*(math.Pi/180),
-		5.79/3600*(math.Pi/180),
-		2.45/3600*(math.Pi/180))
+	return base.AngleFromSec(base.Horner(base.J2000Century(jde)*.01,
+		base.FromSexaSec(' ', 23, 26, 21.448),
+		-4680.93,
+		-1.55,
+		1999.25,
+		-51.38,
+		-249.67,
+		-39.05,
+		7.12,
+		27.87,
+		5.79,
+		2.45))
 }
 
 // NutationInRA returns "nutation in right ascension" or "equation of the
 // equinoxes."
-//
-// Result is an angle in radians.
-func NutationInRA(jde float64) float64 {
+func NutationInRA(jde float64) base.HourAngle {
+	// ch 12, p.88
 	Δψ, Δε := Nutation(jde)
 	ε0 := MeanObliquity(jde)
-	return Δψ * math.Cos(ε0+Δε)
+	return base.HourAngle(Δψ.Rad() * math.Cos((ε0 + Δε).Rad()))
 }
 
 var table22A = []struct {

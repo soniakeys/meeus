@@ -31,52 +31,51 @@ var iau82 = []float64{24110.54841, 8640184.812866, 0.093104, 0.0000062}
 
 // Mean returns mean sidereal time at Greenwich for a given JD.
 //
-// Computation is by IAU 1982 coefficients.  The result is in seconds of
-// time and is in the range [0,86400).
-func Mean(jd float64) float64 {
-	return base.PMod(mean(jd), 86400)
+// Computation is by IAU 1982 coefficients.
+// The result is in the range [0,86400).
+func Mean(jd float64) base.Time {
+	return mean(jd).Mod1()
 }
 
-func mean(jd float64) float64 {
+func mean(jd float64) base.Time {
 	s, f := mean0UT(jd)
-	return s + f*1.00273790935*86400
+	return s + f*1.00273790935
 }
 
 // Mean0UT returns mean sidereal time at Greenwich at 0h UT on the given JD.
 //
-// The result is in seconds of time and is in the range [0,86400).
-func Mean0UT(jd float64) float64 {
+// The result is in the range [0,86400).
+func Mean0UT(jd float64) base.Time {
 	s, _ := mean0UT(jd)
-	return base.PMod(s, 86400)
+	return s.Mod1()
 }
 
-func mean0UT(jd float64) (sidereal, dayFrac float64) {
+func mean0UT(jd float64) (sidereal, dayFrac base.Time) {
 	cen, f := jdToCFrac(jd)
 	// (12.2) p. 87
-	return base.Horner(cen, iau82...), f
+	return base.Time(base.Horner(cen, iau82...)), base.TimeFromDay(f)
 }
 
 // Apparent returns apparent sidereal time at Greenwich for the given JD.
 //
 // Apparent is mean plus the nutation in right ascension.
 //
-// The result is in seconds of time and is in the range [0,86400).
-func Apparent(jd float64) float64 {
-	s := mean(jd)                       // seconds of time
-	n := nutation.NutationInRA(jd)      // angle (radians) of RA
-	ns := n * 3600 * 180 / math.Pi / 15 // convert RA to time in seconds
-	return base.PMod(s+ns, 86400)
+// The result is in the range [0,86400).
+func Apparent(jd float64) base.Time {
+	s := mean(jd)                  // Time
+	n := nutation.NutationInRA(jd) // HourAngle
+	return (s + base.Time(n.Sec())).Mod1()
 }
 
 // Apparent0UT returns apparent sidereal time at Greenwich at 0h UT
 // on the given JD.
 //
-// The result is in seconds of time and is in the range [0,86400).
-func Apparent0UT(jd float64) float64 {
+// The result is in the range [0,86400).
+func Apparent0UT(jd float64) base.Time {
 	j0, f := math.Modf(jd + .5)
 	cen := (j0 - .5 - base.J2000) / 36525
-	s := base.Horner(cen, iau82...) + f*1.00273790935*86400
-	n := nutation.NutationInRA(j0)      // angle (radians) of RA
-	ns := n * 3600 * 180 / math.Pi / 15 // convert RA to time in seconds
-	return base.PMod(s+ns, 86400)
+	s := base.Time(base.Horner(cen, iau82...)) +
+		base.TimeFromDay(f*1.00273790935)
+	n := nutation.NutationInRA(j0) // HourAngle
+	return (s + base.Time(n.Sec())).Mod1()
 }

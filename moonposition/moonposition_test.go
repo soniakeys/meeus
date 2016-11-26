@@ -36,8 +36,7 @@ func ExampleParallax() {
 
 func TestParallax(t *testing.T) {
 	// test case from ch 40, p. 280
-	π := moonposition.Parallax(.37276 * base.AU)
-	got := π * 180 / math.Pi * 60 * 60 // radians to seconds
+	got := moonposition.Parallax(.37276 * base.AU).Sec()
 	want := 23.592
 	if math.Abs(got-want) > .001 {
 		t.Error(got, want)
@@ -75,7 +74,7 @@ var n180 = []float64{
 
 func TestNode0(t *testing.T) {
 	for i, j := range n0 {
-		if e := math.Abs(base.PMod(moonposition.Node(j)+1, 2*math.Pi) - 1); e > 1e-3 {
+		if e := math.Abs(moonposition.Node(j).Rad()); e > 1e-3 {
 			t.Error(i, e)
 		}
 	}
@@ -83,7 +82,7 @@ func TestNode0(t *testing.T) {
 
 func TestNode180(t *testing.T) {
 	for i, j := range n180 {
-		if e := math.Abs(moonposition.Node(j) - math.Pi); e > 1e-3 {
+		if e := math.Abs(moonposition.Node(j).Rad() - math.Pi); e > 1e-3 {
 			t.Error(i, e)
 		}
 	}

@@ -8,14 +8,15 @@ import (
 	"math"
 	"testing"
 
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/parallactic"
 	"github.com/soniakeys/sexagesimal"
 )
 
 func ExampleEclipticAtHorizon() {
-	ε := 23.44 * math.Pi / 180
-	φ := 51 * math.Pi / 180
-	θ := 75 * math.Pi / 180
+	ε := base.AngleFromDeg(23.44)
+	φ := base.AngleFromDeg(51)
+	θ := base.TimeFromHour(5)
 	λ1, λ2, I := parallactic.EclipticAtHorizon(ε, φ, θ)
 	fmt.Println(sexa.Angle(λ1).Fmt())
 	fmt.Println(sexa.Angle(λ2).Fmt())
@@ -27,15 +28,15 @@ func ExampleEclipticAtHorizon() {
 }
 
 func TestDiurnalPathAtHorizon(t *testing.T) {
-	φ := 40 * math.Pi / 180
-	ε := 23.44 * math.Pi / 180
-	J := parallactic.DiurnalPathAtHorizon(0, φ)
-	Jexp := math.Pi/2 - φ
+	φ := base.AngleFromDeg(40)
+	ε := base.AngleFromDeg(23.44)
+	J := parallactic.DiurnalPathAtHorizon(0, φ).Rad()
+	Jexp := math.Pi/2 - φ.Rad()
 	if math.Abs((J-Jexp)/Jexp) > 1e-15 {
 		t.Fatal("0 dec:", sexa.Angle(J).Fmt())
 	}
-	J = parallactic.DiurnalPathAtHorizon(ε, φ)
-	Jexp = sexa.NewAngle(' ', 45, 31, 0).Rad()
+	J = parallactic.DiurnalPathAtHorizon(ε, φ).Rad()
+	Jexp = base.NewAngle(' ', 45, 31, 0).Rad()
 	if math.Abs((J-Jexp)/Jexp) > 1e-3 {
 		t.Fatal("solstace:", sexa.Angle(J).Fmt())
 	}

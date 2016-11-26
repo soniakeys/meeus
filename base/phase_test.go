@@ -12,7 +12,7 @@ import (
 
 func ExampleIlluminated_venus() {
 	// Example 41.a, p. 284.
-	k := base.Illuminated(math.Acos(.29312))
+	k := base.Illuminated(base.Angle(math.Acos(.29312)))
 	fmt.Printf("%.3f\n", k)
 	// Output:
 	// 0.647
@@ -20,7 +20,7 @@ func ExampleIlluminated_venus() {
 
 func ExampleIlluminated_moon() {
 	// Example 48.a, p. 347.
-	k := base.Illuminated(69.0756 * math.Pi / 180)
+	k := base.Illuminated(base.AngleFromDeg(69.0756))
 	fmt.Printf("k = %.4f\n", k)
 	// Output:
 	// k = 0.6786
@@ -46,9 +46,12 @@ func ExampleIlluminated_moon() {
 
 func ExampleLimb() {
 	// Example 48.a, p. 347.
-	const p = math.Pi / 180
-	χ := base.Limb(134.6885*p, 13.7684*p, 20.6579*p, 8.6964*p)
-	fmt.Printf("χ = %.1f\n", χ/p)
+	χ := base.Limb(
+		base.RAFromDeg(134.6885),
+		base.AngleFromDeg(13.7684),
+		base.RAFromDeg(20.6579),
+		base.AngleFromDeg(8.6964))
+	fmt.Printf("χ = %.1f\n", χ.Deg())
 	// Output:
 	// χ = 285.0
 }

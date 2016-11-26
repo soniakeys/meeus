@@ -158,11 +158,11 @@ func ExampleLen5_Zero() {
 	x1 := 25.
 	x5 := 29.
 	yTable := []float64{
-		sexa.DMSToDeg('-', 1, 11, 21.23),
-		sexa.DMSToDeg('-', 0, 28, 12.31),
-		sexa.DMSToDeg(' ', 0, 16, 07.02),
-		sexa.DMSToDeg(' ', 1, 01, 00.13),
-		sexa.DMSToDeg(' ', 1, 45, 46.33),
+		base.FromSexa('-', 1, 11, 21.23),
+		base.FromSexa('-', 0, 28, 12.31),
+		base.FromSexa(' ', 0, 16, 07.02),
+		base.FromSexa(' ', 1, 01, 00.13),
+		base.FromSexa(' ', 1, 45, 46.33),
 	}
 	d5, err := interp.NewLen5(x1, x5, yTable)
 	if err != nil {
@@ -203,16 +203,16 @@ func ExampleLen5_Zero() {
 func ExampleLen4Half() {
 	// Example 3.f, p. 32.
 	half, err := interp.Len4Half([]float64{
-		sexa.NewRA(10, 18, 48.732).Rad(),
-		sexa.NewRA(10, 23, 22.835).Rad(),
-		sexa.NewRA(10, 27, 57.247).Rad(),
-		sexa.NewRA(10, 32, 31.983).Rad(),
+		base.FromSexa(0, 10, 18, 48.732),
+		base.FromSexa(0, 10, 23, 22.835),
+		base.FromSexa(0, 10, 27, 57.247),
+		base.FromSexa(0, 10, 32, 31.983),
 	})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("%.3d", sexa.RA(half).Fmt())
+	fmt.Printf("%.3d", sexa.RAFromHour(half).Fmt())
 	// Output:
 	// 10ʰ25ᵐ40ˢ.001
 }

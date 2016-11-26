@@ -93,14 +93,14 @@ func E5(jde float64, earth, jupiter *pp.V87Planet, pos *[4]XY) {
 	Δ := 5.
 	{
 		s, β, R := solar.TrueVSOP87(earth, jde)
-		ss, cs := math.Sincos(s)
-		sβ := math.Sin(β)
+		ss, cs := math.Sincos(s.Rad())
+		sβ := math.Sin(β.Rad())
 		τ := base.LightTime(Δ)
 		var x, y, z float64
 		f := func() {
 			l, b, r := jupiter.Position(jde - τ)
-			sl, cl := math.Sincos(l)
-			sb, cb := math.Sincos(b)
+			sl, cl := math.Sincos(l.Rad())
+			sb, cb := math.Sincos(b.Rad())
 			x = r*cb*cl + R*cs
 			y = r*cb*sl + R*ss
 			z = r*sb + R*sβ

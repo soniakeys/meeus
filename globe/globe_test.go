@@ -8,6 +8,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/sexagesimal"
 )
@@ -15,7 +16,7 @@ import (
 func ExampleEllipsoid_ParallaxConstants() {
 	// Example 11.a, p 82.
 	// phi = geographic latitude of Palomar
-	φ := sexa.NewAngle(' ', 33, 21, 22).Rad()
+	φ := base.NewAngle(' ', 33, 21, 22)
 	s, c := globe.Earth76.ParallaxConstants(φ, 1706)
 	fmt.Printf("ρ sin φ′ = %+.6f\n", s)
 	fmt.Printf("ρ cos φ′ = %+.6f\n", c)
@@ -26,7 +27,7 @@ func ExampleEllipsoid_ParallaxConstants() {
 
 // p. 83
 func TestLatDiff(t *testing.T) {
-	φ0 := sexa.NewAngle(' ', 45, 5, 46.36).Rad()
+	φ0 := base.NewAngle(' ', 45, 5, 46.36)
 	diff := globe.GeocentricLatitudeDifference(φ0)
 	if f := fmt.Sprintf("%.2d", sexa.Angle(diff).Fmt()); f != "11′32″.73" {
 		t.Fatal(f)
@@ -35,7 +36,7 @@ func TestLatDiff(t *testing.T) {
 
 func ExampleEllipsoid_RadiusAtLatitude() {
 	// Example 11.b p 84.
-	φ := 42 * math.Pi / 180
+	φ := base.AngleFromDeg(42)
 	rp := globe.Earth76.RadiusAtLatitude(φ)
 	fmt.Printf("Rp = %.3f km\n", rp)
 	fmt.Printf("1° of longitude = %.4f km\n", globe.OneDegreeOfLongitude(rp))
@@ -55,17 +56,17 @@ func ExampleEllipsoid_RadiusAtLatitude() {
 func ExampleEllipsoid_Distance() {
 	// Example 11.c p 85.
 	c1 := globe.Coord{
-		sexa.NewAngle(' ', 48, 50, 11).Rad(), // geographic latitude
-		sexa.NewAngle('-', 2, 20, 14).Rad(),  // geographic longitude
+		base.NewAngle(' ', 48, 50, 11), // geographic latitude
+		base.NewAngle('-', 2, 20, 14),  // geographic longitude
 	}
 	c2 := globe.Coord{
-		sexa.NewAngle(' ', 38, 55, 17).Rad(),
-		sexa.NewAngle(' ', 77, 3, 56).Rad(),
+		base.NewAngle(' ', 38, 55, 17),
+		base.NewAngle(' ', 77, 3, 56),
 	}
 	fmt.Printf("%.2f km\n", globe.Earth76.Distance(c1, c2))
 	cos := globe.ApproxAngularDistance(c1, c2)
 	fmt.Printf("cos d = %.6f\n", cos)
-	d := math.Acos(cos)
+	d := base.Angle(math.Acos(cos))
 	fmt.Printf("    d = %.5j\n", sexa.Angle(d).Fmt())
 	fmt.Printf("    s = %.0f km\n", globe.ApproxLinearDistance(d))
 	// Output:

@@ -6,6 +6,7 @@ package rise_test
 import (
 	"fmt"
 
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/meeus/rise"
 	"github.com/soniakeys/sexagesimal"
@@ -15,12 +16,12 @@ func ExampleApproxTimes() {
 	// Example 15.a, p. 103.
 	// Venus on 1988 March 20
 	p := globe.Coord{
-		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
+		Lon: base.NewAngle(' ', 71, 5, 0),
+		Lat: base.NewAngle(' ', 42, 20, 0),
 	}
-	Th0 := sexa.NewTime(' ', 11, 50, 58.1).Sec()
-	α := sexa.NewRA(2, 46, 55.51).Rad()
-	δ := sexa.NewAngle(' ', 18, 26, 27.3).Rad()
+	Th0 := base.NewTime(' ', 11, 50, 58.1)
+	α := base.NewRA(2, 46, 55.51)
+	δ := base.NewAngle(' ', 18, 26, 27.3)
 	h0 := rise.Stdh0Stellar
 	tRise, tTransit, tSet, err := rise.ApproxTimes(p, h0, Th0, α, δ)
 	if err != nil {
@@ -41,22 +42,22 @@ func ExampleTimes() {
 	// Example 15.a, p. 103.
 	// Venus on 1988 March 20
 	p := globe.Coord{
-		Lon: sexa.NewAngle(' ', 71, 5, 0).Rad(),
-		Lat: sexa.NewAngle(' ', 42, 20, 0).Rad(),
+		Lon: base.NewAngle(' ', 71, 5, 0),
+		Lat: base.NewAngle(' ', 42, 20, 0),
 	}
-	Th0 := sexa.NewTime(' ', 11, 50, 58.1).Sec()
-	α3 := []float64{
-		sexa.NewRA(2, 42, 43.25).Rad(),
-		sexa.NewRA(2, 46, 55.51).Rad(),
-		sexa.NewRA(2, 51, 07.69).Rad(),
+	Th0 := base.NewTime(' ', 11, 50, 58.1)
+	α3 := []base.RA{
+		base.NewRA(2, 42, 43.25),
+		base.NewRA(2, 46, 55.51),
+		base.NewRA(2, 51, 07.69),
 	}
-	δ3 := []float64{
-		sexa.NewAngle(' ', 18, 02, 51.4).Rad(),
-		sexa.NewAngle(' ', 18, 26, 27.3).Rad(),
-		sexa.NewAngle(' ', 18, 49, 38.7).Rad(),
+	δ3 := []base.Angle{
+		base.NewAngle(' ', 18, 02, 51.4),
+		base.NewAngle(' ', 18, 26, 27.3),
+		base.NewAngle(' ', 18, 49, 38.7),
 	}
-	h0 := rise.Stdh0Stellar
-	ΔT := 56.
+	h0 := base.AngleFromDeg(-.5667)
+	ΔT := base.Time(56)
 	tRise, tTransit, tSet, err := rise.Times(p, ΔT, h0, Th0, α3, δ3)
 	if err != nil {
 		fmt.Println(err)

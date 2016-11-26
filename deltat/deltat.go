@@ -56,7 +56,8 @@ var (
 		63.8, 64.3, 64.6, 64.8, 65.5, 66.1}
 )
 
-func Interp10A(jde float64) float64 {
+// Interp10A returns ΔT at a date, accurate from years 1620 to 2010.
+func Interp10A(jde float64) (ΔT base.Time) {
 	// kind of crazy, working in calendar years, but it seems that's what
 	// we're supposed to do.
 	y, m, d := julian.JDToCalendar(jde)
@@ -70,7 +71,7 @@ func Interp10A(jde float64) float64 {
 	if err != nil {
 		panic(err) // error would indicate a bug in interp.Slice.
 	}
-	return d3.InterpolateX(yf)
+	return base.Time(d3.InterpolateX(yf))
 }
 
 // c2000 returns centuries from calendar year 2000.0.
@@ -80,28 +81,28 @@ func c2000(y float64) float64 {
 	return (y - 2000) * .01
 }
 
-// PolyBefore948 returns a polynomial approximation valid for calendar
+// PolyBefore948 returns a polynomial approximation of ΔT valid for calendar
 // years before 948.
-func PolyBefore948(year float64) float64 {
+func PolyBefore948(year float64) (ΔT base.Time) {
 	// (10.1) p. 78
-	return base.Horner(c2000(year), 2177, 497, 44.1)
+	return base.Time(base.Horner(c2000(year), 2177, 497, 44.1))
 }
 
-// Poly948to1600 returns a polynomial approximation valid for calendar
+// Poly948to1600 returns a polynomial approximation of ΔT valid for calendar
 // years 948 to 1600.
-func Poly948to1600(year float64) float64 {
+func Poly948to1600(year float64) (ΔT base.Time) {
 	// (10.2) p. 78
-	return base.Horner(c2000(year), 102, 102, 25.3)
+	return base.Time(base.Horner(c2000(year), 102, 102, 25.3))
 }
 
-// PolyAfter2000 returns a polynomial approximation valid for calendar
+// PolyAfter2000 returns a polynomial approximation of ΔT valid for calendar
 // years after 2000.
-func PolyAfter2000(year float64) float64 {
-	ΔT := Poly948to1600(year)
+func PolyAfter2000(year float64) (ΔT base.Time) {
+	ΔT = Poly948to1600(year)
 	if year < 2100 {
-		ΔT += .37 * (year - 2100)
+		ΔT += base.Time(.37 * (year - 2100))
 	}
-	return ΔT
+	return
 }
 
 // jc1900 returns julian centuries from the epoch J1900.0
@@ -111,35 +112,35 @@ func jc1900(jde float64) float64 {
 	return (jde - base.J1900) / base.JulianCentury
 }
 
-// Poly1800to1997 returns a polynomial approximation valid for years
+// Poly1800to1997 returns a polynomial approximation of ΔT valid for years
 // 1800 to 1997.
 //
 // The accuracy is within 2.3 seconds.
-func Poly1800to1997(jde float64) float64 {
-	return base.Horner(jc1900(jde),
+func Poly1800to1997(jde float64) (ΔT base.Time) {
+	return base.Time(base.Horner(jc1900(jde),
 		-1.02, 91.02, 265.90, -839.16, -1545.20,
 		3603.62, 4385.98, -6993.23, -6090.04,
-		6298.12, 4102.86, -2137.64, -1081.51)
+		6298.12, 4102.86, -2137.64, -1081.51))
 }
 
-// Poly1800to1899 returns a polynomial approximation valid for years
+// Poly1800to1899 returns a polynomial approximation of ΔT valid for years
 // 1800 to 1899.
 //
 // The accuracy is within 0.9 seconds.
-func Poly1800to1899(jde float64) float64 {
-	return base.Horner(jc1900(jde),
+func Poly1800to1899(jde float64) (ΔT base.Time) {
+	return base.Time(base.Horner(jc1900(jde),
 		-2.50, 228.95, 5218.61, 56282.84, 324011.78,
 		1061660.75, 2087298.89, 2513807.78,
-		1818961.41, 727058.63, 123563.95)
+		1818961.41, 727058.63, 123563.95))
 }
 
-// Poly1900to1997 returns a polynomial approximation valid for years
+// Poly1900to1997 returns a polynomial approximation of ΔT valid for years
 // 1900 to 1997.
 //
 // The accuracy is within 0.9 seconds.
-func Poly1900to1997(jde float64) float64 {
-	return base.Horner(jc1900(jde),
+func Poly1900to1997(jde float64) (ΔT base.Time) {
+	return base.Time(base.Horner(jc1900(jde),
 		-2.44, 87.24, 815.20, -2637.80, -18756.33,
 		124906.15, -303191.19, 372919.88,
-		-232424.66, 58353.42)
+		-232424.66, 58353.42))
 }

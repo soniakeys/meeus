@@ -189,10 +189,10 @@ func (c *coeff) parse(ic byte, ibody int, lines []string, n int, au bool) (int, 
 //
 // Results are for the dynamical equinox and ecliptic J2000.
 //
-//	L is heliocentric longitude in radians.
-//	B is heliocentric latitude in radians.
+//	L is heliocentric longitude.
+//	B is heliocentric latitude.
 //	R is heliocentric range in AU.
-func (vt *V87Planet) Position2000(jde float64) (L, B, R float64) {
+func (vt *V87Planet) Position2000(jde float64) (L, B base.Angle, R float64) {
 	T := base.J2000Century(jde)
 	τ := T * .1
 	cf := make([]float64, 6)
@@ -207,8 +207,8 @@ func (vt *V87Planet) Position2000(jde float64) (L, B, R float64) {
 		}
 		return base.Horner(τ, cf[:len(series)]...)
 	}
-	L = base.PMod(sum(vt.l), 2*math.Pi)
-	B = sum(vt.b)
+	L = base.Angle(base.PMod(sum(vt.l), 2*math.Pi))
+	B = base.Angle(sum(vt.b))
 	R = sum(vt.r)
 	return
 }
@@ -220,10 +220,10 @@ func (vt *V87Planet) Position2000(jde float64) (L, B, R float64) {
 // Results are positions consistent with those from Meeus's Apendix III,
 // that is, at equinox and ecliptic of date.
 //
-//  L is heliocentric longitude in radians.
-//  B is heliocentric latitude in radians.
+//  L is heliocentric longitude.
+//  B is heliocentric latitude.
 //  R is heliocentric range in AU.
-func (vt *V87Planet) Position(jde float64) (L, B, R float64) {
+func (vt *V87Planet) Position(jde float64) (L, B base.Angle, R float64) {
 	L, B, R = vt.Position2000(jde)
 	eclFrom := &coord.Ecliptic{
 		Lat: B,
@@ -237,14 +237,13 @@ func (vt *V87Planet) Position(jde float64) (L, B, R float64) {
 }
 
 // ToFK5 converts ecliptic longitude and latitude from dynamical frame to FK5.
-func ToFK5(L, B, jde float64) (L5, B5 float64) {
+func ToFK5(L, B base.Angle, jde float64) (L5, B5 base.Angle) {
 	// formula 32.3, p. 219.
 	T := base.J2000Century(jde)
-	Lp := L - 1.397*math.Pi/180*T - .00031*math.Pi/180*T*T
-	sLp, cLp := math.Sincos(Lp)
+	Lp := L - base.AngleFromDeg(1.397*T-.00031*T*T)
+	sLp, cLp := math.Sincos(Lp.Rad())
 	// (32.3) p. 219
-	L5 = L + -.09033/3600*math.Pi/180 +
-		.03916/3600*math.Pi/180*(cLp+sLp)*math.Tan(B)
-	B5 = B + .03916/3600*math.Pi/180*(cLp-sLp)
+	L5 = L + base.AngleFromSec(-.09033+.03916*(cLp+sLp)*math.Tan(B.Rad()))
+	B5 = B + base.AngleFromSec(.03916*(cLp-sLp))
 	return
 }

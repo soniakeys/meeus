@@ -7,7 +7,6 @@ package jupiter_test
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/soniakeys/meeus/jupiter"
 	pp "github.com/soniakeys/meeus/planetposition"
@@ -26,11 +25,11 @@ func ExamplePhysical() {
 		return
 	}
 	DS, DE, ω1, ω2, P := jupiter.Physical(2448972.50068, e, j)
-	fmt.Printf("DS = %+.2f\n", DS*180/math.Pi)
-	fmt.Printf("DE = %+.2f\n", DE*180/math.Pi)
-	fmt.Printf("ω1 = %.2f\n", ω1*180/math.Pi)
-	fmt.Printf("ω2 = %.2f\n", ω2*180/math.Pi)
-	fmt.Printf("P = %.2f\n", P*180/math.Pi)
+	fmt.Printf("DS = %+.2f\n", DS.Deg())
+	fmt.Printf("DE = %+.2f\n", DE.Deg())
+	fmt.Printf("ω1 = %.2f\n", ω1.Deg())
+	fmt.Printf("ω2 = %.2f\n", ω2.Deg())
+	fmt.Printf("P = %.2f\n", P.Deg())
 	// Output:
 	// DS = -2.20
 	// DE = -2.48

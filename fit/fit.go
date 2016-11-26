@@ -4,9 +4,7 @@
 // Fit: Chapter 4, Curve Fitting.
 package fit
 
-import (
-	"math"
-)
+import "math"
 
 // Linear fits a line to sample data.
 //

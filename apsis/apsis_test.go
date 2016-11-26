@@ -69,7 +69,7 @@ func TestPerigeeParallax(t *testing.T) {
 	got := apsis.PerigeeParallax(1997.93)
 	_, _, d := moonposition.Position(apsis.Perigee(1997.93))
 	want := moonposition.Parallax(d)
-	Δ := math.Abs(got-want) / math.Pi * 180 * 3600 // difference in arc seconds
+	Δ := math.Abs((got - want).Sec())
 	// for this case anyway it's within a tenth of an arc second
 	if Δ > .1 {
 		t.Fatal("got", got, "want (about)", want)

@@ -12,29 +12,27 @@ import (
 )
 
 // Standard semidiameters at unit distance of 1 AU.
-// Values are scaled here to radians.
 var (
-	Sun               = 959.63 / 3600 * math.Pi / 180
-	Mercury           = 3.36 / 3600 * math.Pi / 180
-	VenusSurface      = 8.34 / 3600 * math.Pi / 180
-	VenusCloud        = 8.41 / 3600 * math.Pi / 180
-	Mars              = 4.68 / 3600 * math.Pi / 180
-	JupiterEquatorial = 98.44 / 3600 * math.Pi / 180
-	JupiterPolar      = 92.06 / 3600 * math.Pi / 180
-	SaturnEquatorial  = 82.73 / 3600 * math.Pi / 180
-	SaturnPolar       = 73.82 / 3600 * math.Pi / 180
-	Uranus            = 35.02 / 3600 * math.Pi / 180
-	Neptune           = 33.50 / 3600 * math.Pi / 180
-	Pluto             = 2.07 / 3600 * math.Pi / 180
-	Moon              = 358473400 / base.AU / 3600 * math.Pi / 180
+	Sun               = base.AngleFromSec(959.63)
+	Mercury           = base.AngleFromSec(3.36)
+	VenusSurface      = base.AngleFromSec(8.34)
+	VenusCloud        = base.AngleFromSec(8.41)
+	Mars              = base.AngleFromSec(4.68)
+	JupiterEquatorial = base.AngleFromSec(98.44)
+	JupiterPolar      = base.AngleFromSec(92.06)
+	SaturnEquatorial  = base.AngleFromSec(82.73)
+	SaturnPolar       = base.AngleFromSec(73.82)
+	Uranus            = base.AngleFromSec(35.02)
+	Neptune           = base.AngleFromSec(33.50)
+	Pluto             = base.AngleFromSec(2.07)
+	Moon              = base.AngleFromSec(358473400 / base.AU)
 )
 
 // Semidiameter returns semidiameter at specified distance.
 //
-// When used with S0 values provided, Δ must be observer-body distance in AU.
-// Result will then be in radians.
-func Semidiameter(s0, Δ float64) float64 {
-	return s0 / Δ
+// Δ must be observer-body distance in AU.
+func Semidiameter(s0 base.Angle, Δ float64) base.Angle {
+	return s0.Div(Δ)
 }
 
 // SaturnApparentPolar returns apparent polar semidiameter of Saturn
@@ -43,31 +41,26 @@ func Semidiameter(s0, Δ float64) float64 {
 // Argument Δ must be observer-Saturn distance in AU.  Argument B is
 // Saturnicentric latitude of the observer as given by function saturnring.UB()
 // for example.
-//
-// Result is semidiameter in units of package variables SaturnPolar and
-// SaturnEquatorial, nominally radians.
-func SaturnApparentPolar(Δ, B float64) float64 {
-	k := SaturnPolar / SaturnEquatorial
+func SaturnApparentPolar(Δ float64, B base.Angle) base.Angle {
+	k := (SaturnPolar.Rad() / SaturnEquatorial.Rad())
 	k = 1 - k*k
-	cB := math.Cos(B)
-	return SaturnEquatorial / Δ * math.Sqrt(1-k*cB*cB)
+	cB := B.Cos()
+	return SaturnEquatorial.Mul(math.Sqrt(1-k*cB*cB) / Δ)
 }
 
 // MoonTopocentric returns observed topocentric semidiameter of the Moon.
 //
 //	Δ is distance to Moon in AU.
-//	δ is declination of Moon in radians.
-//	H is hour angle of Moon in radians.
+//	δ is declination of Moon.
+//	H is hour angle of Moon.
 //	ρsφʹ, ρcφʹ are parallax constants as returned by
 //	    globe.Ellipsoid.ParallaxConstants, for example.
-//
-// Result is semidiameter in radians.
-func MoonTopocentric(Δ, δ, H, ρsφʹ, ρcφʹ float64) float64 {
+func MoonTopocentric(Δ float64, δ base.Angle, H base.HourAngle, ρsφʹ, ρcφʹ float64) float64 {
 	const k = .272481
-	sπ := math.Sin(parallax.Horizontal(Δ))
+	sπ := parallax.Horizontal(Δ).Sin()
 	// q computed by (40.6, 40.7) p. 280, ch 40.
-	sδ, cδ := math.Sincos(δ)
-	sH, cH := math.Sincos(H)
+	sδ, cδ := δ.Sincos()
+	sH, cH := H.Sincos()
 	A := cδ * sH
 	B := cδ*cH - ρcφʹ*sπ
 	C := sδ - ρsφʹ*sπ
@@ -79,11 +72,9 @@ func MoonTopocentric(Δ, δ, H, ρsφʹ, ρcφʹ float64) float64 {
 // by a less rigorous method.
 //
 // Δ is distance to Moon in AU, h is altitude of the Moon above the observer's
-// horizon in radians.
-//
-// Result is semidiameter in radians.
-func MoonTopocentric2(Δ, h float64) float64 {
-	return Moon / Δ * (1 + math.Sin(h)*math.Sin(parallax.Horizontal(Δ)))
+// horizon.
+func MoonTopocentric2(Δ float64, h base.Angle) base.Angle {
+	return Moon.Mul((1 + h.Sin()*parallax.Horizontal(Δ).Sin()) / Δ)
 }
 
 // AsteroidDiameter returns approximate diameter given absolute magnitude H
@@ -99,7 +90,7 @@ func AsteroidDiameter(H, A float64) float64 {
 //
 // Argument d is diameter in km, Δ is distance in AU.
 //
-// Result is semidiameter in radians.
-func Asteroid(d, Δ float64) float64 {
-	return .0013788 * d / Δ / 3600 * math.Pi / 180
+// Result is semidiameter.
+func Asteroid(d, Δ float64) base.Angle {
+	return base.AngleFromSec(.0013788).Mul(d / Δ)
 }

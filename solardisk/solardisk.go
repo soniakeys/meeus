@@ -19,30 +19,28 @@ import (
 //	P:  Position angle of the solar north pole.
 //	B0: Heliographic latitude of the center of the solar disk.
 //	L0: Heliographic longitude of the center of the solar disk.
-//
-// All results in radians.
-func Ephemeris(jd float64, e *pp.V87Planet) (P, B0, L0 float64) {
-	θ := (jd - 2398220) * 2 * math.Pi / 25.38
-	I := 7.25 * math.Pi / 180
-	K := 73.6667*math.Pi/180 +
-		1.3958333*math.Pi/180*(jd-2396758)/base.JulianCentury
+func Ephemeris(jd float64, e *pp.V87Planet) (P, B0, L0 base.Angle) {
+	θ := base.Angle((jd - 2398220) * 2 * math.Pi / 25.38)
+	I := base.AngleFromDeg(7.25)
+	K := base.AngleFromDeg(73.6667) +
+		base.AngleFromDeg(1.3958333).Mul((jd-2396758)/base.JulianCentury)
 
 	L, _, R := solar.TrueVSOP87(e, jd)
 	Δψ, Δε := nutation.Nutation(jd)
 	ε0 := nutation.MeanObliquity(jd)
 	ε := ε0 + Δε
-	λ := L - 20.4898/3600*math.Pi/180/R
+	λ := L - base.AngleFromSec(20.4898).Div(R)
 	λp := λ + Δψ
 
-	sλK, cλK := math.Sincos(λ - K)
-	sI, cI := math.Sincos(I)
+	sλK, cλK := (λ - K).Sincos()
+	sI, cI := I.Sincos()
 
-	tx := -math.Cos(λp) * math.Tan(ε)
-	ty := -cλK * math.Tan(I)
-	P = math.Atan(tx) + math.Atan(ty)
-	B0 = math.Asin(sλK * sI)
-	η := math.Atan2(-sλK*cI, -cλK)
-	L0 = base.PMod(η-θ, 2*math.Pi)
+	tx := -(λp.Cos() * ε.Tan())
+	ty := -(cλK * I.Tan())
+	P = base.Angle(math.Atan(tx) + math.Atan(ty))
+	B0 = base.Angle(math.Asin(sλK * sI))
+	η := base.Angle(math.Atan2(-sλK*cI, -cλK))
+	L0 = (η - θ).Mod1()
 	return
 }
 

@@ -13,19 +13,17 @@ import (
 )
 
 // constant for Horizontal.  p. 279.
-var hp = base.AngleFromSec(8.794).Rad()
+var hp = base.AngleFromSec(8.794)
 
 // Horizontal returns equatorial horizontal parallax of a body.
 //
 // Argument Δ is distance in AU.
 //
-// Result is parallax in radians.
-//
 // Meeus mentions use of this function for the Moon, Sun, planet, or comet.
 // That is, for relatively distant objects.  For parallax of the Moon (or
 // other relatively close object) see moonposition.Parallax.
-func Horizontal(Δ float64) (π float64) {
-	return hp / Δ // (40.1) p. 279
+func Horizontal(Δ float64) (π base.Angle) {
+	return hp.Div(Δ) // (40.1) p. 279
 }
 
 // Topocentric returns topocentric positions including parallax.
@@ -36,16 +34,18 @@ func Horizontal(Δ float64) (π float64) {
 // jde is time of observation.
 //
 // Results are observed topocentric ra and dec in radians.
-func Topocentric(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (αʹ, δʹ float64) {
+func Topocentric(α base.RA, δ base.Angle, Δ, ρsφʹ, ρcφʹ float64, L base.Angle, jde float64) (αʹ base.RA, δʹ base.Angle) {
 	π := Horizontal(Δ)
-	θ0 := base.Time(sidereal.Apparent(jde)).Rad()
-	H := base.PMod(θ0-L-α, 2*math.Pi)
-	sπ := math.Sin(π)
-	sH, cH := math.Sincos(H)
-	sδ, cδ := math.Sincos(δ)
-	Δα := math.Atan2(-ρcφʹ*sπ*sH, cδ-ρcφʹ*sπ*cH) // (40.2) p. 279
-	αʹ = α + Δα
-	δʹ = math.Atan2((sδ-ρsφʹ*sπ)*math.Cos(Δα), cδ-ρcφʹ*sπ*cH) // (40.3) p. 279
+	θ0 := sidereal.Apparent(jde)
+	H := (θ0.Angle() - L - base.Angle(α)).Mod1()
+	sπ := math.Sin(π.Rad())
+	sH, cH := math.Sincos(H.Rad())
+	sδ, cδ := math.Sincos(δ.Rad())
+	// (40.2) p. 279
+	Δα := base.HourAngle(math.Atan2(-ρcφʹ*sπ*sH, cδ-ρcφʹ*sπ*cH))
+	αʹ = α.Add(Δα)
+	// (40.3) p. 279
+	δʹ = base.Angle(math.Atan2((sδ-ρsφʹ*sπ)*math.Cos(Δα.Rad()), cδ-ρcφʹ*sπ*cH))
 	return
 }
 
@@ -54,14 +54,14 @@ func Topocentric(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (αʹ, δʹ float
 // This function implements the "non-rigorous" method descripted in the text.
 //
 // Note that results are corrections, not corrected coordinates.
-func Topocentric2(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (Δα, Δδ float64) {
+func Topocentric2(α base.RA, δ base.Angle, Δ, ρsφʹ, ρcφʹ float64, L base.Angle, jde float64) (Δα base.HourAngle, Δδ base.Angle) {
 	π := Horizontal(Δ)
-	θ0 := base.Time(sidereal.Apparent(jde)).Rad()
-	H := base.PMod(θ0-L-α, 2*math.Pi)
-	sH, cH := math.Sincos(H)
-	sδ, cδ := math.Sincos(δ)
-	Δα = -π * ρcφʹ * sH / cδ         // (40.4) p. 280
-	Δδ = -π * (ρsφʹ*cδ - ρcφʹ*cH*sδ) // (40.5) p. 280
+	θ0 := sidereal.Apparent(jde)
+	H := (θ0.Angle() - L - base.Angle(α)).Mod1()
+	sH, cH := math.Sincos(H.Rad())
+	sδ, cδ := math.Sincos(δ.Rad())
+	Δα = base.HourAngle(-π.Mul(ρcφʹ * sH / cδ)) // (40.4) p. 280
+	Δδ = -π.Mul(ρsφʹ*cδ - ρcφʹ*cH*sδ)           // (40.5) p. 280
 	return
 }
 
@@ -70,19 +70,19 @@ func Topocentric2(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (Δα, Δδ floa
 // This function implements the "alternative" method described in the text.
 // The method should be similarly rigorous to that of Topocentric() and results
 // should be virtually consistent.
-func Topocentric3(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (Hʹ, δʹ float64) {
+func Topocentric3(α base.RA, δ base.Angle, Δ, ρsφʹ, ρcφʹ float64, L base.Angle, jde float64) (Hʹ base.HourAngle, δʹ base.Angle) {
 	π := Horizontal(Δ)
-	θ0 := base.Time(sidereal.Apparent(jde)).Rad()
-	H := base.PMod(θ0-L-α, 2*math.Pi)
-	sπ := math.Sin(π)
-	sH, cH := math.Sincos(H)
-	sδ, cδ := math.Sincos(δ)
+	θ0 := sidereal.Apparent(jde)
+	H := (θ0.Angle() - L - base.Angle(α)).Mod1()
+	sπ := math.Sin(π.Rad())
+	sH, cH := math.Sincos(H.Rad())
+	sδ, cδ := math.Sincos(δ.Rad())
 	A := cδ * sH
 	B := cδ*cH - ρcφʹ*sπ
 	C := sδ - ρsφʹ*sπ
 	q := math.Sqrt(A*A + B*B + C*C)
-	Hʹ = math.Atan2(A, B)
-	δʹ = math.Asin(C / q)
+	Hʹ = base.HourAngle(math.Atan2(A, B))
+	δʹ = base.Angle(math.Asin(C / q))
 	return
 }
 
@@ -94,23 +94,21 @@ func Topocentric3(α, δ, Δ, ρsφʹ, ρcφʹ, L, jde float64) (Hʹ, δʹ float
 // ecliptic, θ is local sidereal time, π is equatorial horizontal parallax
 // of the body (see Horizonal()).
 //
-// All angular parameters and results are in radians.
-//
 // Results are observed topocentric coordinates and semidiameter.
-func TopocentricEcliptical(λ, β, s, φ, h, ε, θ, π float64) (λʹ, βʹ, sʹ float64) {
+func TopocentricEcliptical(λ, β, s, φ base.Angle, h float64, ε base.Angle, θ base.Time, π base.Angle) (λʹ, βʹ, sʹ base.Angle) {
 	S, C := globe.Earth76.ParallaxConstants(φ, h)
-	sλ, cλ := math.Sincos(λ)
-	sβ, cβ := math.Sincos(β)
-	sε, cε := math.Sincos(ε)
-	sθ, cθ := math.Sincos(θ)
-	sπ := math.Sin(π)
+	sλ, cλ := math.Sincos(λ.Rad())
+	sβ, cβ := math.Sincos(β.Rad())
+	sε, cε := math.Sincos(ε.Rad())
+	sθ, cθ := math.Sincos(θ.Rad())
+	sπ := math.Sin(π.Rad())
 	N := cλ*cβ - C*sπ*cθ
-	λʹ = math.Atan2(sλ*cβ-sπ*(S*sε+C*cε*sθ), N)
+	λʹ = base.Angle(math.Atan2(sλ*cβ-sπ*(S*sε+C*cε*sθ), N))
 	if λʹ < 0 {
 		λʹ += 2 * math.Pi
 	}
-	cλʹ := math.Cos(λʹ)
-	βʹ = math.Atan(cλʹ * (sβ - sπ*(S*cε-C*sε*sθ)) / N)
-	sʹ = math.Asin(cλʹ * math.Cos(βʹ) * math.Sin(s) / N)
+	cλʹ := math.Cos(λʹ.Rad())
+	βʹ = base.Angle(math.Atan(cλʹ * (sβ - sπ*(S*cε-C*sε*sθ)) / N))
+	sʹ = base.Angle(math.Asin(cλʹ * math.Cos(βʹ.Rad()) * math.Sin(s.Rad()) / N))
 	return
 }

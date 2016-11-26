@@ -14,11 +14,9 @@ import (
 // True returns true anomaly ν for given eccentric anomaly E.
 //
 // Argument e is eccentricity.  E must be in radians.
-//
-// Result is in radians.
-func True(E, e float64) float64 {
+func True(E base.Angle, e float64) base.Angle {
 	// (30.1) p. 195
-	return 2 * math.Atan(math.Sqrt((1+e)/(1-e))*math.Tan(E*.5))
+	return base.Angle(2 * math.Atan(math.Sqrt((1+e)/(1-e))*math.Tan(E.Rad()*.5)))
 }
 
 // Radius returns radius distance r for given eccentric anomaly E.
@@ -26,9 +24,9 @@ func True(E, e float64) float64 {
 // Argument e is eccentricity, a is semimajor axis.
 //
 // Result unit is the unit of semimajor axis a (typically AU.)
-func Radius(E, e, a float64) float64 {
+func Radius(E base.Angle, e, a float64) float64 {
 	// (30.2) p. 195
-	return a * (1 - e*math.Cos(E))
+	return a * (1 - e*math.Cos(E.Rad()))
 }
 
 // Kepler1 solves Kepler's equation by iteration.
@@ -37,18 +35,19 @@ func Radius(E, e, a float64) float64 {
 //
 //	E1 = M + e * sin(E0)
 //
-// Argument e is eccentricity, M is mean anomaly in radians,
+// Argument e is eccentricity, M is mean anomaly,
 // places is the desired number of decimal places in the result.
 //
-// Result E is eccentric anomaly in radians.
+// Result E is eccentric anomaly.
 //
 // For some vaues of e and M it will fail to converge and the
 // function will return an error.
-func Kepler1(e, M float64, places int) (E float64, err error) {
+func Kepler1(e float64, M base.Angle, places int) (E base.Angle, err error) {
 	f := func(E0 float64) float64 {
-		return M + e*math.Sin(E0) // (30.5) p. 195
+		return M.Rad() + e*math.Sin(E0) // (30.5) p. 195
 	}
-	return iterate.DecimalPlaces(f, M, places, places*5)
+	ea, err := iterate.DecimalPlaces(f, M.Rad(), places, places*5)
+	return base.Angle(ea), err
 }
 
 // Kepler2 solves Kepler's equation by iteration.
@@ -57,19 +56,20 @@ func Kepler1(e, M float64, places int) (E float64, err error) {
 //
 //	E1 = E0 + (M + e * sin(E0) - E0) / (1 - e * cos(E0))
 //
-// Argument e is eccentricity, M is mean anomaly in radians,
+// Argument e is eccentricity, M is mean anomaly,
 // places is the desired number of decimal places in the result.
 //
-// Result E is eccentric anomaly in radians.
+// Result E is eccentric anomaly.
 //
 // The function converges over a wider range of inputs than does Kepler1
 // but it also fails to converge for some values of e and M.
-func Kepler2(e, M float64, places int) (E float64, err error) {
+func Kepler2(e float64, M base.Angle, places int) (E base.Angle, err error) {
 	f := func(E0 float64) float64 {
 		se, ce := math.Sincos(E0)
-		return E0 + (M+e*se-E0)/(1-e*ce) // (30.7) p. 199
+		return E0 + (M.Rad()+e*se-E0)/(1-e*ce) // (30.7) p. 199
 	}
-	return iterate.DecimalPlaces(f, M, places, places)
+	ea, err := iterate.DecimalPlaces(f, M.Rad(), places, places)
+	return base.Angle(ea), err
 }
 
 // Kepler2a solves Kepler's equation by iteration.
@@ -77,17 +77,18 @@ func Kepler2(e, M float64, places int) (E float64, err error) {
 // The iterated formula is the same as in Kepler2 but a limiting function
 // avoids divergence.
 //
-// Argument e is eccentricity, M is mean anomaly in radians,
+// Argument e is eccentricity, M is mean anomaly,
 // places is the desired number of decimal places in the result.
 //
-// Result E is eccentric anomaly in radians.
-func Kepler2a(e, M float64, places int) (E float64, err error) {
+// Result E is eccentric anomaly.
+func Kepler2a(e float64, M base.Angle, places int) (E base.Angle, err error) {
 	f := func(E0 float64) float64 {
 		se, ce := math.Sincos(E0)
 		// method of Leingärtner, p. 205
-		return E0 + math.Asin(math.Sin((M+e*se-E0)/(1-e*ce)))
+		return E0 + math.Asin(math.Sin((M.Rad()+e*se-E0)/(1-e*ce)))
 	}
-	return iterate.DecimalPlaces(f, M, places, places*5)
+	ea, err := iterate.DecimalPlaces(f, M.Rad(), places, places*5)
+	return base.Angle(ea), err
 }
 
 // Kepler2b solves Kepler's equation by iteration.
@@ -95,14 +96,14 @@ func Kepler2a(e, M float64, places int) (E float64, err error) {
 // The iterated formula is the same as in Kepler2 but a (different) limiting
 // function avoids divergence.
 //
-// Argument e is eccentricity, M is mean anomaly in radians,
+// Argument e is eccentricity, M is mean anomaly,
 // places is the desired number of decimal places in the result.
 //
-// Result E is eccentric anomaly in radians.
-func Kepler2b(e, M float64, places int) (E float64, err error) {
+// Result E is eccentric anomaly.
+func Kepler2b(e float64, M base.Angle, places int) (E base.Angle, err error) {
 	f := func(E0 float64) float64 {
 		se, ce := math.Sincos(E0)
-		d := (M + e*se - E0) / (1 - e*ce)
+		d := (M.Rad() + e*se - E0) / (1 - e*ce)
 		// method of Steele, p. 205
 		if d > .5 {
 			d = .5
@@ -111,27 +112,28 @@ func Kepler2b(e, M float64, places int) (E float64, err error) {
 		}
 		return E0 + d
 	}
-	return iterate.DecimalPlaces(f, M, places, places)
+	ea, err := iterate.DecimalPlaces(f, M.Rad(), places, places)
+	return base.Angle(ea), err
 }
 
 // Kepler3 solves Kepler's equation by binary search.
 //
-// Argument e is eccentricity, M is mean anomaly in radians.
+// Argument e is eccentricity, M is mean anomaly.
 //
-// Result E is eccentric anomaly in radians.
-func Kepler3(e, M float64) (E float64) {
+// Result E is eccentric anomaly.
+func Kepler3(e float64, M base.Angle) (E base.Angle) {
 	// adapted from BASIC, p. 206
-	M = base.PMod(M, 2*math.Pi)
+	MR := M.Mod1().Rad()
 	f := 1
-	if M > math.Pi {
+	if MR > math.Pi {
 		f = -1
-		M = 2*math.Pi - M
+		MR = 2*math.Pi - MR
 	}
 	E0 := math.Pi * .5
 	d := math.Pi * .25
 	for i := 0; i < 53; i++ {
 		M1 := E0 - e*math.Sin(E0)
-		if M-M1 < 0 {
+		if MR-M1 < 0 {
 			E0 -= d
 		} else {
 			E0 += d
@@ -139,19 +141,19 @@ func Kepler3(e, M float64) (E float64) {
 		d *= .5
 	}
 	if f < 0 {
-		return -E0
+		E0 = -E0
 	}
-	return E0
+	return base.Angle(E0)
 }
 
 // Kepler4 returns an approximate solution to Kepler's equation.
 //
 // It is valid only for small values of e.
 //
-// Argument e is eccentricity, M is mean anomaly in radians.
+// Argument e is eccentricity, M is mean anomaly.
 //
-// Result E is eccentric anomaly in radians.
-func Kepler4(e, M float64) (E float64) {
-	sm, cm := math.Sincos(M)
-	return math.Atan2(sm, cm-e) // (30.8) p. 206
+// Result E is eccentric anomaly.
+func Kepler4(e float64, M base.Angle) (E base.Angle) {
+	sm, cm := math.Sincos(M.Rad())
+	return base.Angle(math.Atan2(sm, cm-e)) // (30.8) p. 206
 }

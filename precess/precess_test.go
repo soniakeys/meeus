@@ -19,8 +19,8 @@ import (
 func ExampleApproxAnnualPrecession() {
 	// Example 21.a, p. 132.
 	eq := &coord.Equatorial{
-		sexa.NewRA(10, 8, 22.3).Rad(),
-		sexa.NewAngle(' ', 11, 58, 2).Rad(),
+		base.NewRA(10, 8, 22.3),
+		base.NewAngle(' ', 11, 58, 2),
 	}
 	epochFrom := 2000.0
 	epochTo := 1978.0
@@ -35,8 +35,8 @@ func ExampleApproxAnnualPrecession() {
 func ExampleApproxPosition() {
 	// Example 21.a, p. 132.
 	eq := &coord.Equatorial{
-		sexa.NewRA(10, 8, 22.3).Rad(),
-		sexa.NewAngle(' ', 11, 58, 2).Rad(),
+		base.NewRA(10, 8, 22.3),
+		base.NewAngle(' ', 11, 58, 2),
 	}
 	epochFrom := 2000.0
 	epochTo := 1978.0
@@ -63,8 +63,8 @@ func TestEpoch(t *testing.T) {
 func ExamplePosition() {
 	// Example 21.b, p. 135.
 	eq := &coord.Equatorial{
-		sexa.NewRA(2, 44, 11.986).Rad(),
-		sexa.NewAngle(' ', 49, 13, 42.48).Rad(),
+		base.NewRA(2, 44, 11.986),
+		base.NewAngle(' ', 49, 13, 42.48),
 	}
 	epochFrom := 2000.0
 	jdTo := julian.CalendarGregorianToJD(2028, 11, 13.19)
@@ -82,8 +82,8 @@ func ExamplePosition() {
 // Exercise, p. 136.
 func TestPosition(t *testing.T) {
 	eqFrom := &coord.Equatorial{
-		sexa.NewRA(2, 31, 48.704).Rad(),
-		sexa.NewAngle(' ', 89, 15, 50.72).Rad(),
+		base.NewRA(2, 31, 48.704),
+		base.NewAngle(' ', 89, 15, 50.72),
 	}
 	eqTo := &coord.Equatorial{}
 	mα := base.HourAngleFromSec(0.19877)
@@ -112,8 +112,8 @@ func TestPosition(t *testing.T) {
 func TestPrecessor_Precess(t *testing.T) {
 	// Exercise, p. 136.
 	eqFrom := &coord.Equatorial{
-		RA:  sexa.NewRA(2, 31, 48.704).Rad(),
-		Dec: sexa.NewAngle(' ', 89, 15, 50.72).Rad(),
+		RA:  base.NewRA(2, 31, 48.704),
+		Dec: base.NewAngle(' ', 89, 15, 50.72),
 	}
 	mα := base.HourAngleFromSec(.19877)
 	mδ := base.AngleFromSec(-.0152)
@@ -157,8 +157,8 @@ func ExampleEclipticPosition() {
 func ExampleProperMotion3D() {
 	// Example 21.d, p. 141.
 	eqFrom := &coord.Equatorial{
-		RA:  sexa.NewRA(6, 45, 8.871).Rad(),
-		Dec: sexa.NewAngle('-', 16, 42, 57.99).Rad(),
+		RA:  base.NewRA(6, 45, 8.871),
+		Dec: base.NewAngle('-', 16, 42, 57.99),
 	}
 	mra := base.HourAngleFromSec(-0.03847)
 	mdec := base.AngleFromSec(-1.2053)

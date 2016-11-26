@@ -49,14 +49,14 @@ func TestEqProperMotionToEcl(t *testing.T) {
 		2000.0,
 		// eq coordinates from p. 132.
 		new(coord.Ecliptic).EqToEcl(&coord.Equatorial{
-			RA:  sexa.NewRA(10, 8, 22.3).Rad(),
-			Dec: sexa.NewAngle(' ', 11, 58, 2).Rad(),
+			RA:  base.NewRA(10, 8, 22.3),
+			Dec: base.NewAngle(' ', 11, 58, 2),
 		}, ε))
-	d := math.Abs((mλ - sexa.NewAngle('-', 0, 0, .2348).Rad()) / mλ)
+	d := math.Abs((mλ - base.AngleFromSec(-.2348).Rad()) / mλ)
 	if d*169 > 1 { // 169 = significant digits of given lon
 		t.Fatal("mλ")
 	}
-	d = math.Abs((mβ - sexa.NewAngle('-', 0, 0, 0.0813).Rad()) / mβ)
+	d = math.Abs((mβ - base.AngleFromSec(-.0813).Rad()) / mβ)
 	if d*6 > 1 { // 6 = significant digit of given lat
 		t.Fatal("mβ")
 	}

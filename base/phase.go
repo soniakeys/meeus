@@ -9,10 +9,10 @@ import "math"
 //
 // The illuminated body can be the Moon or a planet.
 //
-// Argument i is the phase angle in radians.
-func Illuminated(i float64) float64 {
+// Argument i is the phase angle.
+func Illuminated(i Angle) float64 {
 	// (41.1) p. 283, also (48.1) p. 345.
-	return (1 + math.Cos(i)) * .5
+	return (1 + math.Cos(i.Rad())) * .5
 }
 
 // Limb returns the position angle of the midpoint of an illuminated limb.
@@ -21,14 +21,12 @@ func Illuminated(i float64) float64 {
 //
 // Arguments α, δ are equatorial coordinates of the body; α0, δ0 are
 // apparent coordinates of the Sun.
-//
-// Result in radians.
-func Limb(α, δ, α0, δ0 float64) float64 {
+func Limb(α RA, δ Angle, α0 RA, δ0 Angle) Angle {
 	// Mentioned in ch 41, p. 283.  Formula (48.5) p. 346
-	sδ, cδ := math.Sincos(δ)
-	sδ0, cδ0 := math.Sincos(δ0)
-	sα0α, cα0α := math.Sincos(α0 - α)
-	χ := math.Atan2(cδ0*sα0α, sδ0*cδ-cδ0*sδ*cα0α)
+	sδ, cδ := math.Sincos(δ.Rad())
+	sδ0, cδ0 := math.Sincos(δ0.Rad())
+	sα0α, cα0α := math.Sincos((α0 - α).Rad())
+	χ := Angle(math.Atan2(cδ0*sα0α, sδ0*cδ-cδ0*sδ*cα0α))
 	if χ < 0 {
 		χ += 2 * math.Pi
 	}

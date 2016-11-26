@@ -33,11 +33,11 @@ func ExampleNutation() {
 func TestApproxNutation(t *testing.T) {
 	jd := julian.CalendarGregorianToJD(1987, 4, 10)
 	Δψ, Δε := nutation.ApproxNutation(jd)
-	if math.Abs(Δψ*(180/math.Pi)*3600+3.788) > .5 {
-		t.Fatal(Δψ * (180 / math.Pi) * 3600)
+	if math.Abs(Δψ.Sec()+3.788) > .5 {
+		t.Fatal(Δψ.Sec())
 	}
-	if math.Abs(Δε*(180/math.Pi)*3600-9.443) > .1 {
-		t.Fatal(Δε * (180 / math.Pi) * 3600)
+	if math.Abs(Δε.Sec()-9.443) > .1 {
+		t.Fatal(Δε.Sec())
 	}
 }
 
@@ -46,7 +46,7 @@ func TestIAUvsLaskar(t *testing.T) {
 		jd := julian.CalendarGregorianToJD(y, 0, 0)
 		i := nutation.MeanObliquity(jd)
 		l := nutation.MeanObliquityLaskar(jd)
-		if math.Abs(i-l)*(180/math.Pi)*3600 > 1 {
+		if math.Abs((i - l).Sec()) > 1 {
 			t.Fatal(y)
 		}
 	}
@@ -54,7 +54,7 @@ func TestIAUvsLaskar(t *testing.T) {
 		jd := julian.CalendarGregorianToJD(y, 0, 0)
 		i := nutation.MeanObliquity(jd)
 		l := nutation.MeanObliquityLaskar(jd)
-		if math.Abs(i-l)*(180/math.Pi)*3600 > 10 {
+		if math.Abs((i - l).Sec()) > 10 {
 			t.Fatal(y)
 		}
 	}

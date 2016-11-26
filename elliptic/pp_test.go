@@ -7,8 +7,8 @@ package elliptic_test
 
 import (
 	"fmt"
-	"math"
 
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/elliptic"
 	"github.com/soniakeys/meeus/julian"
 	pp "github.com/soniakeys/meeus/planetposition"
@@ -46,15 +46,15 @@ func ExampleElements_Position() {
 		TimeP: julian.CalendarGregorianToJD(1990, 10, 28.54502),
 		Axis:  2.2091404,
 		Ecc:   .8502196,
-		Inc:   11.94524 * math.Pi / 180,
-		Node:  334.75006 * math.Pi / 180,
-		ArgP:  186.23352 * math.Pi / 180,
+		Inc:   base.AngleFromDeg(11.94524),
+		Node:  base.AngleFromDeg(334.75006),
+		ArgP:  base.AngleFromDeg(186.23352),
 	}
 	j := julian.CalendarGregorianToJD(1990, 10, 6)
 	α, δ, ψ := k.Position(j, earth)
 	fmt.Printf("α = %.1d\n", sexa.RA(α).Fmt())
 	fmt.Printf("δ = %.0d\n", sexa.Angle(δ).Fmt())
-	fmt.Printf("ψ = %.2f\n", sexa.Angle(ψ).Deg())
+	fmt.Printf("ψ = %.2f\n", ψ.Deg())
 	// Output:
 	// α = 10ʰ34ᵐ14ˢ.2
 	// δ = 19°9′31″

@@ -17,9 +17,9 @@ import (
 func Position(e *pp.V87Planet, jde float64) (x, y, z float64) {
 	// (26.1) p. 171
 	s, β, R := solar.TrueVSOP87(e, jde)
-	sε, cε := math.Sincos(nutation.MeanObliquity(jde))
-	ss, cs := math.Sincos(s)
-	sβ := math.Sin(β)
+	sε, cε := math.Sincos(nutation.MeanObliquity(jde).Rad())
+	ss, cs := math.Sincos(s.Rad())
+	sβ := math.Sin(β.Rad())
 	x = R * cs
 	y = R * (ss*cε - sβ*sε)
 	z = R * (ss*sε + sβ*cε)
@@ -27,9 +27,9 @@ func Position(e *pp.V87Planet, jde float64) (x, y, z float64) {
 }
 
 // LongitudeJ2000 returns geometric longitude referenced to equinox J2000.
-func LongitudeJ2000(e *pp.V87Planet, jde float64) (l float64) {
+func LongitudeJ2000(e *pp.V87Planet, jde float64) (l base.Angle) {
 	l, _, _ = e.Position2000(jde)
-	return base.PMod(l+math.Pi-.09033/3600*math.Pi/180, 2*math.Pi)
+	return (l + math.Pi - base.AngleFromSec(.09033)).Mod1()
 }
 
 // PositionJ2000 returns rectangular coordinates referenced to equinox J2000.
@@ -45,8 +45,8 @@ func xyz(e *pp.V87Planet, jde float64) (x, y, z float64) {
 	l, b, r := e.Position2000(jde)
 	s := l + math.Pi
 	β := -b
-	ss, cs := math.Sincos(s)
-	sβ, cβ := math.Sincos(β)
+	ss, cs := math.Sincos(s.Rad())
+	sβ, cβ := math.Sincos(β.Rad())
 	// (26.2) p. 172
 	x = r * cβ * cs
 	y = r * cβ * ss
