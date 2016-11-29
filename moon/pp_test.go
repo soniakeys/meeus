@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/moon"
 	pp "github.com/soniakeys/meeus/planetposition"
+	"github.com/soniakeys/unit"
 )
 
 func ExamplePhysical() {
@@ -45,7 +45,7 @@ func ExampleSunAltitude() {
 	}
 	_, _, _, l0, b0 := moon.Physical(j, earth)
 	h := moon.SunAltitude(
-		base.AngleFromDeg(-20), base.AngleFromDeg(9.7), l0, b0)
+		unit.AngleFromDeg(-20), unit.AngleFromDeg(9.7), l0, b0)
 	fmt.Printf("%+.3f\n", h.Deg())
 	// Output:
 	// +2.318
@@ -59,7 +59,7 @@ func ExampleSunrise() {
 	}
 	j0 := julian.CalendarGregorianToJD(1992, 4, 15)
 	j := moon.Sunrise(
-		base.AngleFromDeg(-20), base.AngleFromDeg(9.7), j0, earth)
+		unit.AngleFromDeg(-20), unit.AngleFromDeg(9.7), j0, earth)
 	y, m, d := julian.JDToCalendar(j)
 	fmt.Printf("%d %s %.4f TD\n", y, time.Month(m), d)
 	// Output:

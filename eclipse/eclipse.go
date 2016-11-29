@@ -9,6 +9,7 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/moonphase"
+	"github.com/soniakeys/unit"
 )
 
 func g(k, jm, c1, c2 float64) (eclipse bool, jmax, γ, u, Mʹ float64) {
@@ -173,10 +174,10 @@ func Solar(year float64) (eclipseType int, central bool, jmax, γ, u, p, mag flo
 //
 // mag is eclipse magnitude.
 //
-// sd- return values are semidurations of the phases of the eclipse, in days.
+// sd- return values are semidurations of the phases of the eclipse.
 //
 // γ, σ, and ρ are in units of equatorial Earth radii.
-func Lunar(year float64) (eclipseType int, jmax, γ, ρ, σ, mag, sdTotal, sdPartial, sdPenumbral float64) {
+func Lunar(year float64) (eclipseType int, jmax, γ, ρ, σ, mag float64, sdTotal, sdPartial, sdPenumbral unit.Time) {
 	var e bool
 	var u, Mʹ float64
 	e, jmax, γ, u, Mʹ = g(snap(year, .5),
@@ -206,14 +207,14 @@ func Lunar(year float64) (eclipseType int, jmax, γ, ρ, σ, mag, sdTotal, sdPar
 	γ2 := γ * γ
 	switch eclipseType {
 	case Total:
-		sdTotal = math.Sqrt(t*t-γ2) / n / 24
+		sdTotal = unit.TimeFromHour(math.Sqrt(t*t-γ2) / n)
 		fallthrough
 	case Umbral:
-		sdPartial = math.Sqrt(p*p-γ2) / n / 24
+		sdPartial = unit.TimeFromHour(math.Sqrt(p*p-γ2) / n)
 		fallthrough
 	default:
 		h := 1.5573 + u
-		sdPenumbral = math.Sqrt(h*h-γ2) / n / 24
+		sdPenumbral = unit.TimeFromHour(math.Sqrt(h*h-γ2) / n)
 	}
 	return
 }

@@ -11,15 +11,17 @@ import (
 	"github.com/soniakeys/meeus/nutation"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/solar"
+	"github.com/soniakeys/unit"
 )
 
-// Position returns rectangular coordinates referenced to the mean equinox of date.
+// Position returns rectangular coordinates referenced to the mean equinox
+// of date.
 func Position(e *pp.V87Planet, jde float64) (x, y, z float64) {
 	// (26.1) p. 171
 	s, β, R := solar.TrueVSOP87(e, jde)
-	sε, cε := math.Sincos(nutation.MeanObliquity(jde).Rad())
-	ss, cs := math.Sincos(s.Rad())
-	sβ := math.Sin(β.Rad())
+	sε, cε := nutation.MeanObliquity(jde).Sincos()
+	ss, cs := s.Sincos()
+	sβ := β.Sin()
 	x = R * cs
 	y = R * (ss*cε - sβ*sε)
 	z = R * (ss*sε + sβ*cε)
@@ -27,9 +29,9 @@ func Position(e *pp.V87Planet, jde float64) (x, y, z float64) {
 }
 
 // LongitudeJ2000 returns geometric longitude referenced to equinox J2000.
-func LongitudeJ2000(e *pp.V87Planet, jde float64) (l base.Angle) {
+func LongitudeJ2000(e *pp.V87Planet, jde float64) (l unit.Angle) {
 	l, _, _ = e.Position2000(jde)
-	return (l + math.Pi - base.AngleFromSec(.09033)).Mod1()
+	return (l + math.Pi - unit.AngleFromSec(.09033)).Mod1()
 }
 
 // PositionJ2000 returns rectangular coordinates referenced to equinox J2000.
@@ -45,8 +47,8 @@ func xyz(e *pp.V87Planet, jde float64) (x, y, z float64) {
 	l, b, r := e.Position2000(jde)
 	s := l + math.Pi
 	β := -b
-	ss, cs := math.Sincos(s.Rad())
-	sβ, cβ := math.Sincos(β.Rad())
+	ss, cs := s.Sincos()
+	sβ, cβ := β.Sincos()
 	// (26.2) p. 172
 	x = r * cβ * cs
 	y = r * cβ * ss

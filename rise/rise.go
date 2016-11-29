@@ -18,7 +18,6 @@ import (
 	"errors"
 	"math"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/deltat"
 	"github.com/soniakeys/meeus/elliptic"
 	"github.com/soniakeys/meeus/globe"
@@ -26,23 +25,24 @@ import (
 	"github.com/soniakeys/meeus/julian"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/sidereal"
+	"github.com/soniakeys/unit"
 )
 
-var meanRefraction = base.AngleFromMin(34)
+var meanRefraction = unit.AngleFromMin(34)
 
 // "Standard altitudes" for various bodies.
 //
 // The standard altitude is the geometric altitude of the center of body
 // at the time of apparent rising or setting.
 var (
-	Stdh0Stellar   = base.AngleFromMin(-34)
-	Stdh0Solar     = base.AngleFromMin(-50)
-	Stdh0LunarMean = base.AngleFromDeg(.125)
+	Stdh0Stellar   = unit.AngleFromMin(-34)
+	Stdh0Solar     = unit.AngleFromMin(-50)
+	Stdh0LunarMean = unit.AngleFromDeg(.125)
 )
 
 // Stdh0Lunar is the standard altitude of the Moon considering π, the
 // Moon's horizontal parallax.
-func Stdh0Lunar(π base.Angle) base.Angle {
+func Stdh0Lunar(π unit.Angle) unit.Angle {
 	return π.Mul(.7275) - meanRefraction
 }
 
@@ -65,20 +65,20 @@ var ErrorCircumpolar = errors.New("Circumpolar")
 // See sidereal.Apparent0UT.
 //
 // α, δ must be values at 0h dynamical time for the day of interest.
-func ApproxTimes(p globe.Coord, h0 base.Angle, Th0 base.Time, α base.RA, δ base.Angle) (tRise, tTransit, tSet base.Time, err error) {
+func ApproxTimes(p globe.Coord, h0 unit.Angle, Th0 unit.Time, α unit.RA, δ unit.Angle) (tRise, tTransit, tSet unit.Time, err error) {
 	// approximate local hour angle
-	sLat, cLat := math.Sincos(p.Lat.Rad())
-	sδ1, cδ1 := math.Sincos(δ.Rad())
-	cH0 := (math.Sin(h0.Rad()) - sLat*sδ1) / (cLat * cδ1) // (15.1) p. 102
+	sLat, cLat := p.Lat.Sincos()
+	sδ1, cδ1 := δ.Sincos()
+	cH0 := (h0.Sin() - sLat*sδ1) / (cLat * cδ1) // (15.1) p. 102
 	if cH0 < -1 || cH0 > 1 {
 		err = ErrorCircumpolar
 		return
 	}
-	H0 := base.TimeFromRad(math.Acos(cH0))
+	H0 := unit.TimeFromRad(math.Acos(cH0))
 
 	// approximate transit, rise, set times.
 	// (15.2) p. 102.
-	mt := base.TimeFromRad(α.Rad()+p.Lon.Rad()) - Th0
+	mt := unit.TimeFromRad(α.Rad()+p.Lon.Rad()) - Th0
 	tTransit = mt.Mod1()
 	tRise = (mt - H0).Mod1()
 	tSet = (mt + H0).Mod1()
@@ -106,7 +106,7 @@ func ApproxTimes(p globe.Coord, h0 base.Angle, Th0 base.Time, α base.RA, δ bas
 // and the day after the day of interest.  Units are radians.
 //
 // Result units are seconds of day and are in the range [0,86400).
-func Times(p globe.Coord, ΔT base.Time, h0 base.Angle, Th0 base.Time, α3 []base.RA, δ3 []base.Angle) (tRise, tTransit, tSet base.Time, err error) {
+func Times(p globe.Coord, ΔT unit.Time, h0 unit.Angle, Th0 unit.Time, α3 []unit.RA, δ3 []unit.Angle) (tRise, tTransit, tSet unit.Time, err error) {
 	tRise, tTransit, tSet, err = ApproxTimes(p, h0, Th0, α3[1], δ3[1])
 	if err != nil {
 		return
@@ -133,12 +133,12 @@ func Times(p globe.Coord, ΔT base.Time, h0 base.Angle, Th0 base.Time, α3 []bas
 		th0 := (Th0 + tTransit.Mul(360.985647/360)).Mod1()
 		α := d3α.InterpolateX((tTransit + ΔT).Sec())
 		// local hour angle as Time
-		H := th0 - base.TimeFromRad(p.Lon.Rad()+α)
+		H := th0 - unit.TimeFromRad(p.Lon.Rad()+α)
 		tTransit -= H
 	}
 	// adjust tRise, tSet
-	sLat, cLat := math.Sincos(p.Lat.Rad())
-	adjustRS := func(m base.Time) (base.Time, error) {
+	sLat, cLat := p.Lat.Sincos()
+	adjustRS := func(m unit.Time) (unit.Time, error) {
 		th0 := (Th0 + m.Mul(360.985647/360)).Mod1()
 		ut := (m + ΔT).Sec()
 		α := d3α.InterpolateX(ut)
@@ -147,7 +147,7 @@ func Times(p globe.Coord, ΔT base.Time, h0 base.Angle, Th0 base.Time, α3 []bas
 		sδ, cδ := math.Sincos(δ)
 		sH, cH := math.Sincos(Hrad)
 		h := math.Asin(sLat*sδ + cLat*cδ*cH)
-		md := (base.TimeFromRad(h) - h0.Time()).Div(cδ * cLat * sH)
+		md := (unit.TimeFromRad(h) - h0.Time()).Div(cδ * cLat * sH)
 		return m + md, nil
 	}
 	tRise, err = adjustRS(tRise)
@@ -169,7 +169,7 @@ func Times(p globe.Coord, ΔT base.Time, h0 base.Angle, Th0 base.Time, α3 []bas
 // Obtain V87Planet objects with the planetposition package.
 //
 // Result units are seconds of day and are in the range [0,86400).
-func ApproxPlanet(yr, mon, day int, pos globe.Coord, e, pl *pp.V87Planet) (tRise, tTransit, tSet base.Time, err error) {
+func ApproxPlanet(yr, mon, day int, pos globe.Coord, e, pl *pp.V87Planet) (tRise, tTransit, tSet unit.Time, err error) {
 	jd := julian.CalendarGregorianToJD(yr, mon, float64(day))
 	α, δ := elliptic.Position(pl, e, jd)
 	return ApproxTimes(pos, Stdh0Stellar, sidereal.Apparent0UT(jd), α, δ)
@@ -186,10 +186,10 @@ func ApproxPlanet(yr, mon, day int, pos globe.Coord, e, pl *pp.V87Planet) (tRise
 // Obtain V87Planet objects with the planetposition package.
 //
 // Result units are seconds of day and are in the range [0,86400).
-func Planet(yr, mon, day int, pos globe.Coord, e, pl *pp.V87Planet) (tRise, tTransit, tSet base.Time, err error) {
+func Planet(yr, mon, day int, pos globe.Coord, e, pl *pp.V87Planet) (tRise, tTransit, tSet unit.Time, err error) {
 	jd := julian.CalendarGregorianToJD(yr, mon, float64(day))
-	α := make([]base.RA, 3)
-	δ := make([]base.Angle, 3)
+	α := make([]unit.RA, 3)
+	δ := make([]unit.Angle, 3)
 	α[0], δ[0] = elliptic.Position(pl, e, jd-1)
 	α[1], δ[1] = elliptic.Position(pl, e, jd)
 	α[2], δ[2] = elliptic.Position(pl, e, jd+1)

@@ -13,16 +13,15 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 // PhaseAngle computes the phase angle of a planet.
 //
 // Argument r is planet's distance to Sun, Δ its distance to Earth, and R
 // the distance from Sun to Earth.  All distances in AU.
-//
-// Result in radians.
-func PhaseAngle(r, Δ, R float64) float64 {
-	return math.Acos((r*r + Δ*Δ - R*R) / (2 * r * Δ))
+func PhaseAngle(r, Δ, R float64) unit.Angle {
+	return unit.Angle(math.Acos((r*r + Δ*Δ - R*R) / (2 * r * Δ)))
 }
 
 // Fraction computes the illuminated fraction of the disk of a planet.
@@ -39,26 +38,22 @@ func Fraction(r, Δ, R float64) float64 {
 //
 // Arguments L, B, R are heliocentric ecliptical coordinates of the planet.
 // L0, R0 are longitude and radius for Earth, Δ is distance from Earth to
-// the planet.  All distances in AU, angles in radians.
-//
-// The phase angle result is in radians.
-func PhaseAngle2(L, B, R, L0, R0, Δ float64) float64 {
+// the planet.  All distances in AU.
+func PhaseAngle2(L, B unit.Angle, R float64, L0 unit.Angle, R0, Δ float64) unit.Angle {
 	// (41.3) p. 283
-	return math.Acos((R - R0*math.Cos(B)*math.Cos(L-L0)) / Δ)
+	return unit.Angle(math.Acos((R - R0*B.Cos()*(L-L0).Cos()) / Δ))
 }
 
 // PhaseAngle3 computes the phase angle of a planet.
 //
 // Arguments L, B are heliocentric ecliptical longitude and latitude of the
 // planet.  x, y, z are cartesian coordinates of the planet, Δ is distance
-// from Earth to the planet.  All distances in AU, angles in radians.
-//
-// The phase angle result is in radians.
-func PhaseAngle3(L, B, x, y, z, Δ float64) float64 {
+// from Earth to the planet.  All distances in AU.
+func PhaseAngle3(L, B unit.Angle, x, y, z, Δ float64) unit.Angle {
 	// (41.4) p. 283
-	sL, cL := math.Sincos(L)
-	sB, cB := math.Sincos(B)
-	return math.Acos((x*cB*cL + y*cB*sL + z*sB) / Δ)
+	sL, cL := L.Sincos()
+	sB, cB := B.Sincos()
+	return unit.Angle(math.Acos((x*cB*cL + y*cB*sL + z*sB) / Δ))
 }
 
 const p = math.Pi / 180
@@ -78,26 +73,27 @@ func FractionVenus(jde float64) float64 {
 // Mercury computes the visual magnitude of Mercury.
 //
 // Argument r is the planet's distance from the Sun, Δ the distance from Earth,
-// and i the phase angle in radians.
-func Mercury(r, Δ, i float64) float64 {
-	s := i - 50*p
-	return 1.16 + 5*math.Log10(r*Δ) + .02838/p*s + .0001023/p/p*s*s
+// and i the phase angle.
+func Mercury(r, Δ float64, i unit.Angle) float64 {
+	s := i.Deg() - 50
+	return 1.16 + 5*math.Log10(r*Δ) + (.02838+.0001023*s)*s
 }
 
 // Venus computes the visual magnitude of Venus.
 //
 // Argument r is the planet's distance from the Sun, Δ the distance from Earth,
-// and i the phase angle in radians.
-func Venus(r, Δ, i float64) float64 {
-	return -4 + 5*math.Log10(r*Δ) + (.01322/p+.0000004247/p/p/p*i*i)*i
+// and i the phase angle.
+func Venus(r, Δ float64, i unit.Angle) float64 {
+	id := i.Deg()
+	return -4 + 5*math.Log10(r*Δ) + (.01322+.0000004247*id*id)*id
 }
 
 // Mars computes the visual magnitude of Mars.
 //
 // Argument r is the planet's distance from the Sun, Δ the distance from Earth,
-// and i the phase angle in radians.
-func Mars(r, Δ, i float64) float64 {
-	return -1.3 + 5*math.Log10(r*Δ) + .01486/p*i
+// and i the phase angle.
+func Mars(r, Δ float64, i unit.Angle) float64 {
+	return -1.3 + 5*math.Log10(r*Δ) + .01486*i.Deg()
 }
 
 // Jupiter computes the visual magnitude of Jupiter.
@@ -114,9 +110,10 @@ func Jupiter(r, Δ float64) float64 {
 // Saturn's ring. ΔU is the difference between the Saturnicentric longitudes
 // of the Sun and the Earth, measured in the plane of the ring.
 // You can use saturndisk.Disk() to obtain B and ΔU.
-func Saturn(r, Δ, B, ΔU float64) float64 {
-	s := math.Sin(math.Abs(B))
-	return -8.68 + 5*math.Log10(r*Δ) + .044/p*math.Abs(ΔU) - 2.6*s + 1.25*s*s
+func Saturn(r, Δ float64, B, ΔU unit.Angle) float64 {
+	s := math.Abs(B.Sin())
+	return -8.68 + 5*math.Log10(r*Δ) + .044*math.Abs(ΔU.Deg()) -
+		2.6*s + 1.25*s*s
 }
 
 // Uranus computes the visual magnitude of Uranus.
@@ -138,10 +135,10 @@ func Neptune(r, Δ float64) float64 {
 // The formula is that adopted in "Astronomical Almanac" in 1984.
 //
 // Argument r is the planet's distance from the Sun, Δ the distance from Earth,
-// and i the phase angle in radians.
-func Mercury84(r, Δ, i float64) float64 {
-	return base.Horner(i, -.42+5*math.Log10(r*Δ),
-		.038/p, -.000273/p/p, .000002/p/p/p)
+// and i the phase angle.
+func Mercury84(r, Δ float64, i unit.Angle) float64 {
+	return base.Horner(i.Deg(), -.42+5*math.Log10(r*Δ),
+		.038, -.000273, .000002)
 }
 
 // Venus84 computes the visual magnitude of Venus.
@@ -149,10 +146,10 @@ func Mercury84(r, Δ, i float64) float64 {
 // The formula is that adopted in "Astronomical Almanac" in 1984.
 //
 // Argument r is the planet's distance from the Sun, Δ the distance from Earth,
-// and i the phase angle in radians.
-func Venus84(r, Δ, i float64) float64 {
-	return base.Horner(i, -4.4+5*math.Log10(r*Δ),
-		.0009/p, -.000239/p/p, .00000065/p/p/p)
+// and i the phase angle.
+func Venus84(r, Δ float64, i unit.Angle) float64 {
+	return base.Horner(i.Deg(), -4.4+5*math.Log10(r*Δ),
+		.0009, -.000239, .00000065)
 }
 
 // Mars84 computes the visual magnitude of Mars.
@@ -160,9 +157,9 @@ func Venus84(r, Δ, i float64) float64 {
 // The formula is that adopted in "Astronomical Almanac" in 1984.
 //
 // Argument r is the planet's distance from the Sun, Δ the distance from Earth,
-// and i the phase angle in radians.
-func Mars84(r, Δ, i float64) float64 {
-	return -1.52 + 5*math.Log10(r*Δ) + .016/p*i
+// and i the phase angle.
+func Mars84(r, Δ float64, i unit.Angle) float64 {
+	return -1.52 + 5*math.Log10(r*Δ) + .016*i.Deg()
 }
 
 // Jupiter84 computes the visual magnitude of Jupiter.
@@ -170,9 +167,9 @@ func Mars84(r, Δ, i float64) float64 {
 // The formula is that adopted in "Astronomical Almanac" in 1984.
 //
 // Argument r is the planet's distance from the Sun, Δ the distance from Earth,
-// and i the phase angle in radians.
-func Jupiter84(r, Δ, i float64) float64 {
-	return -9.4 + 5*math.Log10(r*Δ) + .005/p*i
+// and i the phase angle.
+func Jupiter84(r, Δ float64, i unit.Angle) float64 {
+	return -9.4 + 5*math.Log10(r*Δ) + .005*i.Deg()
 }
 
 // Saturn84 computes the visual magnitude of Saturn.
@@ -183,9 +180,10 @@ func Jupiter84(r, Δ, i float64) float64 {
 // B is the Saturnicentric latitude of the Earth referred to the plane of
 // Saturn's ring. ΔU is the difference between the Saturnicentric longitudes
 // of the Sun and the Earth, measured in the plane of the ring.
-func Saturn84(r, Δ, B, ΔU float64) float64 {
-	s := math.Sin(math.Abs(B))
-	return -8.88 + 5*math.Log10(r*Δ) + .044/p*math.Abs(ΔU) - 2.6*s + 1.25*s*s
+func Saturn84(r, Δ float64, B, ΔU unit.Angle) float64 {
+	s := math.Abs(B.Sin())
+	return -8.88 + 5*math.Log10(r*Δ) + .044/math.Abs(ΔU.Deg()) -
+		2.6*s + 1.25*s*s
 }
 
 // Uranus84 computes the visual magnitude of Uranus.

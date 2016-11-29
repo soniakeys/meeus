@@ -8,14 +8,15 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 // Parallax returns equatorial horizontal parallax of the Moon.
 //
 // Argument Δ is distance between centers of the Earth and Moon, in km.
-func Parallax(Δ float64) base.Angle {
+func Parallax(Δ float64) unit.Angle {
 	// p. 337
-	return base.Angle(math.Asin(6378.14 / Δ))
+	return unit.Angle(math.Asin(6378.14 / Δ))
 }
 
 const p = math.Pi / 180
@@ -40,7 +41,7 @@ func dmf(T float64) (D, M, Mʹ, F float64) {
 //	λ  Geocentric longitude.
 //	β  Geocentric latidude.
 //	Δ  Distance between centers of the Earth and Moon, in km.
-func Position(jde float64) (λ, β base.Angle, Δ float64) {
+func Position(jde float64) (λ, β unit.Angle, Δ float64) {
 	T := base.J2000Century(jde)
 	Lʹ := base.Horner(T, 218.3164477*p, 481267.88123421*p,
 		-.0015786*p, p/538841, -p/65194000)
@@ -81,8 +82,8 @@ func Position(jde float64) (λ, β base.Angle, Δ float64) {
 			Σb += r.Σb * sb * E2
 		}
 	}
-	λ = base.Angle(Lʹ).Mod1() + base.AngleFromDeg(Σl*1e-6)
-	β = base.AngleFromDeg(Σb * 1e-6)
+	λ = unit.Angle(Lʹ).Mod1() + unit.AngleFromDeg(Σl*1e-6)
+	β = unit.AngleFromDeg(Σb * 1e-6)
 	Δ = 385000.56 + Σr*1e-3
 	return
 }
@@ -247,23 +248,23 @@ var tb = [...]tbs{
 }
 
 // Node returns longitude of the mean ascending node of the lunar orbit.
-func Node(jde float64) base.Angle {
-	return base.AngleFromDeg(base.Horner(base.J2000Century(jde),
+func Node(jde float64) unit.Angle {
+	return unit.AngleFromDeg(base.Horner(base.J2000Century(jde),
 		125.0445479, -1934.1362891, .0020754, 1/467441, -1/60616000)).Mod1()
 }
 
 // Perigee returns longitude of perigee of the lunar orbit.
-func Perigee(jde float64) base.Angle {
-	return base.AngleFromDeg(base.Horner(base.J2000Century(jde),
+func Perigee(jde float64) unit.Angle {
+	return unit.AngleFromDeg(base.Horner(base.J2000Century(jde),
 		83.3532465, 4069.0137287, -.01032, -1/80053, 1/18999000)).Mod1()
 }
 
 // TrueNode returns longitude of the true ascending node.
 //
 // That is, the node of the instantaneous lunar orbit.
-func TrueNode(jde float64) base.Angle {
+func TrueNode(jde float64) unit.Angle {
 	D, M, Mʹ, F := dmf(base.J2000Century(jde))
-	return Node(jde) + base.AngleFromDeg(
+	return Node(jde) + unit.AngleFromDeg(
 		-1.4979*math.Sin(2*(D-F))+
 			-.15*math.Sin(M)+
 			-.1226*math.Sin(2*D)+

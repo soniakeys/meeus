@@ -117,15 +117,15 @@ func ExampleLunar_1973() {
 	switch t {
 	case eclipse.Total:
 		fmt.Printf("Totality semiduration:         %3.0f min\n",
-			sdTotal*24*60)
+			sdTotal.Min())
 		fallthrough
 	case eclipse.Umbral:
 		fmt.Printf("Partial phase semiduration:    %3.0f min\n",
-			sdPartial*24*60)
+			sdPartial.Min())
 		fallthrough
 	default:
 		fmt.Printf("Penumbral semiduration:        %3.0f min\n",
-			sdPenumbral*24*60)
+			sdPenumbral.Min())
 	}
 	// Output:
 	// Penumbral eclipse
@@ -162,13 +162,16 @@ func ExampleLunar_1997() {
 	fmt.Printf("Penumbral radius, ρ:           %+.4f\n", ρ)
 	switch t {
 	case eclipse.Total:
-		fmt.Printf("Totality semiduration:         %3.0f min\n", sdTotal*24*60)
+		fmt.Printf("Totality semiduration:         %3.0f min\n",
+			sdTotal.Min())
 		fallthrough
 	case eclipse.Umbral:
-		fmt.Printf("Partial phase semiduration:    %3.0f min\n", sdPartial*24*60)
+		fmt.Printf("Partial phase semiduration:    %3.0f min\n",
+			sdPartial.Min())
 		fallthrough
 	default:
-		fmt.Printf("Penumbral semiduration:        %3.0f min\n", sdPenumbral*24*60)
+		fmt.Printf("Penumbral semiduration:        %3.0f min\n",
+			sdPenumbral.Min())
 	}
 	// Output:
 	// Total eclipse

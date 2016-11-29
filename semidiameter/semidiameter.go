@@ -9,29 +9,30 @@ import (
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/parallax"
+	"github.com/soniakeys/unit"
 )
 
 // Standard semidiameters at unit distance of 1 AU.
 var (
-	Sun               = base.AngleFromSec(959.63)
-	Mercury           = base.AngleFromSec(3.36)
-	VenusSurface      = base.AngleFromSec(8.34)
-	VenusCloud        = base.AngleFromSec(8.41)
-	Mars              = base.AngleFromSec(4.68)
-	JupiterEquatorial = base.AngleFromSec(98.44)
-	JupiterPolar      = base.AngleFromSec(92.06)
-	SaturnEquatorial  = base.AngleFromSec(82.73)
-	SaturnPolar       = base.AngleFromSec(73.82)
-	Uranus            = base.AngleFromSec(35.02)
-	Neptune           = base.AngleFromSec(33.50)
-	Pluto             = base.AngleFromSec(2.07)
-	Moon              = base.AngleFromSec(358473400 / base.AU)
+	Sun               = unit.AngleFromSec(959.63)
+	Mercury           = unit.AngleFromSec(3.36)
+	VenusSurface      = unit.AngleFromSec(8.34)
+	VenusCloud        = unit.AngleFromSec(8.41)
+	Mars              = unit.AngleFromSec(4.68)
+	JupiterEquatorial = unit.AngleFromSec(98.44)
+	JupiterPolar      = unit.AngleFromSec(92.06)
+	SaturnEquatorial  = unit.AngleFromSec(82.73)
+	SaturnPolar       = unit.AngleFromSec(73.82)
+	Uranus            = unit.AngleFromSec(35.02)
+	Neptune           = unit.AngleFromSec(33.50)
+	Pluto             = unit.AngleFromSec(2.07)
+	Moon              = unit.AngleFromSec(358473400 / base.AU)
 )
 
 // Semidiameter returns semidiameter at specified distance.
 //
 // Δ must be observer-body distance in AU.
-func Semidiameter(s0 base.Angle, Δ float64) base.Angle {
+func Semidiameter(s0 unit.Angle, Δ float64) unit.Angle {
 	return s0.Div(Δ)
 }
 
@@ -41,7 +42,7 @@ func Semidiameter(s0 base.Angle, Δ float64) base.Angle {
 // Argument Δ must be observer-Saturn distance in AU.  Argument B is
 // Saturnicentric latitude of the observer as given by function saturnring.UB()
 // for example.
-func SaturnApparentPolar(Δ float64, B base.Angle) base.Angle {
+func SaturnApparentPolar(Δ float64, B unit.Angle) unit.Angle {
 	k := (SaturnPolar.Rad() / SaturnEquatorial.Rad())
 	k = 1 - k*k
 	cB := B.Cos()
@@ -55,7 +56,7 @@ func SaturnApparentPolar(Δ float64, B base.Angle) base.Angle {
 //	H is hour angle of Moon.
 //	ρsφʹ, ρcφʹ are parallax constants as returned by
 //	    globe.Ellipsoid.ParallaxConstants, for example.
-func MoonTopocentric(Δ float64, δ base.Angle, H base.HourAngle, ρsφʹ, ρcφʹ float64) float64 {
+func MoonTopocentric(Δ float64, δ unit.Angle, H unit.HourAngle, ρsφʹ, ρcφʹ float64) float64 {
 	const k = .272481
 	sπ := parallax.Horizontal(Δ).Sin()
 	// q computed by (40.6, 40.7) p. 280, ch 40.
@@ -73,7 +74,7 @@ func MoonTopocentric(Δ float64, δ base.Angle, H base.HourAngle, ρsφʹ, ρcφ
 //
 // Δ is distance to Moon in AU, h is altitude of the Moon above the observer's
 // horizon.
-func MoonTopocentric2(Δ float64, h base.Angle) base.Angle {
+func MoonTopocentric2(Δ float64, h unit.Angle) unit.Angle {
 	return Moon.Mul((1 + h.Sin()*parallax.Horizontal(Δ).Sin()) / Δ)
 }
 
@@ -91,6 +92,6 @@ func AsteroidDiameter(H, A float64) float64 {
 // Argument d is diameter in km, Δ is distance in AU.
 //
 // Result is semidiameter.
-func Asteroid(d, Δ float64) base.Angle {
-	return base.AngleFromSec(.0013788).Mul(d / Δ)
+func Asteroid(d, Δ float64) unit.Angle {
+	return unit.AngleFromSec(.0013788).Mul(d / Δ)
 }

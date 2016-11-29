@@ -13,6 +13,7 @@ import (
 	"github.com/soniakeys/meeus/deltat"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleInterp10A() {
@@ -37,10 +38,10 @@ func ExamplePoly1900to1997() {
 func ExamplePolyBefore948() {
 	// Example 10.b, p. 80.
 	ΔT := deltat.PolyBefore948(333.1)
-	UT := base.TimeFromHour(6)
+	UT := unit.TimeFromHour(6)
 	TD := UT + ΔT
 	fmt.Printf("%+.0f seconds\n", ΔT)
-	fmt.Printf("333 February 6 at %m TD", sexa.Time(TD).Fmt())
+	fmt.Printf("333 February 6 at %m TD", sexa.FmtTime(TD))
 	// Output:
 	// +6146 seconds
 	// 333 February 6 at 7ʰ42ᵐ TD
@@ -50,7 +51,7 @@ func ExamplePolyBefore948() {
 func TestPoly1800to1997(t *testing.T) {
 	for _, tp := range []struct {
 		year int
-		ΔT   base.Time
+		ΔT   unit.Time
 	}{
 		{1800, 13.1},
 		{1900, -2.8},
@@ -67,7 +68,7 @@ func TestPoly1800to1997(t *testing.T) {
 func TestPoly1800to1899(t *testing.T) {
 	for _, tp := range []struct {
 		year int
-		ΔT   base.Time
+		ΔT   unit.Time
 	}{
 		{1800, 13.1},
 		{1850, 6.8},
@@ -87,7 +88,7 @@ func TestPoly1900to1997(t *testing.T) {
 	}
 	for _, tp := range []struct {
 		year int
-		ΔT   base.Time
+		ΔT   unit.Time
 	}{
 		{1900, -2.8},
 		{1950, 29.1},

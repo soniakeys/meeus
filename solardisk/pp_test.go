@@ -7,7 +7,6 @@ package solardisk_test
 
 import (
 	"fmt"
-	"math"
 
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/solardisk"
@@ -21,9 +20,9 @@ func ExampleEphemeris() {
 		return
 	}
 	P, B0, L0 := solardisk.Ephemeris(j, e)
-	fmt.Printf("P:  %.2f\n", P*180/math.Pi)
-	fmt.Printf("B0: %+.2f\n", B0*180/math.Pi)
-	fmt.Printf("L0: %.2f\n", L0*180/math.Pi)
+	fmt.Printf("P:  %.2f\n", P.Deg())
+	fmt.Printf("B0: %+.2f\n", B0.Deg())
+	fmt.Printf("L0: %.2f\n", L0.Deg())
 	// Output:
 	// P:  26.27
 	// B0: +5.99

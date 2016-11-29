@@ -46,8 +46,8 @@ func ExampleMercuryWestElongation() {
 	y, m, df := julian.JDToCalendar(j)
 	d, f := math.Modf(df)
 	fmt.Printf("%d %s %d, at %dʰ\n", y, time.Month(m), int(d), int(f*24+.5))
-	fmt.Printf("%.4f deg\n", sexa.Angle(e).Deg())
-	fmt.Printf("%m\n", sexa.Angle(e).Fmt())
+	fmt.Printf("%.4f deg\n", e.Deg())
+	fmt.Printf("%m\n", sexa.FmtAngle(e))
 	// Output:
 	// 2449314.14
 	// 1993 November 22, at 15ʰ

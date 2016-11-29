@@ -1,7 +1,8 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Meeus implements algorithms from the book "Astronomical Algorithms" by Jean Meeus.
+// Meeus implements algorithms from the book "Astronomical Algorithms"
+// by Jean Meeus.
 //
 // It follows the second edition, copyright 1998, with corrections as of
 // August 10, 2009.
@@ -102,17 +103,24 @@
 // in identifiers.  U+02B9 on the other hand is Unicode category Lm,
 // and is perfectly valid in Go identifiers.
 //
-// Radians and Degrees
+// Unit types
 //
-// The book generally works in degrees; this library generally uses radians.
-// While degrees are familiar for I/O, radians are most efficient for
-// computations and are required for the trigonometric functions in the Go
-// math library.  Looking at example code provided in this library, you may
-// get the impression that there is an awful lot of churn in converting back
-// and forth between radians and degrees.  The bulk of example code however
-// is I/O.  In a computationally intensive program that used this library,
-// a smaller fraction would be I/O and the advantage of working in radians
-// would emerge.
+// An earler version of this library used the Go type float64 for most
+// parameters and return values.  This allowed terse, efficient code but
+// required careful attention to the scaling or units used.  Go defined types
+// are now used for Time, RA, HourAngle, and general Angle quantities in the
+// interest of making units and coversions more clear.  These types are
+// defined in the external package github.com/soniakeys/unit.
+//
+// Sexagesimal formatting
+//
+// An earlier version of this library included routines for formatting
+// sexagesimal quantities.  These have been moved to the external package
+// github.com/soniakeys/sexagesimal and use of this package is now restricted
+// to examples and tests.
+//
+// Meeus packages and the sexagesimal package both depend on the unit package.
+// Meeus packages do not depend on sexagesimal, although the Meeus tests do.
 //
 // Chapter Cross-reference
 //

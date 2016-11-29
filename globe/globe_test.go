@@ -8,15 +8,15 @@ import (
 	"math"
 	"testing"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleEllipsoid_ParallaxConstants() {
 	// Example 11.a, p 82.
 	// phi = geographic latitude of Palomar
-	φ := base.NewAngle(' ', 33, 21, 22)
+	φ := unit.NewAngle(' ', 33, 21, 22)
 	s, c := globe.Earth76.ParallaxConstants(φ, 1706)
 	fmt.Printf("ρ sin φ′ = %+.6f\n", s)
 	fmt.Printf("ρ cos φ′ = %+.6f\n", c)
@@ -27,16 +27,16 @@ func ExampleEllipsoid_ParallaxConstants() {
 
 // p. 83
 func TestLatDiff(t *testing.T) {
-	φ0 := base.NewAngle(' ', 45, 5, 46.36)
+	φ0 := unit.NewAngle(' ', 45, 5, 46.36)
 	diff := globe.GeocentricLatitudeDifference(φ0)
-	if f := fmt.Sprintf("%.2d", sexa.Angle(diff).Fmt()); f != "11′32″.73" {
+	if f := fmt.Sprintf("%.2d", sexa.FmtAngle(diff)); f != "11′32″.73" {
 		t.Fatal(f)
 	}
 }
 
 func ExampleEllipsoid_RadiusAtLatitude() {
 	// Example 11.b p 84.
-	φ := base.AngleFromDeg(42)
+	φ := unit.AngleFromDeg(42)
 	rp := globe.Earth76.RadiusAtLatitude(φ)
 	fmt.Printf("Rp = %.3f km\n", rp)
 	fmt.Printf("1° of longitude = %.4f km\n", globe.OneDegreeOfLongitude(rp))
@@ -56,18 +56,18 @@ func ExampleEllipsoid_RadiusAtLatitude() {
 func ExampleEllipsoid_Distance() {
 	// Example 11.c p 85.
 	c1 := globe.Coord{
-		base.NewAngle(' ', 48, 50, 11), // geographic latitude
-		base.NewAngle('-', 2, 20, 14),  // geographic longitude
+		unit.NewAngle(' ', 48, 50, 11), // geographic latitude
+		unit.NewAngle('-', 2, 20, 14),  // geographic longitude
 	}
 	c2 := globe.Coord{
-		base.NewAngle(' ', 38, 55, 17),
-		base.NewAngle(' ', 77, 3, 56),
+		unit.NewAngle(' ', 38, 55, 17),
+		unit.NewAngle(' ', 77, 3, 56),
 	}
 	fmt.Printf("%.2f km\n", globe.Earth76.Distance(c1, c2))
 	cos := globe.ApproxAngularDistance(c1, c2)
 	fmt.Printf("cos d = %.6f\n", cos)
-	d := base.Angle(math.Acos(cos))
-	fmt.Printf("    d = %.5j\n", sexa.Angle(d).Fmt())
+	d := unit.Angle(math.Acos(cos))
+	fmt.Printf("    d = %.5j\n", sexa.FmtAngle(d))
 	fmt.Printf("    s = %.0f km\n", globe.ApproxLinearDistance(d))
 	// Output:
 	// 6181.63 km

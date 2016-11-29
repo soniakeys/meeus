@@ -7,7 +7,7 @@ package parallactic
 import (
 	"math"
 
-	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 // ParallacticAngle returns parallactic angle of a celestial object.
@@ -15,18 +15,18 @@ import (
 //	φ is geographic latitude of observer.
 //	δ is declination of observed object.
 //	H is hour angle of observed object.
-func ParallacticAngle(φ, δ base.Angle, H base.HourAngle) base.Angle {
-	sδ, cδ := math.Sincos(δ.Rad())
-	sH, cH := math.Sincos(H.Rad())
+func ParallacticAngle(φ, δ unit.Angle, H unit.HourAngle) unit.Angle {
+	sδ, cδ := δ.Sincos()
+	sH, cH := H.Sincos()
 	// (14.1) p. 98
-	return base.Angle(math.Atan2(sH, math.Tan(φ.Rad())*cδ-sδ*cH))
+	return unit.Angle(math.Atan2(sH, φ.Tan()*cδ-sδ*cH))
 }
 
 // ParallacticAngleOnHorizon is a special case of ParallacticAngle.
 //
 // The hour angle is not needed as an input and the math inside simplifies.
-func ParallacticAngleOnHorizon(φ, δ base.Angle) base.Angle {
-	return base.Angle(math.Acos(math.Sin(φ.Rad()) / math.Cos(δ.Rad())))
+func ParallacticAngleOnHorizon(φ, δ unit.Angle) unit.Angle {
+	return unit.Angle(math.Acos(φ.Sin() / δ.Cos()))
 }
 
 // EclipticAtHorizon computes how the plane of the ecliptic intersects
@@ -39,17 +39,17 @@ func ParallacticAngleOnHorizon(φ, δ base.Angle) base.Angle {
 //
 //	λ1 and λ2 are ecliptic longitudes where the ecliptic intersects the horizon.
 //	I is the angle at which the ecliptic intersects the horizon.
-func EclipticAtHorizon(ε, φ base.Angle, θ base.Time) (λ1, λ2, I base.Angle) {
-	sε, cε := math.Sincos(ε.Rad())
-	sφ, cφ := math.Sincos(φ.Rad())
-	sθ, cθ := math.Sincos(θ.Rad())
+func EclipticAtHorizon(ε, φ unit.Angle, θ unit.Time) (λ1, λ2, I unit.Angle) {
+	sε, cε := ε.Sincos()
+	sφ, cφ := φ.Sincos()
+	sθ, cθ := θ.Angle().Sincos()
 	// (14.2) p. 99
-	λ := base.Angle(math.Atan2(-cθ, sε*(sφ/cφ)+cε*sθ))
+	λ := unit.Angle(math.Atan2(-cθ, sε*(sφ/cφ)+cε*sθ))
 	if λ < 0 {
 		λ += math.Pi
 	}
 	// (14.3) p. 99
-	return λ, λ + math.Pi, base.Angle(math.Acos(cε*sφ - sε*cφ*sθ))
+	return λ, λ + math.Pi, unit.Angle(math.Acos(cε*sφ - sε*cφ*sθ))
 }
 
 // EclipticAtEquator computes the angle between the ecliptic and the parallels
@@ -60,8 +60,8 @@ func EclipticAtHorizon(ε, φ base.Angle, θ base.Time) (λ1, λ2, I base.Angle)
 //
 //	λ is ecliptic longitude.
 //	ε is obliquity of the ecliptic.
-func EclipticAtEquator(λ, ε base.Angle) base.Angle {
-	return base.Angle(math.Atan(-math.Cos(λ.Rad()) * math.Tan(ε.Rad())))
+func EclipticAtEquator(λ, ε unit.Angle) unit.Angle {
+	return unit.Angle(math.Atan(-λ.Cos() * ε.Tan()))
 }
 
 // DiurnalPathAtHorizon computes the angle of the path a celestial object
@@ -69,9 +69,9 @@ func EclipticAtEquator(λ, ε base.Angle) base.Angle {
 //
 //	δ is declination of the object.
 //	φ is geographic latitude of observer.
-func DiurnalPathAtHorizon(δ, φ base.Angle) (J base.Angle) {
-	tφ := math.Tan(φ.Rad())
-	b := math.Tan(δ.Rad()) * tφ
+func DiurnalPathAtHorizon(δ, φ unit.Angle) (J unit.Angle) {
+	tφ := φ.Tan()
+	b := δ.Tan() * tφ
 	c := math.Sqrt(1 - b*b)
-	return base.Angle(math.Atan(c * math.Cos(δ.Rad()) / tφ))
+	return unit.Angle(math.Atan(c * δ.Cos() / tφ))
 }

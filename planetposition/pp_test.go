@@ -40,8 +40,8 @@ func ExampleV87Planet_Position() {
 		return
 	}
 	l, b, r := p.Position(jd)
-	fmt.Printf("L = %+.5j\n", sexa.Angle(l).Fmt())
-	fmt.Printf("B = %+.5j\n", sexa.Angle(b).Fmt())
+	fmt.Printf("L = %+.5j\n", sexa.FmtAngle(l))
+	fmt.Printf("B = %+.5j\n", sexa.FmtAngle(b))
 	fmt.Printf("R = %.6f AU\n", r)
 	// Output:
 	// L = +26°.11412

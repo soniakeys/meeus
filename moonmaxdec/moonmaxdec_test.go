@@ -11,6 +11,7 @@ import (
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/moonmaxdec"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleNorth() {
@@ -20,9 +21,9 @@ func ExampleNorth() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0m TD\n", y, time.Month(m), int(d),
-		sexa.TimeFromDay(f).Fmt())
-	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
-	fmt.Printf("%+0d\n", sexa.Angle(δ).Fmt())
+		sexa.FmtTime(unit.TimeFromDay(f)))
+	fmt.Printf("δ = %.4f\n", δ.Deg())
+	fmt.Printf("%+0d\n", sexa.FmtAngle(δ))
 	// Output:
 	// JDE = 2447518.3346
 	// 1988 December 22 at 20ʰ02ᵐ TD
@@ -37,9 +38,9 @@ func ExampleSouth() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0h TD\n", y, time.Month(m), int(d),
-		sexa.TimeFromDay(f).Fmt())
-	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
-	fmt.Printf("%+0m\n", sexa.Angle(δ).Fmt())
+		sexa.FmtTime(unit.TimeFromDay(f)))
+	fmt.Printf("δ = %.4f\n", δ.Deg())
+	fmt.Printf("%+0m\n", sexa.FmtAngle(δ))
 	// Output:
 	// JDE = 2469553.0834
 	// 2049 April 21 at 14ʰ TD
@@ -54,9 +55,9 @@ func ExampleNorth_c() {
 	y, m, d := julian.JDToCalendar(j)
 	d, f := math.Modf(d)
 	fmt.Printf("%d %s %d at %0h TD\n", y, time.Month(m), int(d),
-		sexa.TimeFromDay(f).Fmt())
-	fmt.Printf("δ = %.4f\n", sexa.Angle(δ).Deg())
-	fmt.Printf("%+0m\n", sexa.Angle(δ).Fmt())
+		sexa.FmtTime(unit.TimeFromDay(f)))
+	fmt.Printf("δ = %.4f\n", δ.Deg())
+	fmt.Printf("%+0m\n", sexa.FmtAngle(δ))
 	// Output:
 	// JDE = 1719672.1412
 	// -4 March 16 at 15ʰ TD

@@ -13,6 +13,7 @@ import (
 	"github.com/soniakeys/meeus/deltat"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExamplePlanetary() {
@@ -26,34 +27,34 @@ func ExamplePlanetary() {
 	// r2, d2 is Mercury ephemeris.
 
 	// Venus
-	r1 := []float64{
-		sexa.NewRA(10, 27, 27.175).Rad(),
-		sexa.NewRA(10, 26, 32.410).Rad(),
-		sexa.NewRA(10, 25, 29.042).Rad(),
-		sexa.NewRA(10, 24, 17.191).Rad(),
-		sexa.NewRA(10, 22, 57.024).Rad(),
+	r1 := []unit.Angle{
+		unit.NewRA(10, 27, 27.175).Angle(),
+		unit.NewRA(10, 26, 32.410).Angle(),
+		unit.NewRA(10, 25, 29.042).Angle(),
+		unit.NewRA(10, 24, 17.191).Angle(),
+		unit.NewRA(10, 22, 57.024).Angle(),
 	}
-	d1 := []float64{
-		sexa.NewAngle(' ', 4, 04, 41.83).Rad(),
-		sexa.NewAngle(' ', 3, 55, 54.66).Rad(),
-		sexa.NewAngle(' ', 3, 48, 03.51).Rad(),
-		sexa.NewAngle(' ', 3, 41, 10.25).Rad(),
-		sexa.NewAngle(' ', 3, 35, 16.61).Rad(),
+	d1 := []unit.Angle{
+		unit.NewAngle(' ', 4, 04, 41.83),
+		unit.NewAngle(' ', 3, 55, 54.66),
+		unit.NewAngle(' ', 3, 48, 03.51),
+		unit.NewAngle(' ', 3, 41, 10.25),
+		unit.NewAngle(' ', 3, 35, 16.61),
 	}
 	// Mercury
-	r2 := []float64{
-		sexa.NewRA(10, 24, 30.125).Rad(),
-		sexa.NewRA(10, 25, 00.342).Rad(),
-		sexa.NewRA(10, 25, 12.515).Rad(),
-		sexa.NewRA(10, 25, 06.235).Rad(),
-		sexa.NewRA(10, 24, 41.185).Rad(),
+	r2 := []unit.Angle{
+		unit.NewRA(10, 24, 30.125).Angle(),
+		unit.NewRA(10, 25, 00.342).Angle(),
+		unit.NewRA(10, 25, 12.515).Angle(),
+		unit.NewRA(10, 25, 06.235).Angle(),
+		unit.NewRA(10, 24, 41.185).Angle(),
 	}
-	d2 := []float64{
-		sexa.NewAngle(' ', 6, 26, 32.05).Rad(),
-		sexa.NewAngle(' ', 6, 10, 57.72).Rad(),
-		sexa.NewAngle(' ', 5, 57, 33.08).Rad(),
-		sexa.NewAngle(' ', 5, 46, 27.07).Rad(),
-		sexa.NewAngle(' ', 5, 37, 48.45).Rad(),
+	d2 := []unit.Angle{
+		unit.NewAngle(' ', 6, 26, 32.05),
+		unit.NewAngle(' ', 6, 10, 57.72),
+		unit.NewAngle(' ', 5, 57, 33.08),
+		unit.NewAngle(' ', 5, 46, 27.07),
+		unit.NewAngle(' ', 5, 37, 48.45),
 	}
 	// compute conjunction
 	day, dd, err := conjunction.Planetary(day1, day5, r1, d1, r2, d2)
@@ -67,7 +68,7 @@ func ExamplePlanetary() {
 	// more useful clock format
 	dInt, dFrac := math.Modf(day)
 	fmt.Printf("1991 August %d at %s TD\n", int(dInt),
-		sexa.TimeFromDay(dFrac).Fmt())
+		sexa.FmtTime(unit.TimeFromDay(dFrac)))
 
 	// deltat func needs jd
 	jd := julian.CalendarGregorianToJD(1991, 8, day)
@@ -78,10 +79,10 @@ func ExamplePlanetary() {
 	// format as before
 	dInt, dFrac = math.Modf(d)
 	fmt.Printf("%d %s %d at %s UT\n", y, time.Month(m), int(dInt),
-		sexa.TimeFromDay(dFrac).Fmt())
+		sexa.FmtTime(unit.TimeFromDay(dFrac)))
 
 	// Δδ
-	fmt.Printf("Δδ = %s\n", sexa.Angle(dd).Fmt())
+	fmt.Printf("Δδ = %s\n", sexa.FmtAngle(dd))
 
 	// Output:
 	// 1991 August 7.23797
@@ -94,19 +95,19 @@ func ExampleStellar() {
 	// Exercise, p. 119.
 	day1 := 7.
 	day5 := 27.
-	r2 := []float64{
-		sexa.NewRA(15, 3, 51.937).Rad(),
-		sexa.NewRA(15, 9, 57.327).Rad(),
-		sexa.NewRA(15, 15, 37.898).Rad(),
-		sexa.NewRA(15, 20, 50.632).Rad(),
-		sexa.NewRA(15, 25, 32.695).Rad(),
+	r2 := []unit.Angle{
+		unit.NewRA(15, 3, 51.937).Angle(),
+		unit.NewRA(15, 9, 57.327).Angle(),
+		unit.NewRA(15, 15, 37.898).Angle(),
+		unit.NewRA(15, 20, 50.632).Angle(),
+		unit.NewRA(15, 25, 32.695).Angle(),
 	}
-	d2 := []float64{
-		sexa.NewAngle('-', 8, 57, 34.51).Rad(),
-		sexa.NewAngle('-', 9, 9, 03.88).Rad(),
-		sexa.NewAngle('-', 9, 17, 37.94).Rad(),
-		sexa.NewAngle('-', 9, 23, 16.25).Rad(),
-		sexa.NewAngle('-', 9, 26, 01.01).Rad(),
+	d2 := []unit.Angle{
+		unit.NewAngle('-', 8, 57, 34.51),
+		unit.NewAngle('-', 9, 9, 03.88),
+		unit.NewAngle('-', 9, 17, 37.94),
+		unit.NewAngle('-', 9, 23, 16.25),
+		unit.NewAngle('-', 9, 26, 01.01),
 	}
 	jd := julian.CalendarGregorianToJD(1996, 2, 17)
 	dt := jd - base.J2000
@@ -117,24 +118,19 @@ func ExampleStellar() {
 
 	pmr := -.649 // sec/cen
 	pmd := -1.91 // sec/cen
-	r1 := sexa.NewRA(15, 17, 0.421+pmr*dc).Rad()
-	// Careful with quick and dirty way of applying correction to seconds
-	// component before converting to radians.  The dec here is negative
-	// so correction must be subtracted.  Alternative, less error-prone,
-	// way would be to convert both to radians, then add.
-	d1 := sexa.NewAngle('-', 9, 22, 58.54-pmd*dc).Rad()
-	fmt.Printf("α′ = %.3d, δ′ = %.2d\n",
-		sexa.RA(r1).Fmt(), sexa.Angle(d1).Fmt())
+	r1 := unit.NewRA(15, 17, 0.421) + unit.RAFromSec(pmr*dc)
+	d1 := unit.NewAngle('-', 9, 22, 58.54) + unit.AngleFromSec(pmd*dc)
+	fmt.Printf("α′ = %.3d, δ′ = %.2d\n", sexa.FmtRA(r1), sexa.FmtAngle(d1))
 
-	day, dd, err := conjunction.Stellar(day1, day5, r1, d1, r2, d2)
+	day, dd, err := conjunction.Stellar(day1, day5, r1.Angle(), d1, r2, d2)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(sexa.Angle(dd).Fmt())
+	fmt.Println(sexa.FmtAngle(dd))
 	dInt, dFrac := math.Modf(day)
 	fmt.Printf("1996 February %d at %s TD\n", int(dInt),
-		sexa.TimeFromDay(dFrac).Fmt())
+		sexa.FmtTime(unit.TimeFromDay(dFrac)))
 
 	// Output:
 	// -3.87 years

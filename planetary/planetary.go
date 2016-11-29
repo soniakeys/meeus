@@ -10,6 +10,7 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 // Mean computes some intermediate values for a mean planetary configuration
@@ -18,7 +19,7 @@ func mean(y float64, a *ca) (J, M, T float64) {
 	// (36.1) p. 250
 	k := math.Floor((365.2425*y+1721060-a.A)/a.B + .5)
 	J = a.A + k*a.B
-	M = base.PMod(a.M0+k*a.M1, 360) * math.Pi / 180
+	M = unit.PMod(a.M0+k*a.M1, 360) * math.Pi / 180
 	T = base.J2000Century(J)
 	return
 }
@@ -136,16 +137,16 @@ func NeptuneOpp(y float64) (jde float64) {
 }
 
 // El computes time and elongation of a greatest elongation event.
-func el(y float64, a *ca, t, e [][]float64) (jde, elongation float64) {
+func el(y float64, a *ca, t, e [][]float64) (jde float64, elongation unit.Angle) {
 	J, M, T := mean(y, micA)
-	return J + sum(T, M, t), sum(T, M, e) * math.Pi / 180
+	return J + sum(T, M, t), unit.AngleFromDeg(sum(T, M, e))
 }
 
 // MercuryEastElongation returns the time and elongation of a greatest eastern elongation of Mercury.
 //
 // Result is time (as a jde) of the event nearest the given time (as a
 // decimal year.)
-func MercuryEastElongation(y float64) (jde, elongation float64) {
+func MercuryEastElongation(y float64) (jde float64, elongation unit.Angle) {
 	return el(y, micA, met, mee)
 }
 
@@ -153,7 +154,7 @@ func MercuryEastElongation(y float64) (jde, elongation float64) {
 //
 // Result is time (as a jde) of the event nearest the given time (as a
 // decimal year.)
-func MercuryWestElongation(y float64) (jde, elongation float64) {
+func MercuryWestElongation(y float64) (jde float64, elongation unit.Angle) {
 	return el(y, micA, mwt, mwe)
 }
 
@@ -339,7 +340,7 @@ var uoB = [][]float64{
 var noB = [][]float64{
 	{-.014, 0, .00001},
 	{-1.3486, .001, .00001},
-	{.8597, .0037},
+	{.8597, 0.0037},
 	{-.0082, -.0002, .00001},
 	{.0037, -.0003},
 	{0},

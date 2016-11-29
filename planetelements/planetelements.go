@@ -7,9 +7,8 @@
 package planetelements
 
 import (
-	"math"
-
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 const (
@@ -28,15 +27,15 @@ const (
 //
 // Some other elements easily derived from these are
 //
-//	Mean Anomolay, M = Lon - Peri
+//	Mean Anomaly, M = Lon - Peri
 //	Argument of Perihelion, ω = Peri - Node
 type Elements struct {
-	Lon  float64 // mean longitude, L
-	Axis float64 // semimajor axis, a
-	Ecc  float64 // eccentricity, e
-	Inc  float64 // inclination, i
-	Node float64 // longitude of ascending node, Ω
-	Peri float64 // longitude of perihelion, ϖ (Meeus likes π better)
+	Lon  unit.Angle // mean longitude, L
+	Axis float64    // semimajor axis, a
+	Ecc  float64    // eccentricity, e
+	Inc  unit.Angle // inclination, i
+	Node unit.Angle // longitude of ascending node, Ω
+	Peri unit.Angle // longitude of perihelion, ϖ (Meeus likes π better)
 }
 
 type c6 struct {
@@ -123,26 +122,26 @@ var cMean = []c6{
 func Mean(p int, jde float64, e *Elements) {
 	T := base.J2000Century(jde)
 	c := &cMean[p]
-	e.Lon = base.PMod(base.Horner(T, c.L...)*math.Pi/180, 2*math.Pi)
+	e.Lon = unit.AngleFromDeg(base.Horner(T, c.L...)).Mod1()
 	e.Axis = base.Horner(T, c.a...)
 	e.Ecc = base.Horner(T, c.e...)
-	e.Inc = base.Horner(T, c.i...) * math.Pi / 180
-	e.Node = base.Horner(T, c.Ω...) * math.Pi / 180
-	e.Peri = base.Horner(T, c.ϖ...) * math.Pi / 180
+	e.Inc = unit.AngleFromDeg(base.Horner(T, c.i...))
+	e.Node = unit.AngleFromDeg(base.Horner(T, c.Ω...))
+	e.Peri = unit.AngleFromDeg(base.Horner(T, c.ϖ...))
 }
 
 // Inc returns mean inclination for a planet at a date.
 //
 // Result is the same as the Inc field returned by function Mean.  That is,
-// radians, referenced to mean dynamical ecliptic and equinox of date.
-func Inc(p int, jde float64) float64 {
-	return base.Horner(base.J2000Century(jde), cMean[p].i...) * math.Pi / 180
+// referenced to mean dynamical ecliptic and equinox of date.
+func Inc(p int, jde float64) unit.Angle {
+	return unit.AngleFromDeg(base.Horner(base.J2000Century(jde), cMean[p].i...))
 }
 
 // Node returns mean longitude of ascending node for a planet at a date.
 //
 // Result is the same as the Node field returned by function Mean.  That is,
 // radians, referenced to mean dynamical ecliptic and equinox of date.
-func Node(p int, jde float64) float64 {
-	return base.Horner(base.J2000Century(jde), cMean[p].Ω...) * math.Pi / 180
+func Node(p int, jde float64) unit.Angle {
+	return unit.AngleFromDeg(base.Horner(base.J2000Century(jde), cMean[p].Ω...))
 }

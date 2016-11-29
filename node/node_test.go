@@ -5,19 +5,19 @@ package node_test
 
 import (
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/node"
 	"github.com/soniakeys/meeus/perihelion"
 	"github.com/soniakeys/meeus/planetelements"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleEllipticAscending() {
 	// Example 39.a, p. 276
 	t, r := node.EllipticAscending(17.9400782, .96727426,
-		111.84644*math.Pi/180,
+		unit.AngleFromDeg(111.84644),
 		julian.CalendarGregorianToJD(1986, 2, 9.45891))
 	y, m, d := julian.JDToCalendar(t)
 	fmt.Printf("%d %s %.2f\n", y, time.Month(m), d)
@@ -30,7 +30,7 @@ func ExampleEllipticAscending() {
 func ExampleEllipticDescending() {
 	// Example 39.a, p. 276
 	t, r := node.EllipticDescending(17.9400782, .96727426,
-		111.84644*math.Pi/180,
+		unit.AngleFromDeg(111.84644),
 		julian.CalendarGregorianToJD(1986, 2, 9.45891))
 	y, m, d := julian.JDToCalendar(t)
 	fmt.Printf("%d %s %.2f\n", y, time.Month(m), d)
@@ -43,7 +43,7 @@ func ExampleEllipticDescending() {
 func ExampleParabolicAscending() {
 	// Example 29.b, p. 277
 	t, r := node.ParabolicAscending(1.324502,
-		154.9103*math.Pi/180,
+		unit.AngleFromDeg(154.9103),
 		julian.CalendarGregorianToJD(1989, 8, 20.291))
 	y, m, d := julian.JDToCalendar(t)
 	fmt.Printf("%d %s %d\n", y, time.Month(m), int(d))
@@ -56,7 +56,7 @@ func ExampleParabolicAscending() {
 func ExampleParabolicDescending() {
 	// Example 29.b, p. 277
 	t, r := node.ParabolicDescending(1.324502,
-		154.9103*math.Pi/180,
+		unit.AngleFromDeg(154.9103),
 		julian.CalendarGregorianToJD(1989, 8, 20.291))
 	y, m, d := julian.JDToCalendar(t)
 	fmt.Printf("%d %s %.3f\n", y, time.Month(m), d)

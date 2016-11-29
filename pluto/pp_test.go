@@ -21,8 +21,8 @@ func ExampleAstrometric() {
 		return
 	}
 	α, δ := pluto.Astrometric(2448908.5, e)
-	fmt.Printf("α: %.1d\n", sexa.RA(α).Fmt())
-	fmt.Printf("δ: %.0d\n", sexa.Angle(δ).Fmt())
+	fmt.Printf("α: %.1d\n", sexa.FmtRA(α))
+	fmt.Printf("δ: %.0d\n", sexa.FmtAngle(δ))
 	// Output:
 	// α: 15ʰ31ᵐ43ˢ.8
 	// δ: -4°27′29″

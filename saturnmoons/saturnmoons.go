@@ -12,6 +12,7 @@ import (
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/precess"
 	"github.com/soniakeys/meeus/solar"
+	"github.com/soniakeys/unit"
 )
 
 // XY holds coordinates returned from Positions().
@@ -26,8 +27,8 @@ const d = math.Pi / 180
 // Result units are Saturn radii.
 func Positions(jde float64, earth, saturn *pp.V87Planet, pos *[8]XY) {
 	s, β, R := solar.TrueVSOP87(earth, jde)
-	ss, cs := math.Sincos(s.Rad())
-	sβ := math.Sin(β.Rad())
+	ss, cs := s.Sincos()
+	sβ := β.Sin()
 	Δ := 9.
 	var x, y, z float64
 	var JDE float64
@@ -36,8 +37,8 @@ func Positions(jde float64, earth, saturn *pp.V87Planet, pos *[8]XY) {
 		JDE = jde - τ
 		l, b, r := saturn.Position(JDE)
 		l, b = pp.ToFK5(l, b, JDE)
-		sl, cl := math.Sincos(l.Rad())
-		sb, cb := math.Sincos(b.Rad())
+		sl, cl := l.Sincos()
+		sb, cb := b.Sincos()
 		x = r*cb*cl + R*cs
 		y = r*cb*sl + R*ss
 		z = r*sb + R*sβ
@@ -45,8 +46,8 @@ func Positions(jde float64, earth, saturn *pp.V87Planet, pos *[8]XY) {
 	}
 	f()
 	f()
-	λ0 := base.Angle(math.Atan2(y, x))
-	β0 := base.Angle(math.Atan(z / math.Hypot(x, y)))
+	λ0 := unit.Angle(math.Atan2(y, x))
+	β0 := unit.Angle(math.Atan(z / math.Hypot(x, y)))
 	ecl := &coord.Ecliptic{λ0, β0}
 	precess.EclipticPosition(ecl, ecl,
 		base.JDEToJulianYear(jde), base.JDEToJulianYear(base.B1950), 0, 0)
@@ -75,8 +76,8 @@ func Positions(jde float64, earth, saturn *pp.V87Planet, pos *[8]XY) {
 		Z[j] = r * su * sγ
 	}
 	Z[0] = 1
-	sλ0, cλ0 := math.Sincos(λ0.Rad())
-	sβ0, cβ0 := math.Sincos(β0.Rad())
+	sλ0, cλ0 := λ0.Sincos()
+	sβ0, cβ0 := β0.Sincos()
 	var A, B, C [9]float64
 	for j := range X {
 		a := X[j]

@@ -14,19 +14,20 @@ import (
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/precess"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleApproxAnnualPrecession() {
 	// Example 21.a, p. 132.
 	eq := &coord.Equatorial{
-		base.NewRA(10, 8, 22.3),
-		base.NewAngle(' ', 11, 58, 2),
+		unit.NewRA(10, 8, 22.3),
+		unit.NewAngle(' ', 11, 58, 2),
 	}
 	epochFrom := 2000.0
 	epochTo := 1978.0
 	Δα, Δδ := precess.ApproxAnnualPrecession(eq, epochFrom, epochTo)
-	fmt.Printf("%+.3d\n", sexa.HourAngle(Δα.Rad()).Fmt())
-	fmt.Printf("%+.2d\n", sexa.Angle(Δδ.Rad()).Fmt())
+	fmt.Printf("%+.3d\n", sexa.FmtHourAngle(Δα))
+	fmt.Printf("%+.2d\n", sexa.FmtAngle(Δδ))
 	// Output:
 	// +3ˢ.207
 	// -17″.71
@@ -35,16 +36,16 @@ func ExampleApproxAnnualPrecession() {
 func ExampleApproxPosition() {
 	// Example 21.a, p. 132.
 	eq := &coord.Equatorial{
-		base.NewRA(10, 8, 22.3),
-		base.NewAngle(' ', 11, 58, 2),
+		unit.NewRA(10, 8, 22.3),
+		unit.NewAngle(' ', 11, 58, 2),
 	}
 	epochFrom := 2000.0
 	epochTo := 1978.0
-	mα := base.HourAngleFromSec(-0.0169)
-	mδ := base.AngleFromSec(0.006)
+	mα := unit.HourAngleFromSec(-0.0169)
+	mδ := unit.AngleFromSec(0.006)
 	precess.ApproxPosition(eq, eq, epochFrom, epochTo, mα, mδ)
-	fmt.Printf("%0.1d\n", sexa.RA(eq.RA).Fmt())
-	fmt.Printf("%+0d\n", sexa.Angle(eq.Dec).Fmt())
+	fmt.Printf("%0.1d\n", sexa.FmtRA(eq.RA))
+	fmt.Printf("%+0d\n", sexa.FmtAngle(eq.Dec))
 	// Output:
 	// 10ʰ07ᵐ12ˢ.1
 	// +12°04′32″
@@ -63,17 +64,17 @@ func TestEpoch(t *testing.T) {
 func ExamplePosition() {
 	// Example 21.b, p. 135.
 	eq := &coord.Equatorial{
-		base.NewRA(2, 44, 11.986),
-		base.NewAngle(' ', 49, 13, 42.48),
+		unit.NewRA(2, 44, 11.986),
+		unit.NewAngle(' ', 49, 13, 42.48),
 	}
 	epochFrom := 2000.0
 	jdTo := julian.CalendarGregorianToJD(2028, 11, 13.19)
 	epochTo := base.JDEToJulianYear(jdTo)
 	precess.Position(eq, eq, epochFrom, epochTo,
-		base.HourAngleFromSec(0.03425),
-		base.AngleFromSec(-0.0895))
-	fmt.Printf("%0.3d\n", sexa.RA(eq.RA).Fmt())
-	fmt.Printf("%+0.2d\n", sexa.Angle(eq.Dec).Fmt())
+		unit.HourAngleFromSec(0.03425),
+		unit.AngleFromSec(-0.0895))
+	fmt.Printf("%0.3d\n", sexa.FmtRA(eq.RA))
+	fmt.Printf("%+0.2d\n", sexa.FmtAngle(eq.Dec))
 	// Output:
 	// 2ʰ46ᵐ11ˢ.331
 	// +49°20′54″.54
@@ -82,12 +83,12 @@ func ExamplePosition() {
 // Exercise, p. 136.
 func TestPosition(t *testing.T) {
 	eqFrom := &coord.Equatorial{
-		base.NewRA(2, 31, 48.704),
-		base.NewAngle(' ', 89, 15, 50.72),
+		unit.NewRA(2, 31, 48.704),
+		unit.NewAngle(' ', 89, 15, 50.72),
 	}
 	eqTo := &coord.Equatorial{}
-	mα := base.HourAngleFromSec(0.19877)
-	mδ := base.AngleFromSec(-0.0152)
+	mα := unit.HourAngleFromSec(0.19877)
+	mδ := unit.AngleFromSec(-0.0152)
 	for _, tc := range []struct {
 		α, δ string
 		jde  float64
@@ -98,8 +99,8 @@ func TestPosition(t *testing.T) {
 	} {
 		epochTo := base.JDEToJulianYear(tc.jde)
 		precess.Position(eqFrom, eqTo, 2000.0, epochTo, mα, mδ)
-		αStr := fmt.Sprintf("%.2s", sexa.RA(eqTo.RA).Fmt())
-		δStr := fmt.Sprintf("%.2s", sexa.Angle(eqTo.Dec).Fmt())
+		αStr := fmt.Sprintf("%.2s", sexa.FmtRA(eqTo.RA))
+		δStr := fmt.Sprintf("%.2s", sexa.FmtAngle(eqTo.Dec))
 		if αStr != tc.α {
 			t.Fatal("got:", αStr, "want:", tc.α)
 		}
@@ -112,11 +113,11 @@ func TestPosition(t *testing.T) {
 func TestPrecessor_Precess(t *testing.T) {
 	// Exercise, p. 136.
 	eqFrom := &coord.Equatorial{
-		RA:  base.NewRA(2, 31, 48.704),
-		Dec: base.NewAngle(' ', 89, 15, 50.72),
+		RA:  unit.NewRA(2, 31, 48.704),
+		Dec: unit.NewAngle(' ', 89, 15, 50.72),
 	}
-	mα := base.HourAngleFromSec(.19877)
-	mδ := base.AngleFromSec(-.0152)
+	mα := unit.HourAngleFromSec(.19877)
+	mδ := unit.AngleFromSec(-.0152)
 	epochs := []float64{
 		base.JDEToJulianYear(base.B1900),
 		2050,
@@ -131,7 +132,7 @@ func TestPrecessor_Precess(t *testing.T) {
 	for i, epochTo := range epochs {
 		precess.Position(eqFrom, eqTo, 2000, epochTo, mα, mδ)
 		if answer[i] != fmt.Sprintf("α = %0.2d   δ = %+0.2d",
-			sexa.RA(eqTo.RA).Fmt(), sexa.Angle(eqTo.Dec).Fmt()) {
+			sexa.FmtRA(eqTo.RA), sexa.FmtAngle(eqTo.Dec)) {
 			t.Fatal(i)
 		}
 	}
@@ -140,15 +141,15 @@ func TestPrecessor_Precess(t *testing.T) {
 func ExampleEclipticPosition() {
 	// Example 21.c, p. 137.
 	eclFrom := &coord.Ecliptic{
-		Lat: 1.76549 * math.Pi / 180,
-		Lon: 149.48194 * math.Pi / 180,
+		Lat: unit.AngleFromDeg(1.76549),
+		Lon: unit.AngleFromDeg(149.48194),
 	}
 	eclTo := &coord.Ecliptic{}
 	epochFrom := 2000.0
 	epochTo := base.JDEToJulianYear(julian.CalendarJulianToJD(-214, 6, 30))
 	precess.EclipticPosition(eclFrom, eclTo, epochFrom, epochTo, 0, 0)
-	fmt.Printf("%.3f\n", eclTo.Lon*180/math.Pi)
-	fmt.Printf("%+.3f\n", eclTo.Lat*180/math.Pi)
+	fmt.Printf("%.3f\n", eclTo.Lon.Deg())
+	fmt.Printf("%+.3f\n", eclTo.Lat.Deg())
 	// Output:
 	// 118.704
 	// +1.615
@@ -157,11 +158,11 @@ func ExampleEclipticPosition() {
 func ExampleProperMotion3D() {
 	// Example 21.d, p. 141.
 	eqFrom := &coord.Equatorial{
-		RA:  base.NewRA(6, 45, 8.871),
-		Dec: base.NewAngle('-', 16, 42, 57.99),
+		RA:  unit.NewRA(6, 45, 8.871),
+		Dec: unit.NewAngle('-', 16, 42, 57.99),
 	}
-	mra := base.HourAngleFromSec(-0.03847)
-	mdec := base.AngleFromSec(-1.2053)
+	mra := unit.HourAngleFromSec(-0.03847)
+	mdec := unit.AngleFromSec(-1.2053)
 	r := 2.64           // given in correct unit
 	mr := -7.6 / 977792 // magic conversion factor
 	eqTo := &coord.Equatorial{}
@@ -169,7 +170,7 @@ func ExampleProperMotion3D() {
 	for _, epoch := range []float64{1000, 0, -1000, -2000, -10000} {
 		precess.ProperMotion3D(eqFrom, eqTo, 2000, epoch, r, mr, mra, mdec)
 		fmt.Printf("%8.1f  %0.2d  %0.1d\n", epoch,
-			sexa.RA(eqTo.RA).Fmt(), sexa.Angle(eqTo.Dec).Fmt())
+			sexa.FmtRA(eqTo.RA), sexa.FmtAngle(eqTo.Dec))
 	}
 	// Output:
 	// Δr = -0.000007773, Δα = -0.0000027976, Δδ = -0.0000058435
@@ -183,17 +184,17 @@ func ExampleProperMotion3D() {
 func ExampleEclipticPrecessor_ReduceElements() {
 	// Example 24.a, p. 160.
 	ele := &elementequinox.Elements{
-		Inc:  47.122 * math.Pi / 180,
-		Peri: 151.4486 * math.Pi / 180,
-		Node: 45.7481 * math.Pi / 180,
+		Inc:  unit.AngleFromDeg(47.122),
+		Peri: unit.AngleFromDeg(151.4486),
+		Node: unit.AngleFromDeg(45.7481),
 	}
 	JFrom := base.JDEToJulianYear(base.BesselianYearToJDE(1744))
 	JTo := base.JDEToJulianYear(base.BesselianYearToJDE(1950))
 	p := precess.NewEclipticPrecessor(JFrom, JTo)
 	p.ReduceElements(ele, ele)
-	fmt.Printf("i = %.4f\n", ele.Inc*180/math.Pi)
-	fmt.Printf("Ω = %.4f\n", ele.Node*180/math.Pi)
-	fmt.Printf("ω = %.4f\n", ele.Peri*180/math.Pi)
+	fmt.Printf("i = %.4f\n", ele.Inc.Deg())
+	fmt.Printf("Ω = %.4f\n", ele.Node.Deg())
+	fmt.Printf("ω = %.4f\n", ele.Peri.Deg())
 	// Output:
 	// i = 47.1380
 	// Ω = 48.6037

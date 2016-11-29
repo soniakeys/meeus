@@ -6,13 +6,13 @@ package kepler_test
 import (
 	"fmt"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/kepler"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleKepler1() {
 	// Example 30.a, p. 196
-	E, err := kepler.Kepler1(.1, base.AngleFromDeg(5), 8)
+	E, err := kepler.Kepler1(.1, unit.AngleFromDeg(5), 8)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -24,7 +24,7 @@ func ExampleKepler1() {
 
 func ExampleKepler2() {
 	// Example 30.b, p. 199
-	E, err := kepler.Kepler2(.1, base.AngleFromDeg(5), 11)
+	E, err := kepler.Kepler2(.1, unit.AngleFromDeg(5), 11)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -36,7 +36,7 @@ func ExampleKepler2() {
 
 func ExampleKepler2a() {
 	// Example data from p. 205
-	E, err := kepler.Kepler2a(.99, base.Angle(.2), 14)
+	E, err := kepler.Kepler2a(.99, unit.Angle(.2), 14)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -70,7 +70,7 @@ func ExampleKepler3() {
 func ExampleKepler4() {
 	// Input data from example 30.a, p. 196,
 	// result from p. 207
-	E := kepler.Kepler4(.1, base.AngleFromDeg(5))
+	E := kepler.Kepler4(.1, unit.AngleFromDeg(5))
 	fmt.Printf("%.6f\n", E.Deg())
 	// Output:
 	// 5.554599

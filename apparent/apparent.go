@@ -12,42 +12,43 @@ import (
 	"github.com/soniakeys/meeus/nutation"
 	"github.com/soniakeys/meeus/precess"
 	"github.com/soniakeys/meeus/solar"
+	"github.com/soniakeys/unit"
 )
 
 // Nutation returns corrections due to nutation for equatorial coordinates
 // of an object.
 //
 // Results are invalid for objects very near the celestial poles.
-func Nutation(α base.RA, δ base.Angle, jd float64) (Δα1 base.HourAngle, Δδ1 base.Angle) {
+func Nutation(α unit.RA, δ unit.Angle, jd float64) (Δα1 unit.HourAngle, Δδ1 unit.Angle) {
 	ε := nutation.MeanObliquity(jd)
-	sε, cε := math.Sincos(ε.Rad())
+	sε, cε := ε.Sincos()
 	Δψ, Δε := nutation.Nutation(jd)
-	sα, cα := math.Sincos(α.Rad())
-	tδ := math.Tan(δ.Rad())
+	sα, cα := α.Sincos()
+	tδ := δ.Tan()
 	// (23.1) p. 151
-	Δα1 = base.HourAngle((cε+sε*sα*tδ)*Δψ.Rad() - cα*tδ*Δε.Rad())
+	Δα1 = unit.HourAngle((cε+sε*sα*tδ)*Δψ.Rad() - cα*tδ*Δε.Rad())
 	Δδ1 = Δψ.Mul(sε*cα) + Δε.Mul(sα)
 	return
 }
 
 // κ is the constnt of aberration in radians.
-var κ = base.AngleFromSec(20.49552)
+var κ = unit.AngleFromSec(20.49552)
 
 // longitude of perihelian of Earth's orbit.
-func perihelion(T float64) base.Angle {
-	return base.AngleFromDeg(base.Horner(T, 102.93735, 1.71946, .00046))
+func perihelion(T float64) unit.Angle {
+	return unit.AngleFromDeg(base.Horner(T, 102.93735, 1.71946, .00046))
 }
 
 // EclipticAberration returns corrections due to aberration for ecliptic
 // coordinates of an object.
-func EclipticAberration(λ, β base.Angle, jd float64) (Δλ, Δβ base.Angle) {
+func EclipticAberration(λ, β unit.Angle, jd float64) (Δλ, Δβ unit.Angle) {
 	T := base.J2000Century(jd)
 	s, _ := solar.True(T)
 	e := solar.Eccentricity(T)
 	π := perihelion(T)
-	sβ, cβ := math.Sincos(β.Rad())
-	ssλ, csλ := math.Sincos((s - λ).Rad())
-	sπλ, cπλ := math.Sincos((π - λ).Rad())
+	sβ, cβ := β.Sincos()
+	ssλ, csλ := (s - λ).Sincos()
+	sπλ, cπλ := (π - λ).Sincos()
 	// (23.2) p. 151
 	Δλ = κ.Mul((e*cπλ - csλ) / cβ)
 	Δβ = -κ.Mul(sβ * (ssλ - e*sπλ))
@@ -56,21 +57,21 @@ func EclipticAberration(λ, β base.Angle, jd float64) (Δλ, Δβ base.Angle) {
 
 // Aberration returns corrections due to aberration for equatorial
 // coordinates of an object.
-func Aberration(α base.RA, δ base.Angle, jd float64) (Δα2 base.HourAngle, Δδ2 base.Angle) {
+func Aberration(α unit.RA, δ unit.Angle, jd float64) (Δα2 unit.HourAngle, Δδ2 unit.Angle) {
 	ε := nutation.MeanObliquity(jd)
 	T := base.J2000Century(jd)
 	s, _ := solar.True(T)
 	e := solar.Eccentricity(T)
 	π := perihelion(T)
-	sα, cα := math.Sincos(α.Rad())
-	sδ, cδ := math.Sincos(δ.Rad())
-	ss, cs := math.Sincos(s.Rad())
-	sπ, cπ := math.Sincos(π.Rad())
-	cε := math.Cos(ε.Rad())
-	tε := math.Tan(ε.Rad())
+	sα, cα := α.Sincos()
+	sδ, cδ := δ.Sincos()
+	ss, cs := s.Sincos()
+	sπ, cπ := π.Sincos()
+	cε := ε.Cos()
+	tε := ε.Tan()
 	q1 := cα * cε
 	// (23.3) p. 152
-	Δα2 = base.HourAngle(κ.Rad() * (e*(q1*cπ+sα*sπ) - (q1*cs + sα*ss)) / cδ)
+	Δα2 = unit.HourAngle(κ.Rad() * (e*(q1*cπ+sα*sπ) - (q1*cs + sα*ss)) / cδ)
 	q2 := cε * (tε*cδ - sα*sδ)
 	q3 := cα * sδ
 	Δδ2 = κ.Mul(e*(cπ*q2+sπ*q3) - (cs*q2 + ss*q3))
@@ -82,7 +83,7 @@ func Aberration(α base.RA, δ base.Angle, jd float64) (Δα2 base.HourAngle, Δ
 // Position is computed for equatorial coordinates in eqFrom, considering
 // proper motion, precession, nutation, and aberration.  Result is in
 // eqTo.  EqFrom and eqTo must be non-nil, but may point to the same struct.
-func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
+func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα unit.HourAngle, mδ unit.Angle) *coord.Equatorial {
 	precess.Position(eqFrom, eqTo, epochFrom, epochTo, mα, mδ)
 	jd := base.JulianYearToJDE(epochTo)
 	Δα1, Δδ1 := Nutation(eqTo.RA, eqTo.Dec, jd)
@@ -94,7 +95,7 @@ func Position(eqFrom, eqTo *coord.Equatorial, epochFrom, epochTo float64, mα ba
 
 // AberrationRonVondrak uses the Ron-Vondrák expression to compute corrections
 // due to aberration for equatorial coordinates of an object.
-func AberrationRonVondrak(α base.RA, δ base.Angle, jd float64) (Δα base.HourAngle, Δδ base.Angle) {
+func AberrationRonVondrak(α unit.RA, δ unit.Angle, jd float64) (Δα unit.HourAngle, Δδ unit.Angle) {
 	T := base.J2000Century(jd)
 	r := &rv{
 		T:  T,
@@ -118,11 +119,11 @@ func AberrationRonVondrak(α base.RA, δ base.Angle, jd float64) (Δα base.Hour
 		Yp += y
 		Zp += z
 	}
-	sα, cα := math.Sincos(α.Rad())
-	sδ, cδ := math.Sincos(δ.Rad())
+	sα, cα := α.Sincos()
+	sδ, cδ := δ.Sincos()
 	// (23.4) p. 156
-	Δα = base.HourAngle((Yp*cα - Xp*sα) / (c * cδ))
-	Δδ = base.Angle(-((Xp*cα+Yp*sα)*sδ - Zp*cδ) / c)
+	Δα = unit.HourAngle((Yp*cα - Xp*sα) / (c * cδ))
+	Δδ = unit.Angle(-((Xp*cα+Yp*sα)*sδ - Zp*cδ) / c)
 	return
 }
 
@@ -296,7 +297,7 @@ var rvTerm = [36]rvFunc{
 //
 // Note the Ron-Vondrák expression is only valid for the epoch J2000.
 // EqFrom must be coordinates at epoch J2000.
-func PositionRonVondrak(eqFrom, eqTo *coord.Equatorial, epochTo float64, mα base.HourAngle, mδ base.Angle) *coord.Equatorial {
+func PositionRonVondrak(eqFrom, eqTo *coord.Equatorial, epochTo float64, mα unit.HourAngle, mδ unit.Angle) *coord.Equatorial {
 	t := epochTo - 2000
 	eqTo.RA = eqFrom.RA.Add(mα.Mul(t))
 	eqTo.Dec = eqFrom.Dec + mδ.Mul(t)

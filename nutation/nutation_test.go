@@ -19,10 +19,10 @@ func ExampleNutation() {
 	Δψ, Δε := nutation.Nutation(jd)
 	ε0 := nutation.MeanObliquity(jd)
 	ε := ε0 + Δε
-	fmt.Printf("%+.3d\n", sexa.Angle(Δψ).Fmt())
-	fmt.Printf("%+.3d\n", sexa.Angle(Δε).Fmt())
-	fmt.Printf("%.3d\n", sexa.Angle(ε0).Fmt())
-	fmt.Printf("%.3d\n", sexa.Angle(ε).Fmt())
+	fmt.Printf("%+.3d\n", sexa.FmtAngle(Δψ))
+	fmt.Printf("%+.3d\n", sexa.FmtAngle(Δε))
+	fmt.Printf("%.3d\n", sexa.FmtAngle(ε0))
+	fmt.Printf("%.3d\n", sexa.FmtAngle(ε))
 	// Output:
 	// -3″.788
 	// +9″.443

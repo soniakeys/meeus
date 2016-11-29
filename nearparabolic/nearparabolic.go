@@ -9,6 +9,7 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 // Elements holds orbital elements for near-parabolic orbits.
@@ -20,9 +21,9 @@ type Elements struct {
 
 // AnomalyDistance returns true anomaly and distance for near-parabolic orbits.
 //
-// True anomaly ν returned in radians. Distance r returned in AU.
+// Distance r returned in AU.
 // An error is returned if the algorithm fails to converge.
-func (e *Elements) AnomalyDistance(jde float64) (ν, r float64, err error) {
+func (e *Elements) AnomalyDistance(jde float64) (ν unit.Angle, r float64, err error) {
 	// fairly literal translation of code on p. 246
 	q1 := base.K * math.Sqrt((1+e.Ecc)/e.PDis) / (2 * e.PDis) // line 20
 	g := (1 - e.Ecc) / (1 + e.Ecc)                            // line 20
@@ -75,9 +76,9 @@ func (e *Elements) AnomalyDistance(jde float64) (ν, r float64, err error) {
 			}
 		}
 	}
-	ν = 2 * math.Atan(s)                               // line 66
-	r = e.PDis * (1 + e.Ecc) / (1 + e.Ecc*math.Cos(ν)) // line 68
-	if ν < 0 {                                         // line 70
+	ν = unit.Angle(2 * math.Atan(s))               // line 66
+	r = e.PDis * (1 + e.Ecc) / (1 + e.Ecc*ν.Cos()) // line 68
+	if ν < 0 {                                     // line 70
 		ν += 2 * math.Pi
 	}
 	return

@@ -10,7 +10,7 @@ package globe
 import (
 	"math"
 
-	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 // Ellipsoid represents an ellipsoid of revolution.
@@ -47,10 +47,10 @@ func (e Ellipsoid) Eccentricity() float64 {
 //
 // Arguments are geographic latitude φ and height h above the ellipsoid.
 // For e.Er in Km, h must be in meters.
-func (e Ellipsoid) ParallaxConstants(φ base.Angle, h float64) (s, c float64) {
+func (e Ellipsoid) ParallaxConstants(φ unit.Angle, h float64) (s, c float64) {
 	boa := 1 - e.Fl
-	su, cu := math.Sincos(math.Atan(boa * math.Tan(φ.Rad())))
-	s, c = math.Sincos(φ.Rad())
+	su, cu := math.Sincos(math.Atan(boa * φ.Tan()))
+	s, c = φ.Sincos()
 	hoa := h * 1e-3 / e.Er
 	return su*boa + hoa*s, cu + hoa*c
 }
@@ -58,18 +58,17 @@ func (e Ellipsoid) ParallaxConstants(φ base.Angle, h float64) (s, c float64) {
 // Rho is distance from Earth center to a point on the ellipsoid at latitude φ.
 //
 // Result unit is fraction of the equatorial radius.
-func Rho(φ base.Angle) float64 {
+func Rho(φ unit.Angle) float64 {
 	// Magic numbers...
-	return .9983271 + .0016764*math.Cos(2*φ.Rad()) -
-		.0000035*math.Cos(4*φ.Rad())
+	return .9983271 + .0016764*φ.Mul(2).Cos() - .0000035*φ.Mul(4).Cos()
 }
 
 // RadiusAtLatitude returns the radius of the circle that is the parallel of
 // latitude φ.
 //
 // Result unit is same as e.Er (typically Km.)
-func (e Ellipsoid) RadiusAtLatitude(φ base.Angle) float64 {
-	s, c := math.Sincos(φ.Rad())
+func (e Ellipsoid) RadiusAtLatitude(φ unit.Angle) float64 {
+	s, c := φ.Sincos()
 	return e.A() * c / math.Sqrt(1-(2-e.Fl)*e.Fl*s*s)
 }
 
@@ -92,8 +91,8 @@ const RotationRate1996_5 = 7.292114992e-5
 // RadiusOfCurvature of meridian at latitude φ.
 //
 // Result in units of e.ER, typically Km.
-func (e Ellipsoid) RadiusOfCurvature(φ base.Angle) float64 {
-	s := math.Sin(φ.Rad())
+func (e Ellipsoid) RadiusOfCurvature(φ unit.Angle) float64 {
+	s := φ.Sin()
 	e2 := (2 - e.Fl) * e.Fl
 	return e.A() * (1 - e2) / math.Pow(1-e2*s*s, 1.5)
 }
@@ -109,36 +108,35 @@ func OneDegreeOfLatitude(rm float64) float64 {
 
 // GeocentricLatitudeDifference returns geographic latitude - geocentric
 // latitude (φ - φ′) given geographic latitude (φ).
-func GeocentricLatitudeDifference(φ base.Angle) base.Angle {
+func GeocentricLatitudeDifference(φ unit.Angle) unit.Angle {
 	// This appears to be an approximation with hard coded magic numbers.
 	// No explanation is given in the text. The ellipsoid is not specified.
 	// Perhaps the approximation works well enough for all ellipsoids?
-	return base.AngleFromSec(692.73*math.Sin(2*φ.Rad()) -
-		1.16*math.Sin(4*φ.Rad()))
+	return unit.AngleFromSec(692.73*φ.Mul(2).Sin() - 1.16*φ.Mul(4).Sin())
 }
 
 // Coord represents geographic coordinates on the Earth.
 //
 // Longitude is measured positively westward from the Greenwich meridian.
 type Coord struct {
-	Lat base.Angle // latitude (φ)
-	Lon base.Angle // longitude (ψ, or L)
+	Lat unit.Angle // latitude (φ)
+	Lon unit.Angle // longitude (ψ, or L)
 }
 
 // ApproxAngularDistance returns the cosine of the angle between two points.
 //
 // The accuracy deteriorates at small angles.
 func ApproxAngularDistance(p1, p2 Coord) float64 {
-	s1, c1 := math.Sincos(p1.Lat.Rad())
-	s2, c2 := math.Sincos(p2.Lat.Rad())
-	return s1*s2 + c1*c2*math.Cos((p1.Lon-p2.Lon).Rad())
+	s1, c1 := p1.Lat.Sincos()
+	s2, c2 := p2.Lat.Sincos()
+	return s1*s2 + c1*c2*(p1.Lon-p2.Lon).Cos()
 }
 
 // ApproxLinearDistance computes a distance across the surface of the Earth.
 //
 // Approximating the Earth as a sphere, the function takes a geocentric angular
 // distance and returns the corresponding linear distance in Km.
-func ApproxLinearDistance(d base.Angle) float64 {
+func ApproxLinearDistance(d unit.Angle) float64 {
 	return 6371 * d.Rad()
 }
 
@@ -164,8 +162,7 @@ func (e Ellipsoid) Distance(c1, c2 Coord) float64 {
 	return d * (1 + e.Fl*(h1*s2f*c2g-h2*c2f*s2g))
 }
 
-// small function should expand inline
-func sincos2(x base.Angle) (s2, c2 float64) {
-	s, c := math.Sincos(x.Rad())
+func sincos2(x unit.Angle) (s2, c2 float64) {
+	s, c := x.Sincos()
 	return s * s, c * c
 }

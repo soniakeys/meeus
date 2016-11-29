@@ -24,8 +24,8 @@ func ExampleApparentEquatorialVSOP87() {
 	}
 	jde := julian.CalendarGregorianToJD(1992, 10, 13)
 	α, δ, _ := solar.ApparentEquatorialVSOP87(e, jde)
-	fmt.Printf("α: %.3d\n", sexa.RA(α).Fmt())
-	fmt.Printf("δ: %+.2d\n", sexa.Angle(δ).Fmt())
+	fmt.Printf("α: %.3d\n", sexa.FmtRA(α))
+	fmt.Printf("δ: %+.2d\n", sexa.FmtAngle(δ))
 	// Output:
 	// α: 13ʰ13ᵐ30ˢ.749
 	// δ: -7°47′1″.74

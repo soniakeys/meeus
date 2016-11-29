@@ -11,6 +11,7 @@ import (
 	"github.com/soniakeys/meeus/nutation"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/solar"
+	"github.com/soniakeys/unit"
 )
 
 // Ephemeris returns the apparent orientation of the sun at the given jd.
@@ -19,17 +20,17 @@ import (
 //	P:  Position angle of the solar north pole.
 //	B0: Heliographic latitude of the center of the solar disk.
 //	L0: Heliographic longitude of the center of the solar disk.
-func Ephemeris(jd float64, e *pp.V87Planet) (P, B0, L0 base.Angle) {
-	θ := base.Angle((jd - 2398220) * 2 * math.Pi / 25.38)
-	I := base.AngleFromDeg(7.25)
-	K := base.AngleFromDeg(73.6667) +
-		base.AngleFromDeg(1.3958333).Mul((jd-2396758)/base.JulianCentury)
+func Ephemeris(jd float64, e *pp.V87Planet) (P, B0, L0 unit.Angle) {
+	θ := unit.Angle((jd - 2398220) * 2 * math.Pi / 25.38)
+	I := unit.AngleFromDeg(7.25)
+	K := unit.AngleFromDeg(73.6667) +
+		unit.AngleFromDeg(1.3958333).Mul((jd-2396758)/base.JulianCentury)
 
 	L, _, R := solar.TrueVSOP87(e, jd)
 	Δψ, Δε := nutation.Nutation(jd)
 	ε0 := nutation.MeanObliquity(jd)
 	ε := ε0 + Δε
-	λ := L - base.AngleFromSec(20.4898).Div(R)
+	λ := L - unit.AngleFromSec(20.4898).Div(R)
 	λp := λ + Δψ
 
 	sλK, cλK := (λ - K).Sincos()
@@ -37,9 +38,9 @@ func Ephemeris(jd float64, e *pp.V87Planet) (P, B0, L0 base.Angle) {
 
 	tx := -(λp.Cos() * ε.Tan())
 	ty := -(cλK * I.Tan())
-	P = base.Angle(math.Atan(tx) + math.Atan(ty))
-	B0 = base.Angle(math.Asin(sλK * sI))
-	η := base.Angle(math.Atan2(-sλK*cI, -cλK))
+	P = unit.Angle(math.Atan(tx) + math.Atan(ty))
+	B0 = unit.Angle(math.Asin(sλK * sI))
+	η := unit.Angle(math.Atan2(-sλK*cI, -cλK))
 	L0 = (η - θ).Mod1()
 	return
 }

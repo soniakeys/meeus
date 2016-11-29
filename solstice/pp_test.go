@@ -11,6 +11,7 @@ import (
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/solstice"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleJune2() {
@@ -23,7 +24,7 @@ func ExampleJune2() {
 	j := solstice.June2(1962, e)
 	t := j - 2437836.5 // 0h 1962 June 21
 	// result is VSOP87 result given in example 27.a, p. 180
-	fmt.Println(sexa.Time(t * 24 * 60 * 60).Fmt())
+	fmt.Println(sexa.FmtTime(unit.TimeFromDay(t)))
 	// Output:
 	// 21ʰ24ᵐ42ˢ
 }

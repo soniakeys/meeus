@@ -13,15 +13,16 @@ import (
 	"github.com/soniakeys/meeus/moonillum"
 	"github.com/soniakeys/meeus/moonposition"
 	"github.com/soniakeys/meeus/solar"
+	"github.com/soniakeys/unit"
 )
 
 func ExamplePhaseAngleEq() {
 	i := moonillum.PhaseAngleEq(
-		base.RAFromDeg(134.6885),
-		base.AngleFromDeg(13.7684),
+		unit.RAFromDeg(134.6885),
+		unit.AngleFromDeg(13.7684),
 		368410,
-		base.RAFromDeg(20.6579),
-		base.AngleFromDeg(8.6964),
+		unit.RAFromDeg(20.6579),
+		unit.AngleFromDeg(8.6964),
 		149971520)
 	fmt.Printf("i = %.4f\n", i.Deg())
 	// Output:
@@ -29,12 +30,11 @@ func ExamplePhaseAngleEq() {
 }
 
 func ExamplePhaseAngleEq2() {
-	const p = math.Pi / 180
 	i := moonillum.PhaseAngleEq2(
-		base.RAFromDeg(134.6885),
-		base.AngleFromDeg(13.7684),
-		base.RAFromDeg(20.6579),
-		base.AngleFromDeg(8.6964))
+		unit.RAFromDeg(134.6885),
+		unit.AngleFromDeg(13.7684),
+		unit.RAFromDeg(20.6579),
+		unit.AngleFromDeg(8.6964))
 	k := base.Illuminated(i)
 	fmt.Printf("k = %.4f\n", k)
 	// Output:
@@ -48,7 +48,7 @@ func TestPhaseAngleEcl(t *testing.T) {
 	λ0 := solar.ApparentLongitude(T)
 	R := solar.Radius(T) * base.AU
 	i := moonillum.PhaseAngleEcl(λ, β, Δ, λ0, R)
-	ref := base.AngleFromDeg(69.0756)
+	ref := unit.AngleFromDeg(69.0756)
 	if math.Abs(((i - ref) / ref).Rad()) > 1e-4 {
 		t.Errorf("i = %.4f", i.Deg())
 	}

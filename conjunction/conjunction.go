@@ -8,6 +8,7 @@ import (
 	"errors"
 
 	"github.com/soniakeys/meeus/interp"
+	"github.com/soniakeys/unit"
 )
 
 // Planetary computes a conjunction between two moving objects, such as planets.
@@ -26,7 +27,7 @@ import (
 // Return value t is time of conjunction in the scale of t1, t5.
 // Δd is the amount that object 2 was "above" object 1 at the time of
 // conjunction.
-func Planetary(t1, t5 float64, r1, d1, r2, d2 []float64) (t, Δd float64, err error) {
+func Planetary(t1, t5 float64, r1, d1, r2, d2 []unit.Angle) (t float64, Δd unit.Angle, err error) {
 	if len(r1) != 5 || len(d1) != 5 || len(r2) != 5 || len(d2) != 5 {
 		err = errors.New("Five rows required in ephemerides")
 		return
@@ -34,8 +35,8 @@ func Planetary(t1, t5 float64, r1, d1, r2, d2 []float64) (t, Δd float64, err er
 	dr := make([]float64, 5, 10)
 	dd := dr[5:10]
 	for i, r := range r1 {
-		dr[i] = r2[i] - r
-		dd[i] = d2[i] - d1[i]
+		dr[i] = (r2[i] - r).Rad()
+		dd[i] = (d2[i] - d1[i]).Rad()
 	}
 	return conj(t1, t5, dr, dd)
 }
@@ -44,7 +45,7 @@ func Planetary(t1, t5 float64, r1, d1, r2, d2 []float64) (t, Δd float64, err er
 //
 // Arguments and return values same as with Planetary, except the non-moving
 // object is r1, d1.  The ephemeris of the moving object is r2, d2.
-func Stellar(t1, t5, r1, d1 float64, r2, d2 []float64) (t, Δd float64, err error) {
+func Stellar(t1, t5 float64, r1, d1 unit.Angle, r2, d2 []unit.Angle) (t float64, Δd unit.Angle, err error) {
 	if len(r2) != 5 || len(d2) != 5 {
 		err = errors.New("Five rows required in ephemeris")
 		return
@@ -52,13 +53,13 @@ func Stellar(t1, t5, r1, d1 float64, r2, d2 []float64) (t, Δd float64, err erro
 	dr := make([]float64, 5, 10)
 	dd := dr[5:10]
 	for i, r := range r2 {
-		dr[i] = r - r1
-		dd[i] = d2[i] - d1
+		dr[i] = (r - r1).Rad()
+		dd[i] = (d2[i] - d1).Rad()
 	}
 	return conj(t1, t5, dr, dd)
 }
 
-func conj(t1, t5 float64, dr, dd []float64) (t, Δd float64, err error) {
+func conj(t1, t5 float64, dr, dd []float64) (t float64, Δd unit.Angle, err error) {
 	var l5 *interp.Len5
 	if l5, err = interp.NewLen5(t1, t5, dr); err != nil {
 		return
@@ -69,6 +70,6 @@ func conj(t1, t5 float64, dr, dd []float64) (t, Δd float64, err error) {
 	if l5, err = interp.NewLen5(t1, t5, dd); err != nil {
 		return
 	}
-	Δd, err = l5.InterpolateXStrict(t)
-	return
+	ΔdRad, err := l5.InterpolateXStrict(t)
+	return t, unit.Angle(ΔdRad), err
 }

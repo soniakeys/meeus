@@ -10,37 +10,38 @@ import (
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/elliptic"
 	pp "github.com/soniakeys/meeus/planetposition"
+	"github.com/soniakeys/unit"
 )
 
 // Heliocentric returns J2000 heliocentric coordinates of Pluto.
 //
 // Results l, b are solar longitude and latitude in radians.
 // Result r is distance in AU.
-func Heliocentric(jde float64) (l, b base.Angle, r float64) {
+func Heliocentric(jde float64) (l, b unit.Angle, r float64) {
 	T := base.J2000Century(jde)
-	J := base.AngleFromDeg(34.35 + 3034.9057*T)
-	S := base.AngleFromDeg(50.08 + 1222.1138*T)
-	P := base.AngleFromDeg(238.96 + 144.96*T)
+	J := unit.AngleFromDeg(34.35 + 3034.9057*T)
+	S := unit.AngleFromDeg(50.08 + 1222.1138*T)
+	P := unit.AngleFromDeg(238.96 + 144.96*T)
 	for i := range t37 {
 		t := &t37[i]
-		sα, cα := math.Sincos((J.Mul(t.i) + S.Mul(t.j) + P.Mul(t.k)).Rad())
+		sα, cα := (J.Mul(t.i) + S.Mul(t.j) + P.Mul(t.k)).Sincos()
 		l += t.lA.Mul(sα) + t.lB.Mul(cα)
 		b += t.bA.Mul(sα) + t.bB.Mul(cα)
 		r += t.rA*sα + t.rB*cα
 	}
-	l += base.AngleFromDeg(238.958116 + 144.96*T)
-	b -= base.AngleFromDeg(3.908239)
+	l += unit.AngleFromDeg(238.958116 + 144.96*T)
+	b -= unit.AngleFromDeg(3.908239)
 	r += 40.7241346
 	return
 }
 
 // Astrometric returns J2000 astrometric coordinates of Pluto.
-func Astrometric(jde float64, e *pp.V87Planet) (α base.RA, δ base.Angle) {
+func Astrometric(jde float64, e *pp.V87Planet) (α unit.RA, δ unit.Angle) {
 	const sε, cε = base.SOblJ2000, base.COblJ2000
 	f := func(jde float64) (x, y, z float64) {
 		l, b, r := Heliocentric(jde)
-		sl, cl := math.Sincos(l.Rad())
-		sb, cb := math.Sincos(b.Rad())
+		sl, cl := l.Sincos()
+		sb, cb := b.Sincos()
 		// (37.1) p. 264
 		x = r * cl * cb
 		y = r * (sl*cb*cε - sb*sε)
@@ -63,8 +64,8 @@ func init() {
 
 var t37 = []struct {
 	i, j, k float64
-	lA, lB  base.Angle
-	bA, bB  base.Angle
+	lA, lB  unit.Angle
+	bA, bB  unit.Angle
 	rA, rB  float64
 }{
 	{0, 0, 1, -19.799805, 19.850055, -5.452852, -14.974862, 6.6865439, 6.8951812},

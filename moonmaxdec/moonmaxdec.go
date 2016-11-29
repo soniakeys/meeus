@@ -8,6 +8,7 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 // North computes the maximum northern declination of the Moon near a given date.
@@ -16,7 +17,7 @@ import (
 //
 // Returned is the jde of the event nearest the given date and the declination
 // of the Moon at that time.
-func North(y float64) (jde, δ float64) {
+func North(y float64) (jde float64, δ unit.Angle) {
 	return max(y, &nc)
 }
 
@@ -26,13 +27,13 @@ func North(y float64) (jde, δ float64) {
 //
 // Returned is the jde of the event nearest the given date and the declination
 // of the Moon at that time.
-func South(y float64) (jde, δ float64) {
+func South(y float64) (jde float64, δ unit.Angle) {
 	return max(y, &sc)
 }
 
 const p = math.Pi / 180
 
-func max(y float64, c *mc) (jde, δ float64) {
+func max(y float64, c *mc) (jde float64, δ unit.Angle) {
 	k := (y - 2000.03) * 13.3686 // (52.1) p. 367
 	k = math.Floor(k + .5)
 	const ck = 1 / 1336.86
@@ -87,7 +88,7 @@ func max(y float64, c *mc) (jde, δ float64) {
 		c.tc[41]*math.Sin(2*(D-F)) +
 		c.tc[42]*math.Cos(2*Mʹ+F) +
 		c.tc[43]*math.Cos(3*Mʹ+F)
-	δ = 23.6961*p - .013004*p*T +
+	δ = unit.Angle(23.6961*p - .013004*p*T +
 		c.dc[0]*math.Sin(F) +
 		c.dc[1]*math.Cos(2*F) +
 		c.dc[2]*math.Sin(2*D-F) +
@@ -124,8 +125,8 @@ func max(y float64, c *mc) (jde, δ float64) {
 		c.dc[33]*math.Cos(2*Mʹ) +
 		c.dc[34]*math.Cos(Mʹ) +
 		c.dc[35]*math.Sin(2*F) +
-		c.dc[36]*math.Sin(Mʹ+F)
-	return jde, c.s * δ
+		c.dc[36]*math.Sin(Mʹ+F))
+	return jde, δ.Mul(c.s)
 }
 
 type mc struct {

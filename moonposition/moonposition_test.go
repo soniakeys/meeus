@@ -16,8 +16,8 @@ import (
 func ExamplePosition() {
 	// Example 47.a, p. 342.
 	λ, β, Δ := moonposition.Position(julian.CalendarGregorianToJD(1992, 4, 12))
-	fmt.Printf("λ = %.6f\n", λ*180/math.Pi)
-	fmt.Printf("β = %.6f\n", β*180/math.Pi)
+	fmt.Printf("λ = %.6f\n", λ.Deg())
+	fmt.Printf("β = %.6f\n", β.Deg())
 	fmt.Printf("Δ = %.1f\n", Δ)
 	// Output:
 	// λ = 133.162655
@@ -29,7 +29,7 @@ func ExampleParallax() {
 	// Example 47.a, p. 342.
 	_, _, Δ := moonposition.Position(julian.CalendarGregorianToJD(1992, 4, 12))
 	π := moonposition.Parallax(Δ)
-	fmt.Printf("π = %.6f\n", π*180/math.Pi)
+	fmt.Printf("π = %.6f\n", π.Deg())
 	// Output:
 	// π = 0.991990
 }

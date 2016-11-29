@@ -8,11 +8,11 @@ package elliptic_test
 import (
 	"fmt"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/elliptic"
 	"github.com/soniakeys/meeus/julian"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExamplePosition() {
@@ -28,8 +28,8 @@ func ExamplePosition() {
 		return
 	}
 	α, δ := elliptic.Position(venus, earth, 2448976.5)
-	fmt.Printf("α = %.3d\n", sexa.RA(α).Fmt())
-	fmt.Printf("δ = %.2d\n", sexa.Angle(δ).Fmt())
+	fmt.Printf("α = %.3d\n", sexa.FmtRA(α))
+	fmt.Printf("δ = %.2d\n", sexa.FmtAngle(δ))
 	// Output:
 	// α = 21ʰ4ᵐ41ˢ.454
 	// δ = -18°53′16″.84
@@ -46,14 +46,14 @@ func ExampleElements_Position() {
 		TimeP: julian.CalendarGregorianToJD(1990, 10, 28.54502),
 		Axis:  2.2091404,
 		Ecc:   .8502196,
-		Inc:   base.AngleFromDeg(11.94524),
-		Node:  base.AngleFromDeg(334.75006),
-		ArgP:  base.AngleFromDeg(186.23352),
+		Inc:   unit.AngleFromDeg(11.94524),
+		Node:  unit.AngleFromDeg(334.75006),
+		ArgP:  unit.AngleFromDeg(186.23352),
 	}
 	j := julian.CalendarGregorianToJD(1990, 10, 6)
 	α, δ, ψ := k.Position(j, earth)
-	fmt.Printf("α = %.1d\n", sexa.RA(α).Fmt())
-	fmt.Printf("δ = %.0d\n", sexa.Angle(δ).Fmt())
+	fmt.Printf("α = %.1d\n", sexa.FmtRA(α))
+	fmt.Printf("δ = %.0d\n", sexa.FmtAngle(δ))
 	fmt.Printf("ψ = %.2f\n", ψ.Deg())
 	// Output:
 	// α = 10ʰ34ᵐ14ˢ.2

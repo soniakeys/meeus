@@ -408,9 +408,9 @@ func E5(jde float64, earth, jupiter *pp.V87Planet, pos *[4]XY) {
 	C := make([]float64, 5)
 	sI, cI := math.Sincos(I)
 	Ω := pe.Node(pe.Jupiter, jde)
-	sΩ, cΩ := math.Sincos(Ω)
-	sΦ, cΦ := math.Sincos(ψ - Ω)
-	si, ci := math.Sincos(pe.Inc(pe.Jupiter, jde))
+	sΩ, cΩ := Ω.Sincos()
+	sΦ, cΦ := math.Sincos(ψ - Ω.Rad())
+	si, ci := pe.Inc(pe.Jupiter, jde).Sincos()
 	sλ0, cλ0 := math.Sincos(λ0)
 	sβ0, cβ0 := math.Sincos(β0)
 	for i := range A {

@@ -5,7 +5,6 @@ package parabolic_test
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/meeus/parabolic"
@@ -19,7 +18,7 @@ func ExampleElements_AnomalyDistance() {
 	}
 	j := julian.CalendarGregorianToJD(1998, 8, 5)
 	ν, r := e.AnomalyDistance(j)
-	fmt.Printf("%.5f deg\n", ν*180/math.Pi)
+	fmt.Printf("%.5f deg\n", ν.Deg())
 	fmt.Printf("%.6f AU\n", r)
 	// Output:
 	// 66.78862 deg

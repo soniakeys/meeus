@@ -5,7 +5,6 @@ package solar_test
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/julian"
@@ -20,7 +19,7 @@ func ExampleTrue() {
 	T := base.J2000Century(jd)
 	fmt.Printf("T:   %.9f\n", T)
 	s, _ := solar.True(T)
-	fmt.Printf("☉:   %.5f\n", (s * 180 / math.Pi))
+	fmt.Printf("☉:   %.5f\n", s.Deg())
 	// Output:
 	// JDE: 2448908.5
 	// T:   -0.072183436
@@ -30,7 +29,7 @@ func ExampleTrue() {
 func ExampleMeanAnomaly() {
 	// Example 25.a, p. 165.
 	T := base.J2000Century(julian.CalendarGregorianToJD(1992, 10, 13))
-	fmt.Printf("%.5f\n", solar.MeanAnomaly(T)*180/math.Pi)
+	fmt.Printf("%.5f\n", solar.MeanAnomaly(T).Deg())
 	// Output:
 	// -2241.00603
 }
@@ -54,7 +53,7 @@ func ExampleRadius() {
 func ExampleApparentLongitude() {
 	// Example 25.a, p. 165.
 	T := base.J2000Century(julian.CalendarGregorianToJD(1992, 10, 13))
-	fmt.Println("λ:", sexa.Angle(solar.ApparentLongitude(T)).Fmt())
+	fmt.Println("λ:", sexa.FmtAngle(solar.ApparentLongitude(T)))
 	// Output:
 	// λ: 199°54′32″
 }
@@ -63,8 +62,8 @@ func ExampleApparentEquatorial() {
 	// Example 25.a, p. 165.
 	jde := julian.CalendarGregorianToJD(1992, 10, 13)
 	α, δ := solar.ApparentEquatorial(jde)
-	fmt.Printf("α: %.1d\n", sexa.RA(α).Fmt())
-	fmt.Printf("δ: %d\n", sexa.Angle(δ).Fmt())
+	fmt.Printf("α: %.1d\n", sexa.FmtRA(α))
+	fmt.Printf("δ: %d\n", sexa.FmtAngle(δ))
 	// Output:
 	// α: 13ʰ13ᵐ31ˢ.4
 	// δ: -7°47′6″

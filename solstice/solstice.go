@@ -10,6 +10,7 @@ import (
 	"github.com/soniakeys/meeus/base"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/meeus/solar"
+	"github.com/soniakeys/unit"
 )
 
 var (
@@ -187,7 +188,7 @@ func December2(y int, e *pp.V87Planet) float64 {
 	return eq2(y-2000, e, math.Pi*3/2, dc2)
 }
 
-func eq2(y int, e *pp.V87Planet, q base.Angle, c []float64) float64 {
+func eq2(y int, e *pp.V87Planet, q unit.Angle, c []float64) float64 {
 	J0 := base.Horner(float64(y)*.001, c...)
 	for {
 		λ, _, _ := solar.ApparentVSOP87(e, J0)

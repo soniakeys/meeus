@@ -11,53 +11,54 @@ import (
 	"github.com/soniakeys/meeus/angle"
 	"github.com/soniakeys/meeus/julian"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleSep() {
 	// Example 17.a, p. 110.
-	r1 := sexa.NewRA(14, 15, 39.7).Rad()
-	d1 := sexa.NewAngle(' ', 19, 10, 57).Rad()
-	r2 := sexa.NewRA(13, 25, 11.6).Rad()
-	d2 := sexa.NewAngle('-', 11, 9, 41).Rad()
+	r1 := unit.NewRA(14, 15, 39.7).Angle()
+	d1 := unit.NewAngle(' ', 19, 10, 57)
+	r2 := unit.NewRA(13, 25, 11.6).Angle()
+	d2 := unit.NewAngle('-', 11, 9, 41)
 	d := angle.Sep(r1, d1, r2, d2)
-	fmt.Println(sexa.Angle(d).Fmt())
+	fmt.Println(sexa.FmtAngle(d))
 	// Output:
 	// 32°47′35″
 }
 
 // First exercise, p. 110.
 func TestSep(t *testing.T) {
-	r1 := sexa.NewRA(4, 35, 55.2).Rad()
-	d1 := sexa.NewAngle(' ', 16, 30, 33).Rad()
-	r2 := sexa.NewRA(16, 29, 24).Rad()
-	d2 := sexa.NewAngle('-', 26, 25, 55).Rad()
+	r1 := unit.NewRA(4, 35, 55.2).Angle()
+	d1 := unit.NewAngle(' ', 16, 30, 33)
+	r2 := unit.NewRA(16, 29, 24).Angle()
+	d2 := unit.NewAngle('-', 26, 25, 55)
 	d := angle.Sep(r1, d1, r2, d2)
-	answer := sexa.NewAngle(' ', 169, 58, 0).Rad()
-	if math.Abs(d-answer) > 1e-4 {
-		t.Fatal(sexa.Angle(d).Fmt())
+	answer := unit.NewAngle(' ', 169, 58, 0)
+	if math.Abs((d - answer).Rad()) > 1e-4 {
+		t.Fatal(d, answer)
 	}
 }
 
 var (
-	r1 = []float64{
-		sexa.NewRA(10, 29, 44.27).Rad(),
-		sexa.NewRA(10, 36, 19.63).Rad(),
-		sexa.NewRA(10, 43, 01.75).Rad(),
+	r1 = []unit.Angle{
+		unit.NewRA(10, 29, 44.27).Angle(),
+		unit.NewRA(10, 36, 19.63).Angle(),
+		unit.NewRA(10, 43, 01.75).Angle(),
 	}
-	d1 = []float64{
-		sexa.NewAngle(' ', 11, 02, 05.9).Rad(),
-		sexa.NewAngle(' ', 10, 29, 51.7).Rad(),
-		sexa.NewAngle(' ', 9, 55, 16.7).Rad(),
+	d1 = []unit.Angle{
+		unit.NewAngle(' ', 11, 02, 05.9),
+		unit.NewAngle(' ', 10, 29, 51.7),
+		unit.NewAngle(' ', 9, 55, 16.7),
 	}
-	r2 = []float64{
-		sexa.NewRA(10, 33, 29.64).Rad(),
-		sexa.NewRA(10, 33, 57.97).Rad(),
-		sexa.NewRA(10, 34, 26.22).Rad(),
+	r2 = []unit.Angle{
+		unit.NewRA(10, 33, 29.64).Angle(),
+		unit.NewRA(10, 33, 57.97).Angle(),
+		unit.NewRA(10, 34, 26.22).Angle(),
 	}
-	d2 = []float64{
-		sexa.NewAngle(' ', 10, 40, 13.2).Rad(),
-		sexa.NewAngle(' ', 10, 37, 33.4).Rad(),
-		sexa.NewAngle(' ', 10, 34, 53.9).Rad(),
+	d2 = []unit.Angle{
+		unit.NewAngle(' ', 10, 40, 13.2),
+		unit.NewAngle(' ', 10, 37, 33.4),
+		unit.NewAngle(' ', 10, 34, 53.9),
 	}
 	jd1 = julian.CalendarGregorianToJD(1978, 9, 13)
 	jd3 = julian.CalendarGregorianToJD(1978, 9, 15)
@@ -69,9 +70,9 @@ func TestMinSep(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	answer := .5017 * math.Pi / 180 // on p. 111
-	if math.Abs((sep-answer)/sep) > 1e-3 {
-		t.Fatal(sexa.Angle(sep).Fmt())
+	answer := unit.AngleFromDeg(.5017) // on p. 111
+	if math.Abs((sep-answer).Rad()/sep.Rad()) > 1e-3 {
+		t.Fatal(sep, answer)
 	}
 }
 
@@ -81,21 +82,21 @@ func TestMinSepRect(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	answer := 224 * math.Pi / 180 / 3600 // on p. 111
-	if math.Abs((sep-answer)/sep) > 1e-2 {
-		t.Fatal(sexa.Angle(sep).Fmt())
+	answer := unit.AngleFromSec(224) // on p. 111
+	if math.Abs((sep-answer).Rad()/sep.Rad()) > 1e-2 {
+		t.Fatal(sep, answer)
 	}
 
 }
 
 func TestSepHav(t *testing.T) {
 	// Example 17.a, p. 110.
-	r1 := sexa.NewRA(14, 15, 39.7).Rad()
-	d1 := sexa.NewAngle(' ', 19, 10, 57).Rad()
-	r2 := sexa.NewRA(13, 25, 11.6).Rad()
-	d2 := sexa.NewAngle('-', 11, 9, 41).Rad()
+	r1 := unit.NewRA(14, 15, 39.7).Angle()
+	d1 := unit.NewAngle(' ', 19, 10, 57)
+	r2 := unit.NewRA(13, 25, 11.6).Angle()
+	d2 := unit.NewAngle('-', 11, 9, 41)
 	d := angle.SepHav(r1, d1, r2, d2)
-	s := fmt.Sprint(sexa.Angle(d).Fmt())
+	s := fmt.Sprint(sexa.FmtAngle(d))
 	if s != "32°47′35″" {
 		t.Fatal(s)
 	}
@@ -103,12 +104,12 @@ func TestSepHav(t *testing.T) {
 
 func ExampleSepPauwels() {
 	// Example 17.b, p. 116.
-	r1 := sexa.NewRA(14, 15, 39.7).Rad()
-	d1 := sexa.NewAngle(' ', 19, 10, 57).Rad()
-	r2 := sexa.NewRA(13, 25, 11.6).Rad()
-	d2 := sexa.NewAngle('-', 11, 9, 41).Rad()
+	r1 := unit.NewRA(14, 15, 39.7).Angle()
+	d1 := unit.NewAngle(' ', 19, 10, 57)
+	r2 := unit.NewRA(13, 25, 11.6).Angle()
+	d2 := unit.NewAngle('-', 11, 9, 41)
 	d := angle.SepPauwels(r1, d1, r2, d2)
-	fmt.Println(sexa.Angle(d).Fmt())
+	fmt.Println(sexa.FmtAngle(d))
 	// Output:
 	// 32°47′35″
 }

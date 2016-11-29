@@ -8,18 +8,19 @@ import (
 
 	"github.com/soniakeys/meeus/circle"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleSmallest_a() {
 	// Example 20.a, p. 128.
-	r1 := sexa.NewRA(12, 41, 8.64).Rad()
-	r2 := sexa.NewRA(12, 52, 5.21).Rad()
-	r3 := sexa.NewRA(12, 39, 28.11).Rad()
-	d1 := sexa.NewAngle('-', 5, 37, 54.2).Rad()
-	d2 := sexa.NewAngle('-', 4, 22, 26.2).Rad()
-	d3 := sexa.NewAngle('-', 1, 50, 3.7).Rad()
+	r1 := unit.NewRA(12, 41, 8.64).Angle()
+	r2 := unit.NewRA(12, 52, 5.21).Angle()
+	r3 := unit.NewRA(12, 39, 28.11).Angle()
+	d1 := unit.NewAngle('-', 5, 37, 54.2)
+	d2 := unit.NewAngle('-', 4, 22, 26.2)
+	d3 := unit.NewAngle('-', 1, 50, 3.7)
 	d, t := circle.Smallest(r1, d1, r2, d2, r3, d3)
-	fd := sexa.Angle(d).Fmt()
+	fd := sexa.FmtAngle(d)
 	fmt.Printf("Δ = %.5j = %m\n", fd, fd)
 	if t {
 		fmt.Println("type I")
@@ -33,14 +34,14 @@ func ExampleSmallest_a() {
 
 func ExampleSmallest_b() {
 	// Exercise, p. 128.
-	r1 := sexa.NewRA(9, 5, 41.44).Rad()
-	r2 := sexa.NewRA(9, 9, 29).Rad()
-	r3 := sexa.NewRA(8, 59, 47.14).Rad()
-	d1 := sexa.NewAngle(' ', 18, 30, 30).Rad()
-	d2 := sexa.NewAngle(' ', 17, 43, 56.7).Rad()
-	d3 := sexa.NewAngle(' ', 17, 49, 36.8).Rad()
+	r1 := unit.NewRA(9, 5, 41.44).Angle()
+	r2 := unit.NewRA(9, 9, 29).Angle()
+	r3 := unit.NewRA(8, 59, 47.14).Angle()
+	d1 := unit.NewAngle(' ', 18, 30, 30)
+	d2 := unit.NewAngle(' ', 17, 43, 56.7)
+	d3 := unit.NewAngle(' ', 17, 49, 36.8)
 	d, t := circle.Smallest(r1, d1, r2, d2, r3, d3)
-	fmt.Printf("Δ = %m\n", sexa.Angle(d).Fmt())
+	fmt.Printf("Δ = %m\n", sexa.FmtAngle(d))
 	if t {
 		fmt.Println("type I")
 	} else {

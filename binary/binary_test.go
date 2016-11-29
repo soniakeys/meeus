@@ -6,9 +6,9 @@ package binary_test
 import (
 	"fmt"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/binary"
 	"github.com/soniakeys/meeus/kepler"
+	"github.com/soniakeys/unit"
 )
 
 func ExamplePosition() {
@@ -21,9 +21,9 @@ func ExamplePosition() {
 		return
 	}
 	fmt.Printf("E = %.3f\n", E.Deg())
-	θ, ρ := binary.Position(.2763, base.AngleFromSec(.907),
-		base.AngleFromDeg(59.025), base.AngleFromDeg(23.717),
-		base.AngleFromDeg(219.907), E)
+	θ, ρ := binary.Position(.2763, unit.AngleFromSec(.907),
+		unit.AngleFromDeg(59.025), unit.AngleFromDeg(23.717),
+		unit.AngleFromDeg(219.907), E)
 	fmt.Printf("θ = %.1f\n", θ.Deg())
 	fmt.Printf("ρ = %.3f\n", ρ.Sec())
 	// Output:
@@ -36,7 +36,7 @@ func ExamplePosition() {
 func ExampleApparentEccentricity() {
 	// Example 57.b, p. 400
 	fmt.Printf("%.3f\n", binary.ApparentEccentricity(.2763,
-		base.AngleFromDeg(59.025), base.AngleFromDeg(219.907)))
+		unit.AngleFromDeg(59.025), unit.AngleFromDeg(219.907)))
 	// Output:
 	// 0.860
 }

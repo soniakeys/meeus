@@ -32,6 +32,7 @@ import (
 	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/precess"
+	"github.com/soniakeys/unit"
 )
 
 // Mercury-Neptune planet constants suitable for first argument to LoadPlanet.
@@ -192,7 +193,7 @@ func (c *coeff) parse(ic byte, ibody int, lines []string, n int, au bool) (int, 
 //	L is heliocentric longitude.
 //	B is heliocentric latitude.
 //	R is heliocentric range in AU.
-func (vt *V87Planet) Position2000(jde float64) (L, B base.Angle, R float64) {
+func (vt *V87Planet) Position2000(jde float64) (L, B unit.Angle, R float64) {
 	T := base.J2000Century(jde)
 	τ := T * .1
 	cf := make([]float64, 6)
@@ -207,8 +208,8 @@ func (vt *V87Planet) Position2000(jde float64) (L, B base.Angle, R float64) {
 		}
 		return base.Horner(τ, cf[:len(series)]...)
 	}
-	L = base.Angle(base.PMod(sum(vt.l), 2*math.Pi))
-	B = base.Angle(sum(vt.b))
+	L = unit.Angle(unit.PMod(sum(vt.l), 2*math.Pi))
+	B = unit.Angle(sum(vt.b))
 	R = sum(vt.r)
 	return
 }
@@ -223,7 +224,7 @@ func (vt *V87Planet) Position2000(jde float64) (L, B base.Angle, R float64) {
 //  L is heliocentric longitude.
 //  B is heliocentric latitude.
 //  R is heliocentric range in AU.
-func (vt *V87Planet) Position(jde float64) (L, B base.Angle, R float64) {
+func (vt *V87Planet) Position(jde float64) (L, B unit.Angle, R float64) {
 	L, B, R = vt.Position2000(jde)
 	eclFrom := &coord.Ecliptic{
 		Lat: B,
@@ -237,13 +238,13 @@ func (vt *V87Planet) Position(jde float64) (L, B base.Angle, R float64) {
 }
 
 // ToFK5 converts ecliptic longitude and latitude from dynamical frame to FK5.
-func ToFK5(L, B base.Angle, jde float64) (L5, B5 base.Angle) {
+func ToFK5(L, B unit.Angle, jde float64) (L5, B5 unit.Angle) {
 	// formula 32.3, p. 219.
 	T := base.J2000Century(jde)
-	Lp := L - base.AngleFromDeg(1.397*T-.00031*T*T)
+	Lp := L - unit.AngleFromDeg(1.397*T-.00031*T*T)
 	sLp, cLp := math.Sincos(Lp.Rad())
 	// (32.3) p. 219
-	L5 = L + base.AngleFromSec(-.09033+.03916*(cLp+sLp)*math.Tan(B.Rad()))
-	B5 = B + base.AngleFromSec(.03916*(cLp-sLp))
+	L5 = L + unit.AngleFromSec(-.09033+.03916*(cLp+sLp)*math.Tan(B.Rad()))
+	B5 = B + unit.AngleFromSec(.03916*(cLp-sLp))
 	return
 }

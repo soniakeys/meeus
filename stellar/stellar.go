@@ -6,6 +6,8 @@ package stellar
 
 import (
 	"math"
+
+	"github.com/soniakeys/unit"
 )
 
 // Sum returns the combined apparent magnitude of two stars.
@@ -39,9 +41,9 @@ func Difference(ratio float64) float64 {
 
 // AbsoluteByParallax returns absolute magnitude given annual parallax.
 //
-// Argument m is apparent magnitude, π is annual parallax in arc seconds.
-func AbsoluteByParallax(m, π float64) float64 {
-	return m + 5 + 5*math.Log10(π)
+// Argument m is apparent magnitude, π is annual parallax.
+func AbsoluteByParallax(m float64, π unit.Angle) float64 {
+	return m + 5 + 5*math.Log10(π.Sec())
 }
 
 // AbsoluteByDistance returns absolute magnitude given distance.

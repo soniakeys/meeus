@@ -7,7 +7,6 @@ package saturnring_test
 
 import (
 	"fmt"
-	"math"
 	"testing"
 
 	pp "github.com/soniakeys/meeus/planetposition"
@@ -28,12 +27,12 @@ func ExampleRing() {
 		return
 	}
 	B, Bʹ, ΔU, P, a, b := saturnring.Ring(2448972.50068, earth, saturn)
-	fmt.Printf("B  = %.3f\n", B*180/math.Pi)
-	fmt.Printf("Bʹ = %.3f\n", Bʹ*180/math.Pi)
-	fmt.Printf("ΔU = %.3f\n", ΔU*180/math.Pi)
-	fmt.Printf("P  = %.3f\n", P*180/math.Pi)
-	fmt.Printf("a  = %.2d\n", sexa.Angle(a).Fmt())
-	fmt.Printf("b  = %.2d\n", sexa.Angle(b).Fmt())
+	fmt.Printf("B  = %.3f\n", B.Deg())
+	fmt.Printf("Bʹ = %.3f\n", Bʹ.Deg())
+	fmt.Printf("ΔU = %.3f\n", ΔU.Deg())
+	fmt.Printf("P  = %.3f\n", P.Deg())
+	fmt.Printf("a  = %.2d\n", sexa.FmtAngle(a))
+	fmt.Printf("b  = %.2d\n", sexa.FmtAngle(b))
 	// Output:
 	// B  = 16.442
 	// Bʹ = 14.679

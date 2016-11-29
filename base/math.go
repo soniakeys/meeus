@@ -3,28 +3,23 @@
 
 package base
 
-import "math"
+import "github.com/soniakeys/unit"
 
 // SmallAngle is threshold used by various routines for switching between
 // trigonometric functions and Pythagorean approximations.
 //
 // In chapter 17, p. 109, Meeus recommends 10′.
 var (
-	SmallAngle    = 10 * math.Pi / 180 / 60 // about .003 radians
-	CosSmallAngle = math.Cos(SmallAngle)    // about .999996
+	SmallAngle    = unit.AngleFromMin(10) // about .003 radians
+	CosSmallAngle = SmallAngle.Cos()      // about .999996
 )
 
-// PMod returns a positive floating-point x mod y.
+// Hav implements the haversine trigonometric function.
 //
-// For a positive argument y, it returns a value in the range [0,y).
-//
-// The result may not be useful if y is negative.
-func PMod(x, y float64) float64 {
-	r := math.Mod(x, y)
-	if r < 0 {
-		r += y
-	}
-	return r
+// See https://en.wikipedia.org/wiki/Haversine_formula.
+func Hav(a unit.Angle) float64 {
+	// (17.5) p. 115
+	return .5 * (1 - a.Cos())
 }
 
 // Horner evaluates a polynomal with coefficients c at x.  The constant

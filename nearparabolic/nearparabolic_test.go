@@ -37,8 +37,8 @@ func TestAnomalyDistance(t *testing.T) {
 			t.Error(err)
 			continue
 		}
-		if math.Abs(ν*180/math.Pi-d.ν) > 1e-5 {
-			t.Errorf("got ν = %.6f expected %.6f", ν*180/math.Pi, d.ν)
+		if math.Abs(ν.Deg()-d.ν) > 1e-5 {
+			t.Errorf("got ν = %.6f expected %.6f", ν.Deg(), d.ν)
 		}
 		if math.Abs(r-d.r) > 1e-6 {
 			t.Errorf("got r = %.7f expected %.7f", r, d.r)
@@ -88,9 +88,9 @@ func TestAnomalyDistance2(t *testing.T) {
 			t.Errorf("%#v", d)
 			continue
 		}
-		if math.Abs(ν*180/math.Pi-d.ν) > math.Pow(10, float64(-d.p)) {
+		if math.Abs(ν.Deg()-d.ν) > math.Pow(10, float64(-d.p)) {
 			t.Errorf("got ν = %.*f expected %.*f",
-				d.p+1, ν*180/math.Pi, d.p+1, d.ν)
+				d.p+1, ν.Deg(), d.p+1, d.ν)
 		}
 	}
 }

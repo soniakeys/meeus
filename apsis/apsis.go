@@ -8,6 +8,7 @@ import (
 	"math"
 
 	"github.com/soniakeys/meeus/base"
+	"github.com/soniakeys/unit"
 )
 
 // conversion factor from k to T, given in (50.3) p. 356
@@ -58,14 +59,14 @@ func Apogee(year float64) float64 {
 // ApogeeParallax returns equatorial horizontal parallax of the Moon at the Apogee nearest the given date.
 //
 // Year is a decimal year specifying a date.
-func ApogeeParallax(year float64) base.Angle {
+func ApogeeParallax(year float64) unit.Angle {
 	return newLa(year, .5).ap()
 }
 
 // PerigeeParallax returns equatorial horizontal parallax of the Moon at the Perigee nearest the given date.
 //
 // Year is a decimal year specifying a date.
-func PerigeeParallax(year float64) base.Angle {
+func PerigeeParallax(year float64) unit.Angle {
 	return newLa(year, 0).pp()
 }
 
@@ -189,8 +190,8 @@ func (l *la) ac() float64 {
 }
 
 // apogee parallax
-func (l *la) ap() base.Angle {
-	return base.AngleFromSec(
+func (l *la) ap() unit.Angle {
+	return unit.AngleFromSec(
 		3245.251 +
 			-9.147*math.Cos(2*l.D) +
 			-.841*math.Cos(l.D) +
@@ -212,8 +213,8 @@ func (l *la) ap() base.Angle {
 }
 
 // perigee parallax
-func (l *la) pp() base.Angle {
-	return base.AngleFromSec(
+func (l *la) pp() unit.Angle {
+	return unit.AngleFromSec(
 		3629.215 +
 			63.224*math.Cos(2*l.D) +
 			-6.990*math.Cos(4*l.D) +

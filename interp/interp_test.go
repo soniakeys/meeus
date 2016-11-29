@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/interp"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleLen3_InterpolateN() {
@@ -23,7 +23,7 @@ func ExampleLen3_InterpolateN() {
 		fmt.Println(err)
 		return
 	}
-	h := base.FromSexa(0, 4, 21, 0)
+	h := unit.FromSexa(0, 4, 21, 0)
 	fmt.Println(h, "hours")
 	n := h / 24
 	y := d3.InterpolateN(n)
@@ -44,7 +44,7 @@ func ExampleLen3_InterpolateX() {
 		fmt.Println(err)
 		return
 	}
-	x := 8 + base.NewTime(' ', 4, 21, 0).Day() // 8th day at 4:21
+	x := 8 + unit.NewTime(' ', 4, 21, 0).Day() // 8th day at 4:21
 	y := d3.InterpolateX(x)
 	fmt.Printf("%.6f\n", y)
 	// Output:
@@ -71,7 +71,7 @@ func ExampleLen3_Extremum() {
 	fmt.Printf("date:     %.4f\n", x)
 	i, frac := math.Modf(x)
 	fmt.Printf("1992 May %d, at %h TD",
-		int(i), sexa.TimeFromDay(frac).Fmt())
+		int(i), sexa.FmtTime(unit.TimeFromDay(frac)))
 	// Output:
 	// distance:  1.3812030 AU
 	// date:     17.5864
@@ -84,9 +84,9 @@ func ExampleLen3_Zero() {
 	x3 := 28.
 	// the y unit doesn't matter.  working in degrees is fine
 	yTable := []float64{
-		base.FromSexa('-', 0, 28, 13.4),
-		base.FromSexa(' ', 0, 6, 46.3),
-		base.FromSexa(' ', 0, 38, 23.2),
+		unit.FromSexa('-', 0, 28, 13.4),
+		unit.FromSexa(' ', 0, 6, 46.3),
+		unit.FromSexa(' ', 0, 38, 23.2),
 	}
 	d3, err := interp.NewLen3(x1, x3, yTable)
 	if err != nil {
@@ -101,7 +101,7 @@ func ExampleLen3_Zero() {
 	fmt.Printf("February %.5f\n", x)
 	i, frac := math.Modf(x)
 	fmt.Printf("February %d, at %m TD",
-		int(i), sexa.TimeFromDay(frac).Fmt())
+		int(i), sexa.FmtTime(unit.TimeFromDay(frac)))
 	// Output:
 	// February 26.79873
 	// February 26, at 19ʰ10ᵐ TD
@@ -133,11 +133,11 @@ func ExampleLen5_InterpolateX() {
 	x5 := 29.
 	// work in degrees
 	yTable := []float64{
-		base.FromSexa(' ', 0, 54, 36.125),
-		base.FromSexa(' ', 0, 54, 24.606),
-		base.FromSexa(' ', 0, 54, 15.486),
-		base.FromSexa(' ', 0, 54, 08.694),
-		base.FromSexa(' ', 0, 54, 04.133),
+		unit.FromSexa(' ', 0, 54, 36.125),
+		unit.FromSexa(' ', 0, 54, 24.606),
+		unit.FromSexa(' ', 0, 54, 15.486),
+		unit.FromSexa(' ', 0, 54, 08.694),
+		unit.FromSexa(' ', 0, 54, 04.133),
 	}
 	d5, err := interp.NewLen5(x1, x5, yTable)
 	if err != nil {
@@ -147,8 +147,7 @@ func ExampleLen5_InterpolateX() {
 	n := (3 + 20./60) / 24
 	x := 28 + n
 	y := d5.InterpolateX(x)
-	// radians easy to format
-	fmt.Printf("%.3d", sexa.AngleFromDeg(y).Fmt())
+	fmt.Printf("%.3d", sexa.FmtAngle(unit.AngleFromDeg(y)))
 	// Output:
 	// 54′13″.369
 }
@@ -158,11 +157,11 @@ func ExampleLen5_Zero() {
 	x1 := 25.
 	x5 := 29.
 	yTable := []float64{
-		base.FromSexa('-', 1, 11, 21.23),
-		base.FromSexa('-', 0, 28, 12.31),
-		base.FromSexa(' ', 0, 16, 07.02),
-		base.FromSexa(' ', 1, 01, 00.13),
-		base.FromSexa(' ', 1, 45, 46.33),
+		unit.FromSexa('-', 1, 11, 21.23),
+		unit.FromSexa('-', 0, 28, 12.31),
+		unit.FromSexa(' ', 0, 16, 07.02),
+		unit.FromSexa(' ', 1, 01, 00.13),
+		unit.FromSexa(' ', 1, 45, 46.33),
 	}
 	d5, err := interp.NewLen5(x1, x5, yTable)
 	if err != nil {
@@ -177,7 +176,7 @@ func ExampleLen5_Zero() {
 	fmt.Printf("1988 January %.6f\n", z)
 	zInt, zFrac := math.Modf(z)
 	fmt.Printf("1988 January %d at %m TD\n", int(zInt),
-		sexa.TimeFromDay(zFrac).Fmt())
+		sexa.FmtTime(unit.TimeFromDay(zFrac)))
 
 	// compare result to that from just three central values
 	d3, err := interp.NewLen3(26, 28, yTable[1:4])
@@ -203,16 +202,16 @@ func ExampleLen5_Zero() {
 func ExampleLen4Half() {
 	// Example 3.f, p. 32.
 	half, err := interp.Len4Half([]float64{
-		base.FromSexa(0, 10, 18, 48.732),
-		base.FromSexa(0, 10, 23, 22.835),
-		base.FromSexa(0, 10, 27, 57.247),
-		base.FromSexa(0, 10, 32, 31.983),
+		unit.FromSexa(0, 10, 18, 48.732),
+		unit.FromSexa(0, 10, 23, 22.835),
+		unit.FromSexa(0, 10, 27, 57.247),
+		unit.FromSexa(0, 10, 32, 31.983),
 	})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("%.3d", sexa.RAFromHour(half).Fmt())
+	fmt.Printf("%.3d", sexa.FmtRA(unit.RAFromHour(half)))
 	// Output:
 	// 10ʰ25ᵐ40ˢ.001
 }
