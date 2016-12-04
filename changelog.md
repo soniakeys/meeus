@@ -1,3 +1,18 @@
+## 3 Dec 2016
+
+Breaking changes, mostly driven by the sexagesimal formatting.  The formatting
+routines are moved to an external package now.  They rely on types defined in
+yet another external package.  The most significant change to the meeus
+packages is that a large number of function parameters and return values
+are changed from float64 to one of these externally defined types.  There
+are four types for now, Angle, HourAngle, RA, and Time.  An advantage of
+float64s is terseness and simplicity.  Defined types though have advantages
+of type checking, clarity and readability, and consistent unit representation.
+
+There are many quantities other than these four types and they remain as
+float64s for now.
+
+
 ## v1 31 Dec 2014
 
 Status:  No changes in the last year!  89 GitHub stars currently, otherwise
