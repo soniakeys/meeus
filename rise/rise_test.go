@@ -29,9 +29,9 @@ func ExampleApproxTimes() {
 		return
 	}
 	// Units for "m" values given near top of p. 104 are day fraction.
-	fmt.Printf("rising:  %+.5f  %02s\n", tRise/86400, sexa.FmtTime(tRise))
-	fmt.Printf("transit: %+.5f  %02s\n", tTransit/86400, sexa.FmtTime(tTransit))
-	fmt.Printf("seting:  %+.5f  %02s\n", tSet/86400, sexa.FmtTime(tSet))
+	fmt.Printf("rising:  %+.5f %02s\n", tRise/86400, sexa.FmtTime(tRise))
+	fmt.Printf("transit: %+.5f %02s\n", tTransit/86400, sexa.FmtTime(tTransit))
+	fmt.Printf("seting:  %+.5f %02s\n", tSet/86400, sexa.FmtTime(tSet))
 	// Output:
 	// rising:  +0.51816  12ʰ26ᵐ09ˢ
 	// transit: +0.81965  19ʰ40ᵐ17ˢ
@@ -63,9 +63,9 @@ func ExampleTimes() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("rising:  %+.5f  %02s\n", tRise/86400, sexa.FmtTime(tRise))
-	fmt.Printf("transit: %+.5f  %02s\n", tTransit/86400, sexa.FmtTime(tTransit))
-	fmt.Printf("seting:  %+.5f  %02s\n", tSet/86400, sexa.FmtTime(tSet))
+	fmt.Printf("rising:  %+.5f %02s\n", tRise/86400, sexa.FmtTime(tRise))
+	fmt.Printf("transit: %+.5f %02s\n", tTransit/86400, sexa.FmtTime(tTransit))
+	fmt.Printf("seting:  %+.5f %02s\n", tSet/86400, sexa.FmtTime(tSet))
 	// Output:
 	// rising:  +0.51766  12ʰ25ᵐ26ˢ
 	// transit: +0.81980  19ʰ40ᵐ30ˢ
