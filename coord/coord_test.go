@@ -5,10 +5,9 @@ package coord_test
 
 import (
 	"fmt"
-	"math"
-	"testing"
 	"time"
 
+	"github.com/soniakeys/meeus/base"
 	"github.com/soniakeys/meeus/coord"
 	"github.com/soniakeys/meeus/globe"
 	"github.com/soniakeys/meeus/julian"
@@ -17,11 +16,23 @@ import (
 	"github.com/soniakeys/unit"
 )
 
+func ExampleEclToEq() {
+	// Exercise, end of Example 13.a, p. 95.
+	α, δ := coord.EclToEq(
+		unit.AngleFromDeg(113.21563),
+		unit.AngleFromDeg(6.68417),
+		base.SOblJ2000,
+		base.COblJ2000)
+	fmt.Printf("α = %.3d, δ = %+.2d\n", sexa.FmtRA(α), sexa.FmtAngle(δ))
+	// Output:
+	// α = 7ʰ45ᵐ18ˢ.946, δ = +28°1′34″.26
+}
+
 func ExampleEcliptic_EqToEcl() {
 	// Example 13.a, p. 95.
 	eq := &coord.Equatorial{
-		unit.NewRA(7, 45, 18.946),
-		unit.NewAngle(' ', 28, 1, 34.26),
+		RA:  unit.NewRA(7, 45, 18.946),
+		Dec: unit.NewAngle(' ', 28, 1, 34.26),
 	}
 	obl := coord.NewObliquity(unit.AngleFromDeg(23.4392911))
 	ecl := new(coord.Ecliptic).EqToEcl(eq, obl)
@@ -32,25 +43,75 @@ func ExampleEcliptic_EqToEcl() {
 	// β = +6°.684170
 }
 
-func TestEquatorial_EclToEq(t *testing.T) {
-	// repeat example above
-	eq0 := &coord.Equatorial{
+func ExampleEqToEcl() {
+	// Example 13.a, p. 95 but using precomputed obliquity sine and cosine.
+	λ, β := coord.EqToEcl(
 		unit.NewRA(7, 45, 18.946),
 		unit.NewAngle(' ', 28, 1, 34.26),
-	}
-	obl := coord.NewObliquity(23.4392911 * math.Pi / 180)
-	ecl := new(coord.Ecliptic).EqToEcl(eq0, obl)
-
-	// now reverse transform
-	eq := new(coord.Equatorial).EclToEq(ecl, obl)
-	if math.Abs((eq.RA-eq0.RA).Rad()/eq.RA.Rad()) > 1e-15 {
-		t.Fatal("RA:", eq0.RA, eq.RA)
-	}
-	if math.Abs((eq.Dec-eq0.Dec).Rad()/eq.Dec.Rad()) > 1e-15 {
-		t.Fatal("Dec:", eq0.Dec, eq.Dec)
-	}
+		base.SOblJ2000, base.COblJ2000)
+	fmt.Printf("λ = %.5j\n", sexa.FmtAngle(λ))
+	fmt.Printf("β = %+.6j\n", sexa.FmtAngle(β))
+	// Output:
+	// λ = 113°.21563
+	// β = +6°.684170
 }
 
+func ExampleEqToGal() {
+	// Exercise, p. 96.
+	l, b := coord.EqToGal(
+		unit.NewRA(17, 48, 59.74),
+		unit.NewAngle('-', 14, 43, 8.2))
+	fmt.Printf("l = %.4j, b = %+.4j\n", sexa.FmtAngle(l), sexa.FmtAngle(b))
+	// Output:
+	// l = 12°.9593, b = +6°.0463
+}
+
+func ExampleEqToHz() {
+	// Example 13.b, p. 95.
+	jd := julian.TimeToJD(time.Date(1987, 4, 10, 19, 21, 0, 0, time.UTC))
+	A, h := coord.EqToHz(
+		unit.NewRA(23, 9, 16.641),
+		unit.NewAngle('-', 6, 43, 11.61),
+		unit.NewAngle(' ', 38, 55, 17),
+		unit.NewAngle(' ', 77, 3, 56),
+		sidereal.Apparent(jd))
+	fmt.Printf("A = %+.3j\n", sexa.FmtAngle(A))
+	fmt.Printf("h = %+.3j\n", sexa.FmtAngle(h))
+	// Output:
+	// A = +68°.034
+	// h = +15°.125
+}
+
+func ExampleEquatorial_EclToEq() {
+	// Exercise, end of Example 13.a, p. 95.
+	ecl := &coord.Ecliptic{
+		Lon: unit.AngleFromDeg(113.21563),
+		Lat: unit.AngleFromDeg(6.68417),
+	}
+	ε := coord.NewObliquity(unit.AngleFromDeg(23.4392911))
+	eq := new(coord.Equatorial).EclToEq(ecl, ε)
+	fmt.Printf("α = %.3d, δ = %+.2d\n",
+		sexa.FmtRA(eq.RA), sexa.FmtAngle(eq.Dec))
+	// Output:
+	// α = 7ʰ45ᵐ18ˢ.946, δ = +28°1′34″.26
+}
+
+func ExampleEquatorial_HzToEq() {
+	// Example 13.b, p. 95, inverse.
+	hz := &coord.Horizontal{
+		Az:  unit.AngleFromDeg(68.0337),
+		Alt: unit.AngleFromDeg(15.1249),
+	}
+	g := globe.Coord{
+		Lat: unit.NewAngle(' ', 38, 55, 17),
+		Lon: unit.NewAngle(' ', 77, 3, 56),
+	}
+	jd := julian.TimeToJD(time.Date(1987, 4, 10, 19, 21, 0, 0, time.UTC))
+	eq := new(coord.Equatorial).HzToEq(hz, g, sidereal.Apparent(jd))
+	fmt.Printf("α = %+.1d, δ = %+d\n", sexa.FmtRA(eq.RA), sexa.FmtAngle(eq.Dec))
+	// Output:
+	// α = +23ʰ9ᵐ16ˢ.6, δ = -6°43′12″
+}
 func ExampleHorizontal_EqToHz() {
 	// Example 13.b, p. 95.
 	eq := &coord.Equatorial{
@@ -71,15 +132,40 @@ func ExampleHorizontal_EqToHz() {
 	// h = +15°.125
 }
 
-func TestEqToGal(t *testing.T) {
-	g := new(coord.Galactic).EqToGal(&coord.Equatorial{
+/* FAILS
+func ExampleGalToEq() {
+	// Exercise, p. 96, inverse
+	α, δ := coord.GalToEq(
+		unit.AngleFromDeg(12.9593), unit.AngleFromDeg(6.0463))
+	fmt.Printf("α = %.2d, δ = %+.1d\n", sexa.FmtRA(α), sexa.FmtAngle(δ))
+	// Output:
+	// α = 17ʰ48ᵐ59ˢ.74, δ = -14°43′8″.2
+}
+*/
+
+func ExampleHzToEq() {
+	// Example 13.b, p. 95, inverse.
+	jd := julian.TimeToJD(time.Date(1987, 4, 10, 19, 21, 0, 0, time.UTC))
+	α, δ := coord.HzToEq(
+		unit.AngleFromDeg(68.0337),
+		unit.AngleFromDeg(15.1249),
+		unit.NewAngle(' ', 38, 55, 17),
+		unit.NewAngle(' ', 77, 3, 56),
+		sidereal.Apparent(jd))
+	fmt.Printf("α = %+.1d, δ = %+d\n", sexa.FmtRA(α), sexa.FmtAngle(δ))
+	// Output:
+	// α = +23ʰ9ᵐ16ˢ.6, δ = -6°43′12″
+}
+
+func ExampleGalactic_EqToGal() {
+	// Exercise, p. 96.
+	eq := &coord.Equatorial{
 		RA:  unit.NewRA(17, 48, 59.74),
 		Dec: unit.NewAngle('-', 14, 43, 8.2),
-	})
-	if s := fmt.Sprintf("%.4f", g.Lon.Deg()); s != "12.9593" {
-		t.Fatal("lon:", s)
 	}
-	if s := fmt.Sprintf("%+.4f", g.Lat.Deg()); s != "+6.0463" {
-		t.Fatal("lat:", s)
-	}
+	g := new(coord.Galactic).EqToGal(eq)
+	fmt.Printf("l = %.4j, b = %+.4j\n",
+		sexa.FmtAngle(g.Lon), sexa.FmtAngle(g.Lat))
+	// Output:
+	// l = 12°.9593, b = +6°.0463
 }

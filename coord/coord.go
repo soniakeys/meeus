@@ -16,12 +16,6 @@
 // allocations, and the struct pointers will pass more efficiently on the
 // stack.  These methods transform their arguments, placing the result in
 // the receiver.  The receiver is then returned for convenience.
-//
-// A number of the functions take sine and cosine of the obliquity of the
-// ecliptic.  This becomes an advantage when you doing multiple transformations
-// with the same obliquity.  The efficiency of computing sine and cosine once
-// and reuse these values far outweighs the overhead of passing one number as
-// opposed to two.
 package coord
 
 import (
@@ -33,7 +27,7 @@ import (
 
 // Obliquity represents the obliquity of the ecliptic.
 type Obliquity struct {
-	S, C float64
+	S, C float64 // sine and cosine of obliquity
 }
 
 // NewObliquity constructs a new Obliquity.
@@ -54,10 +48,7 @@ type Ecliptic struct {
 
 // EqToEcl converts equatorial coordinates to ecliptic coordinates.
 func (ecl *Ecliptic) EqToEcl(eq *Equatorial, ε *Obliquity) *Ecliptic {
-	sα, cα := eq.RA.Sincos()
-	sδ, cδ := eq.Dec.Sincos()
-	ecl.Lon = unit.Angle(math.Atan2(sα*ε.C+(sδ/cδ)*ε.S, cα)) // (13.1) p. 93
-	ecl.Lat = unit.Angle(math.Asin(sδ*ε.C - cδ*ε.S*sα))      // (13.2) p. 93
+	ecl.Lon, ecl.Lat = EqToEcl(eq.RA, eq.Dec, ε.S, ε.C)
 	return ecl
 }
 
@@ -88,10 +79,7 @@ type Equatorial struct {
 
 // EclToEq converts ecliptic coordinates to equatorial coordinates.
 func (eq *Equatorial) EclToEq(ecl *Ecliptic, ε *Obliquity) *Equatorial {
-	sβ, cβ := ecl.Lat.Sincos()
-	sλ, cλ := ecl.Lon.Sincos()
-	eq.RA = unit.RAFromRad(math.Atan2(sλ*ε.C-(sβ/cβ)*ε.S, cλ)) // (13.3) p. 93
-	eq.Dec = unit.Angle(math.Asin(sβ*ε.C + cβ*ε.S*sλ))         // (13.4) p. 93
+	eq.RA, eq.Dec = EclToEq(ecl.Lon, ecl.Lat, ε.S, ε.C)
 	return eq
 }
 
@@ -119,12 +107,7 @@ func EclToEq(λ, β unit.Angle, sε, cε float64) (α unit.RA, δ unit.Angle) {
 // in the sense that if coordinates are apparent, sidereal time must be
 // apparent as well.
 func (eq *Equatorial) HzToEq(hz *Horizontal, g globe.Coord, st unit.Time) *Equatorial {
-	sA, cA := hz.Az.Sincos()
-	sh, ch := hz.Alt.Sincos()
-	sφ, cφ := g.Lat.Sincos()
-	H := math.Atan2(sA, cA*sφ+sh/ch*cφ)
-	eq.RA = unit.RAFromRad(st.Rad() - g.Lon.Rad() - H)
-	eq.Dec = unit.Angle(math.Asin(sφ*sh - cφ*ch*cA))
+	eq.RA, eq.Dec = HzToEq(hz.Az, hz.Alt, g.Lat, g.Lon, st)
 	return eq
 }
 
@@ -160,12 +143,7 @@ func HzToEq(A, h, φ, ψ unit.Angle, st unit.Time) (α unit.RA, δ unit.Angle) {
 // B1950.0.  For subsequent conversion to other epochs, see package precess and
 // utility functions in package meeus.
 func (eq *Equatorial) GalToEq(g *Galactic) *Equatorial {
-	sdLon, cdLon := (g.Lon - galacticLon0).Sincos()
-	sgδ, cgδ := galacticNorth.Dec.Sincos()
-	sb, cb := g.Lat.Sincos()
-	y := math.Atan2(sdLon, cdLon*sgδ-(sb/cb)*cgδ)
-	eq.RA = unit.RAFromRad(y + galacticNorth.RA.Rad())
-	eq.Dec = unit.Angle(math.Asin(sb*sgδ + cb*cgδ*cdLon))
+	eq.RA, eq.Dec = GalToEq(g.Lon, g.Lat)
 	return eq
 }
 
@@ -199,12 +177,7 @@ type Horizontal struct {
 // Sidereal time must be consistent with the equatorial coordinates.
 // If coordinates are apparent, sidereal time must be apparent as well.
 func (hz *Horizontal) EqToHz(eq *Equatorial, g *globe.Coord, st unit.Time) *Horizontal {
-	H := st.Rad() - g.Lon.Rad() - eq.RA.Rad()
-	sH, cH := math.Sincos(H)
-	sφ, cφ := g.Lat.Sincos()
-	sδ, cδ := eq.Dec.Sincos()
-	hz.Az = unit.Angle(math.Atan2(sH, cH*sφ-(sδ/cδ)*cφ)) // (13.5) p. 93
-	hz.Alt = unit.Angle(math.Asin(sφ*sδ + cφ*cδ*cH))     // (13.6) p. 93
+	hz.Az, hz.Alt = EqToHz(eq.RA, eq.Dec, g.Lat, g.Lon, st)
 	return hz
 }
 
@@ -227,7 +200,7 @@ func EqToHz(α unit.RA, δ, φ, ψ unit.Angle, st unit.Time) (A, h unit.Angle) {
 	H := st.Rad() - ψ.Rad() - α.Rad()
 	sH, cH := math.Sincos(H)
 	sφ, cφ := φ.Sincos()
-	sδ, cδ := ψ.Sincos()
+	sδ, cδ := δ.Sincos()
 	A = unit.Angle(math.Atan2(sH, cH*sφ-(sδ/cδ)*cφ)) // (13.5) p. 93
 	h = unit.Angle(math.Asin(sφ*sδ + cφ*cδ*cH))      // (13.6) p. 93
 	return
@@ -252,14 +225,7 @@ var galacticLon0 = unit.AngleFromDeg(123)
 // For conversion to B1950, see package precess and utility functions in
 // package "unit".
 func (g *Galactic) EqToGal(eq *Equatorial) *Galactic {
-	sdα, cdα := (galacticNorth.RA - eq.RA).Sincos()
-	sgδ, cgδ := galacticNorth.Dec.Sincos()
-	sδ, cδ := eq.Dec.Sincos()
-	// (13.7) p. 94
-	x := unit.Angle(math.Atan2(sdα, cdα*sgδ-(sδ/cδ)*cgδ))
-	g.Lon = (galacticLon0 + math.Pi - x).Mod1()
-	// (13.8) p. 94
-	g.Lat = unit.Angle(math.Asin(sδ*sgδ + cδ*cgδ*cdα))
+	g.Lon, g.Lat = EqToGal(eq.RA, eq.Dec)
 	return g
 }
 
