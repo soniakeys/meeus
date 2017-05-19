@@ -96,6 +96,18 @@ func ExampleEquatorial_EclToEq() {
 	// α = 7ʰ45ᵐ18ˢ.946, δ = +28°1′34″.26
 }
 
+func ExampleEquatorial_GalToEq() {
+	// Exercise, p. 96, inverse
+	g := &coord.Galactic{
+		Lon: unit.AngleFromDeg(12.9593),
+		Lat: unit.AngleFromDeg(6.0463),
+	}
+	eq := new(coord.Equatorial).GalToEq(g)
+	fmt.Printf("α = %.1d, δ = %+d\n", sexa.FmtRA(eq.RA), sexa.FmtAngle(eq.Dec))
+	// Output:
+	// α = 17ʰ48ᵐ59ˢ.7, δ = -14°43′8″
+}
+
 func ExampleEquatorial_HzToEq() {
 	// Example 13.b, p. 95, inverse.
 	hz := &coord.Horizontal{
@@ -132,16 +144,14 @@ func ExampleHorizontal_EqToHz() {
 	// h = +15°.125
 }
 
-/* FAILS
 func ExampleGalToEq() {
 	// Exercise, p. 96, inverse
 	α, δ := coord.GalToEq(
 		unit.AngleFromDeg(12.9593), unit.AngleFromDeg(6.0463))
-	fmt.Printf("α = %.2d, δ = %+.1d\n", sexa.FmtRA(α), sexa.FmtAngle(δ))
+	fmt.Printf("α = %.1d, δ = %+d\n", sexa.FmtRA(α), sexa.FmtAngle(δ))
 	// Output:
-	// α = 17ʰ48ᵐ59ˢ.74, δ = -14°43′8″.2
+	// α = 17ʰ48ᵐ59ˢ.7, δ = -14°43′8″
 }
-*/
 
 func ExampleHzToEq() {
 	// Example 13.b, p. 95, inverse.

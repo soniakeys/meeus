@@ -147,17 +147,31 @@ func (eq *Equatorial) GalToEq(g *Galactic) *Equatorial {
 	return eq
 }
 
+var (
+	// IAU B1950.0 coordinates of galactic North Pole
+	GalacticNorth1950 = &Equatorial{
+		RA:  unit.NewRA(12, 49, 0),
+		Dec: unit.AngleFromDeg(27.4),
+	}
+	// Meeus gives 33 as the origin of galactic longitudes relative to the
+	// ascending node of of the galactic equator.  33 + 90 = 123, the IAU
+	// value for origin relative to the equatorial pole.
+	Galactic0Lon1950 = unit.AngleFromDeg(33)
+)
+
 // GalToEq converts galactic coordinates to equatorial coordinates.
 //
 // Resulting equatorial coordinates will be referred to the standard equinox of
 // B1950.0.  For subsequent conversion to other epochs, see package precess and
 // utility functions in package meeus.
 func GalToEq(l, b unit.Angle) (α unit.RA, δ unit.Angle) {
-	sdLon, cdLon := (l - galacticLon0).Sincos()
-	sgδ, cgδ := galacticNorth.Dec.Sincos()
+	// (-Galactic0Lon1950 - math.Pi/2) = magic number of -123 deg
+	sdLon, cdLon := (l - Galactic0Lon1950 - math.Pi/2).Sincos()
+	sgδ, cgδ := GalacticNorth1950.Dec.Sincos()
 	sb, cb := b.Sincos()
 	y := math.Atan2(sdLon, cdLon*sgδ-(sb/cb)*cgδ)
-	α = unit.RAFromRad(y + galacticNorth.RA.Rad())
+	// (GalacticNorth1950.RA.Rad() - math.Pi) = magic number of 12.25 deg
+	α = unit.RAFromRad(y + GalacticNorth1950.RA.Rad() - math.Pi)
 	δ = unit.Angle(math.Asin(sb*sgδ + cb*cgδ*cdLon))
 	return
 }
@@ -212,13 +226,6 @@ type Galactic struct {
 	Lon unit.Angle // Longitude (l) in radians
 }
 
-var galacticNorth = &Equatorial{
-	RA:  unit.NewRA(12, 49, 0),
-	Dec: unit.AngleFromDeg(27.4),
-}
-
-var galacticLon0 = unit.AngleFromDeg(123)
-
 // EqToGal converts equatorial coordinates to galactic coordinates.
 //
 // Equatorial coordinates must be referred to the standard equinox of B1950.0.
@@ -235,12 +242,13 @@ func (g *Galactic) EqToGal(eq *Equatorial) *Galactic {
 // For conversion to B1950, see package precess and utility functions in
 // package "common".
 func EqToGal(α unit.RA, δ unit.Angle) (l, b unit.Angle) {
-	sdα, cdα := (galacticNorth.RA - α).Sincos()
-	sgδ, cgδ := galacticNorth.Dec.Sincos()
+	sdα, cdα := (GalacticNorth1950.RA - α).Sincos()
+	sgδ, cgδ := GalacticNorth1950.Dec.Sincos()
 	sδ, cδ := δ.Sincos()
 	// (13.7) p. 94
 	x := unit.Angle(math.Atan2(sdα, cdα*sgδ-(sδ/cδ)*cgδ))
-	l = (galacticLon0 + math.Pi - x).Mod1()
+	// (Galactic0Lon1950 + 1.5*math.Pi) = magic number of 303 deg
+	l = (Galactic0Lon1950 + 1.5*math.Pi - x).Mod1()
 	// (13.8) p. 94
 	b = unit.Angle(math.Asin(sδ*sgδ + cδ*cgδ*cdα))
 	return
