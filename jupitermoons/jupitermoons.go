@@ -1,7 +1,7 @@
 // Copyright 2013 Sonia Keys
 // License MIT: http://www.opensource.org/licenses/MIT
 
-// Jupitermoons: Chapter 42, Positions of the Satellites of Jupiter.
+// Jupitermoons: Chapter 44, Positions of the Satellites of Jupiter.
 package jupitermoons
 
 import (
@@ -15,7 +15,7 @@ import (
 
 // XY used for returning coordinates of moons.
 type XY struct {
-	X, Y float64
+	X, Y float64 // in units of Jupiter radii
 }
 
 // Positions computes positions of moons of Jupiter.
@@ -72,22 +72,12 @@ func Positions(jde float64) (pI, pII, pIII, pIV XY) {
 	return xy(u1+c1, r1), xy(u2+c2, r2), xy(u3+c3, r3), xy(u4+c4, r4)
 }
 
-// Positions computes positions of moons of Jupiter.
+// E5 computes higher accuracy positions of moons of Jupiter.
 //
 // High accuracy method based on theory "E5."  Results returned in
 // argument pos, which must not be nil.  Returned coordinates in units
 // of Jupiter radii.
 func E5(jde float64, earth, jupiter *pp.V87Planet, pos *[4]XY) {
-	// I'll interject that I don't trust the results of this function.
-	// There is obviously a great chance of typographic errors.
-	// My Y results for the test case of the example don't agree with
-	// Meeus's well at all, but do agree with the results from the less
-	// accurate method.  This would seem to indicate a typo in Meeus's
-	// computer implementation.  On the other hand, while my X results
-	// agree reasonably well with his, our X results for satellite III
-	// don't agree well with the result from the less accurate method,
-	// perhaps indicating a typo in the presented algorithm.
-
 	// variables assigned in following block
 	var λ0, β0, t float64
 	Δ := 5.
@@ -298,41 +288,41 @@ func E5(jde float64, earth, jupiter *pp.V87Planet, pos *[4]XY) {
 	{
 		L := [...]float64{L1, L2, L3, L4}
 		B := [...]float64{
-			math.Atan(.0006393*p*math.Sin(L1-ω1) +
-				.0001825*p*math.Sin(L1-ω2) +
-				.0000329*p*math.Sin(L1-ω3) +
-				-.0000311*p*math.Sin(L1-ψ) +
-				.0000093*p*math.Sin(L1-ω4) +
-				.0000075*p*math.Sin(3*L1-4*l2-1.9927*Σ1+ω2) +
-				.0000046*p*math.Sin(L1+ψ-2*Π-2*G)),
-			math.Atan(.0081004*p*math.Sin(L2-ω2) +
-				.0004512*p*math.Sin(L2-ω3) +
-				-.0003284*p*math.Sin(L2-ψ) +
-				.0001160*p*math.Sin(L2-ω4) +
-				.0000272*p*math.Sin(l1-2*l3+1.0146*Σ2+ω2) +
-				-.0000144*p*math.Sin(L2-ω1) +
-				.0000143*p*math.Sin(L2+ψ-2*Π-2*G) +
-				.0000035*p*math.Sin(L2-ψ+G) +
-				-.0000028*p*math.Sin(l1-2*l3+1.0146*Σ2+ω3)),
-			math.Atan(.0032402*p*math.Sin(L3-ω3) +
-				-.0016911*p*math.Sin(L3-ψ) +
-				.0006847*p*math.Sin(L3-ω4) +
-				-.0002797*p*math.Sin(L3-ω2) +
-				.0000321*p*math.Sin(L3+ψ-2*Π-2*G) +
-				.0000051*p*math.Sin(L3-ψ+G) +
-				-.0000045*p*math.Sin(L3-ψ-G) +
-				-.0000045*p*math.Sin(L3+ψ-2*Π) +
-				.0000037*p*math.Sin(L3+ψ-2*Π-3*G) +
-				.000003*p*math.Sin(2*l2-3*L3+4.03*Σ3+ω2) +
-				-.0000021*p*math.Sin(2*l2-3*L3+4.03*Σ3+ω3)),
-			math.Atan(-.0076579*p*math.Sin(L4-ψ) +
-				.0044134*p*math.Sin(L4-ω4) +
-				-.0005112*p*math.Sin(L4-ω3) +
-				.0000773*p*math.Sin(L4+ψ-2*Π-2*G) +
-				.0000104*p*math.Sin(L4-ψ+G) +
-				-.0000102*p*math.Sin(L4-ψ-G) +
-				.0000088*p*math.Sin(L4+ψ-2*Π-3*G) +
-				-.0000038*p*math.Sin(L4+ψ-2*Π-G)),
+			math.Atan(.0006393*math.Sin(L1-ω1) +
+				.0001825*math.Sin(L1-ω2) +
+				.0000329*math.Sin(L1-ω3) +
+				-.0000311*math.Sin(L1-ψ) +
+				.0000093*math.Sin(L1-ω4) +
+				.0000075*math.Sin(3*L1-4*l2-1.9927*Σ1+ω2) +
+				.0000046*math.Sin(L1+ψ-2*Π-2*G)),
+			math.Atan(.0081004*math.Sin(L2-ω2) +
+				.0004512*math.Sin(L2-ω3) +
+				-.0003284*math.Sin(L2-ψ) +
+				.0001160*math.Sin(L2-ω4) +
+				.0000272*math.Sin(l1-2*l3+1.0146*Σ2+ω2) +
+				-.0000144*math.Sin(L2-ω1) +
+				.0000143*math.Sin(L2+ψ-2*Π-2*G) +
+				.0000035*math.Sin(L2-ψ+G) +
+				-.0000028*math.Sin(l1-2*l3+1.0146*Σ2+ω3)),
+			math.Atan(.0032402*math.Sin(L3-ω3) +
+				-.0016911*math.Sin(L3-ψ) +
+				.0006847*math.Sin(L3-ω4) +
+				-.0002797*math.Sin(L3-ω2) +
+				.0000321*math.Sin(L3+ψ-2*Π-2*G) +
+				.0000051*math.Sin(L3-ψ+G) +
+				-.0000045*math.Sin(L3-ψ-G) +
+				-.0000045*math.Sin(L3+ψ-2*Π) +
+				.0000037*math.Sin(L3+ψ-2*Π-3*G) +
+				.000003*math.Sin(2*l2-3*L3+4.03*Σ3+ω2) +
+				-.0000021*math.Sin(2*l2-3*L3+4.03*Σ3+ω3)),
+			math.Atan(-.0076579*math.Sin(L4-ψ) +
+				.0044134*math.Sin(L4-ω4) +
+				-.0005112*math.Sin(L4-ω3) +
+				.0000773*math.Sin(L4+ψ-2*Π-2*G) +
+				.0000104*math.Sin(L4-ψ+G) +
+				-.0000102*math.Sin(L4-ψ-G) +
+				.0000088*math.Sin(L4+ψ-2*Π-3*G) +
+				-.0000038*math.Sin(L4+ψ-2*Π-G)),
 		}
 		R = [...]float64{
 			5.90569 * (1 +
