@@ -12,6 +12,7 @@ import (
 	"github.com/soniakeys/meeus/julian"
 	pp "github.com/soniakeys/meeus/planetposition"
 	"github.com/soniakeys/sexagesimal"
+	"github.com/soniakeys/unit"
 )
 
 func ExampleV87Planet_Position2000() {
@@ -50,18 +51,46 @@ func ExampleV87Planet_Position() {
 	// R = 0.724602 AU
 }
 
+func ExampleToFK5() {
+	// In example 33.a, p. 226
+	jd := 2448976.5
+	λ := unit.AngleFromDeg(313.07689) // (the value from mid-page)
+	β := unit.AngleFromDeg(-2.08489)
+	λ5, β5 := pp.ToFK5(λ, β, jd)
+	// recovering Δs,
+	Δλ := sexa.FmtAngle(λ5 - λ)
+	Δβ := sexa.FmtAngle(β5 - β)
+	fmt.Printf("λ = %3.5j\n", sexa.FmtAngle(λ))
+	fmt.Printf("β = %3.5j\n", sexa.FmtAngle(β))
+	fmt.Printf("Δλ = %+.5d = %+.5j\n", Δλ, Δλ)
+	fmt.Printf("Δβ = %+.5d = %+.5j\n", Δβ, Δβ)
+	fmt.Printf("FK5 λ = %3.5j\n", sexa.FmtAngle(λ5))
+	fmt.Printf("FK5 β = %3.5j\n", sexa.FmtAngle(β5))
+	// Output:
+	// λ =  313°.07689
+	// β =   -2°.08489
+	// Δλ = -0″.09027 = -°.00003
+	// Δβ = +0″.05535 = +°.00002
+	// FK5 λ =  313°.07686
+	// FK5 β =   -2°.08487
+}
+
 func TestFK5(t *testing.T) {
-	// Meeus provides no worked example for the FK5 conversion given by
-	// formula 32.3, p. 219.  This at least displays the result when applied
-	// to the position of Example 32.a on that page.
-	jd := julian.CalendarGregorianToJD(1992, 12, 20)
-	p, err := pp.LoadPlanet(pp.Venus)
-	if err != nil {
-		fmt.Println(err)
-		return
+	// The effect of issue #10 is in like the 10th decimal place.
+	// ExampleToFK5 above doesn't show it.  We don't have the correct answer, but we can
+	// at least test reproducibility with enough precision to show the effect of the bug fix.
+	jd := 2448976.5
+	λ := unit.AngleFromDeg(313.07689)
+	β := unit.AngleFromDeg(-2.08489)
+	λ5, β5 := pp.ToFK5(λ, β, jd)
+	Δλ := fmt.Sprintf("%.12s", sexa.FmtAngle(λ5-λ))
+	Δβ := fmt.Sprintf("%.12s", sexa.FmtAngle(β5-β))
+	Δλwant := "-0.090265798293″"
+	Δβwant := "0.055352515765″"
+	if Δλ != Δλwant {
+		t.Error(Δλ)
 	}
-	l, b, _ := p.Position(jd)
-	t.Log("L, B from pp.Position:", l, b)
-	l, b = pp.ToFK5(l, b, jd)
-	t.Log("L, B in FK5:          ", l, b)
+	if Δβ != Δβwant {
+		t.Error(Δβ)
+	}
 }
