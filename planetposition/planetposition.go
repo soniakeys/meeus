@@ -241,7 +241,7 @@ func (vt *V87Planet) Position(jde float64) (L, B unit.Angle, R float64) {
 func ToFK5(L, B unit.Angle, jde float64) (L5, B5 unit.Angle) {
 	// formula 32.3, p. 219.
 	T := base.J2000Century(jde)
-	Lp := L - unit.AngleFromDeg(1.397*T-.00031*T*T)
+	Lp := L - unit.AngleFromDeg(1.397*T+.00031*T*T)
 	sLp, cLp := math.Sincos(Lp.Rad())
 	// (32.3) p. 219
 	L5 = L + unit.AngleFromSec(-.09033+.03916*(cLp+sLp)*math.Tan(B.Rad()))

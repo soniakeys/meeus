@@ -7,6 +7,7 @@ package planetposition_test
 
 import (
 	"fmt"
+	"testing"
 
 	"github.com/soniakeys/meeus/julian"
 	pp "github.com/soniakeys/meeus/planetposition"
@@ -47,4 +48,20 @@ func ExampleV87Planet_Position() {
 	// L = +26°.11412
 	// B = -2°.62060
 	// R = 0.724602 AU
+}
+
+func TestFK5(t *testing.T) {
+	// Meeus provides no worked example for the FK5 conversion given by
+	// formula 32.3, p. 219.  This at least displays the result when applied
+	// to the position of Example 32.a on that page.
+	jd := julian.CalendarGregorianToJD(1992, 12, 20)
+	p, err := pp.LoadPlanet(pp.Venus)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	l, b, _ := p.Position(jd)
+	t.Log("L, B from pp.Position:", l, b)
+	l, b = pp.ToFK5(l, b, jd)
+	t.Log("L, B in FK5:          ", l, b)
 }
