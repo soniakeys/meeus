@@ -158,10 +158,13 @@ func (p *Precessor) Precess(eqFrom, eqTo *coord.Equatorial) *coord.Equatorial {
 	B := p.cθ*cδ*cαζ - p.sθ*sδ
 	C := p.sθ*cδ*cαζ + p.cθ*sδ
 	eqTo.RA = unit.RAFromRad(math.Atan2(A, B) + p.z.Rad())
-	if C < base.CosSmallAngle {
+	if math.Abs(C) < base.CosSmallAngle {
 		eqTo.Dec = unit.Angle(math.Asin(C))
 	} else {
 		eqTo.Dec = unit.Angle(math.Acos(math.Hypot(A, B))) // near pole
+		if C < 0 {
+			eqTo.Dec = -eqTo.Dec
+		}
 	}
 	return eqTo
 }
@@ -248,10 +251,13 @@ func (p *EclipticPrecessor) Precess(eclFrom, eclTo *coord.Ecliptic) *coord.Eclip
 	B := cβ * cd
 	C := p.cη*sβ + p.sη*cβ*sd
 	eclTo.Lon = p.p + p.π - unit.Angle(math.Atan2(A, B))
-	if C < base.CosSmallAngle {
+	if math.Abs(C) < base.CosSmallAngle {
 		eclTo.Lat = unit.Angle(math.Asin(C))
 	} else {
 		eclTo.Lat = unit.Angle(math.Acos(math.Hypot(A, B))) // near pole
+		if C < 0 {
+			eclTo.Lat = -eclTo.Lat
+		}
 	}
 	return eclTo
 }
