@@ -25,7 +25,7 @@ const (
 //
 // Δ is distance in AU.
 //
-// Result in seconds of time.
+// Result in days.
 func LightTime(Δ float64) float64 {
 	// Formula given as (33.3) p. 224.
 	return .0057755183 * Δ
