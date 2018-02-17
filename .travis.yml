@@ -6,8 +6,6 @@ go:
   - go1.1.x
   - master
 
-install:
-  - go get github.com/soniakeys/sexagesimal
-  - go get github.com/soniakeys/meeus
+install: go get -t github.com/soniakeys/meeus/...
 
 script: go test -tags nopp ./...
