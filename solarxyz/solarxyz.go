@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Solarxyz: Chapter 26, Rectangular Coordinates of the Sun.
 package solarxyz

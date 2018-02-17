@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Eclipse: Chapter 54, Eclipses.
 package eclipse

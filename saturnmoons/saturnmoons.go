@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Saturnmoons: Chapter 46, Positions of the Satellites of Saturn
 package saturnmoons

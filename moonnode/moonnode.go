@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Moonnode: Chapter 51, Passages of the Moon through the Nodes.
 package moonnode

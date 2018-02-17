@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Circle: Chapter 20, Smallest Circle containing three Celestial Bodies.
 package circle

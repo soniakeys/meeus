@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Parallactic: Chapter 14, The Parallactic Angle, and three other Topics.
 package parallactic

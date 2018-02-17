@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Illum: Chapter 41, Illuminated Fraction of the Disk and Magnitude of a Planet.
 //

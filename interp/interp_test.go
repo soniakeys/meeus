@@ -1,5 +1,5 @@
 // Copyright 2012 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 package interp_test
 

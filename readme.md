@@ -12,3 +12,7 @@ there is a package "base" with additional functions that may not be described
 in the book but are useful with multiple other packages.
 
 See meeus package documentation for a chapter title cross-reference.
+
+All software in this repository is copyright Sonia Keys and licensed with the
+MIT license.
+

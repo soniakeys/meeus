@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Sidereal: Chapter 12, Sidereal Time at Greenwich.
 package sidereal

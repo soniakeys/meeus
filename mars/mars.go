@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Mars: Chapter 42, Ephemeris for Physical Observations of Mars.
 package mars

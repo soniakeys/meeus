@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Jupitermoons: Chapter 44, Positions of the Satellites of Jupiter.
 package jupitermoons

@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Elementequinox: Chapter 24, Reduction of Ecliptical Elements
 // from one Equinox to another one.

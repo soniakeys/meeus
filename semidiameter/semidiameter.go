@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Semidiameter: Chapter 55, Semidiameters of the Sun, Moon, and Planets.
 package semidiameter

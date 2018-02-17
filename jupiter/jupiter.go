@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Jupiter: Chapter 43, Ephemeris for Physical Observations of Jupiter.
 package jupiter

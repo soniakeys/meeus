@@ -1,5 +1,5 @@
 // Copyright 2013 Sonia Keys
-// License MIT: http://www.opensource.org/licenses/MIT
+// License: MIT
 
 // Solardisk: Chapter 29, Ephemeris for Physical Observations of the Sun.
 package solardisk
