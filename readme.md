@@ -17,48 +17,7 @@ See meeus package documentation for a chapter title cross-reference.
 
 ## Install
 
-### Go get
-
-Technically, `go get github.com/soniakeys/meeus/...` is sufficient.
-
-The tests also require the sexagesimal package, so use the -t option to prompt
-`go get` to find it as a test dependency:
-
-    go get -t github.com/soniakeys/meeus/...
-
-### Git clone
-
-Alternatively, you can clone the repository into an appropriate place under
-your GOPATH.  To clone into the same place as `go get` for example, assuming
-the default GOPATH of ~/go, you would cd to `~/go/src/github.com/soniakeys`
-before running the clone command.
-
-    cd <somewhere under GOPATH>
-    git clone https://github.com/soniakeys/meeus
-
-The meeus package depends on the external package github.com/soniakeys/unit,
-so you may need to `go get` or `git clone` the unit package.  And again, to
-run tests, you will need the sexagesimal package.  You can use `go get` or
-`git clone` as you prefer.
-
-### Dep
-
-You can also use dep (https://golang.github.io/dep/) to vendor the sexagesimal
-and unit packages.  If you do this then these dependencies do not otherwise
-need to be installed.  That is, you don't need the `-t` on `go get` and you
-don't need to `git clone` sexagesimal or unit.
-
-To use dep, first read about dep on the website linked above and install it.
-Then install meeus with either `go get` or `git clone`.  Finally, from the
-installed meeus directory, type
-
-    dep ensure
-
-This will "vendor" the sexagesimal and unit packages, installing them under the
-`vendor` subdirectory and also installing specific versions of sexagesimal and
-unit known to work with the version of meeus that you just installed.
-
-## VSOP87
+### VSOP87
 
 Routines of the `planetposition` package require "VSOP87" data files.  These
 files should be available from public sources, for example
@@ -72,6 +31,15 @@ the eight files
 There are no requirements on where you place these files in your file system
 but you may find it convenient to create a directory for them and set an
 environment variable `VSOP87` to this directory.
+
+### Install package software with go get
+
+Technically, `go get github.com/soniakeys/meeus/...` is sufficient.
+
+The tests also require the sexagesimal package, so use the -t option to prompt
+`go get` to find it as a test dependency:
+
+    go get -t github.com/soniakeys/meeus/...
 
 ### Tests
 
@@ -88,6 +56,18 @@ the VSOP87 files, use
     go test -tags nopp ./...
 
 ("nopp" for no planet positions)
+
+### Vgo
+
+Experimentally, you can try [vgo](https://research.swtch.com/vgo).
+
+To run package tests, clone the repository -- anywhere! it doesn't have to
+be under GOPATH -- and from the cloned directory run
+
+    vgo test all
+
+Vgo will fetch the sexagesimal test dependency as needed and run all
+package tests.
 
 ## Copyright and license
 

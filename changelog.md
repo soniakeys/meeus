@@ -3,17 +3,13 @@
 Really just a few notes about tagged releases.  Complete change history is
 in git, of course.
 
-## v2.0.0, 18 Feb 2018
+## v2.0.0, 22 Feb 2018
 
 This new release adds a semantic version number to the few small changes and
 bug fixes since the 3 Dec 2016 version.  This version remains compatible with
 the 3 Dec 2016 version.  However, as the 3 Dec 2016 version introduced API
 changes over the 31 Dec 2014 version tagged "v1", this version is given a new
 major version number in the semantic version scheme.
-
-Also new is experimental support for "dep" (https://golang.github.io/dep/).
-New instructions in the readme tell how to run dep to ensure consistent
-dependent library versions.
 
 ## 3 Dec 2016
 
