@@ -1,17 +1,37 @@
 # Change log
 
-Really just a few notes about tagged releases.  Complete change history is
-in git, of course.
+## 3 Mar 2018
 
-## v2.0.0, 22 Feb 2018
+Sorry, but I rewrote some history in the interest of assigning sensible
+semantic version numbers.  (This prompted by vgo.)
 
-This new release adds a semantic version number to the few small changes and
-bug fixes since the 3 Dec 2016 version.  This version remains compatible with
-the 3 Dec 2016 version.  However, as the 3 Dec 2016 version introduced API
-changes over the 31 Dec 2014 version tagged "v1", this version is given a new
-major version number in the semantic version scheme.
+* I left the tag "v1" on the version of 31 Dec 2014 but set some new tags on
+historical versions after that.
 
-## 3 Dec 2016
+* I had previously identified 3 Dec 2016 as a completion date for some
+significant breaking changes.  I'm now tagging this as v2.0.0 to recognize
+the breaking changes.
+
+* I'm now identifying 23 Jun 2017 as a date when some bug fixes and minor API
+additions were complete.  For this I'm bumping the minor version to v2.1.0
+
+
+## v3.0.0, 3 Mar 2018
+
+This is an attempt to follow the guidelines of the initial presentation of
+vgo.  There are no functional changes between v3.0.0 and v2.0.0 but this new
+major version number is introduced to distinguish the new "module" structure
+of putting major version v3 in a v3 subdirectory.
+
+
+## v2.1.0, 22 Feb 2018
+
+This release bumps the minor version for the few small changes and bug fixes
+since the 3 Dec 2016 v2.0.0 version.  This version remains API compatible with
+the 3 Dec 2016 version.
+
+
+## v2.0.0 3 Dec 2016
 
 Breaking changes, mostly driven by the sexagesimal formatting.  The formatting
 routines are moved to an external package now.  They rely on types defined in

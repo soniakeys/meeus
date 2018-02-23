@@ -6,6 +6,16 @@ Selected algorithms from the book "Astronomical Algorithms"
 by Jean Meeus, following the second edition, copyright 1998,
 with corrections as of August 10, 2009.
 
+## Repository organization
+
+The branch "master" has the current version.  Tags exist with "semantic
+versions" with a three-part major.minor.fix format like `v3.0.0`.  Older
+versions can be checked out by tag.  Also a branch or branches should exist
+for older versions.
+
+Beginning with v3.0.0, code will be organized as a vgo "module" in a
+subdirectory, named like `v3` corresponding to the current major version.
+
 ## Package organization
 
 Package meeus is a documentation-only package.  Algorithms are implemented
