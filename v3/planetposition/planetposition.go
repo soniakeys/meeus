@@ -26,6 +26,7 @@ import (
 	"io/ioutil"
 	"math"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -104,7 +105,7 @@ func LoadPlanetPath(ibody int, path string) (*V87Planet, error) {
 	if ibody < 0 || ibody >= nPlanets {
 		return nil, errors.New("Invalid planet.")
 	}
-	data, err := ioutil.ReadFile(path + "/VSOP87B." + ext[ibody])
+	data, err := ioutil.ReadFile(filepath.Join(path, "VSOP87B."+ext[ibody]))
 	if err != nil {
 		return nil, err
 	}
