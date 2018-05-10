@@ -1,5 +1,9 @@
 # Change log
 
+## v3.0.1, 9 May 2018
+
+Bug fix: Fixed a hardcoded path separator character.
+
 ## 3 Mar 2018
 
 Sorry, but I rewrote some history in the interest of assigning sensible
