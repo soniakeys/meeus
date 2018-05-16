@@ -329,7 +329,7 @@ func (d *Len5) Extremum() (x, y float64, err error) {
 	nCoeff := []float64{
 		6*(d.b+d.c) - d.h - d.j,
 		0,
-		3 * (d.h + d.k),
+		3 * (d.h + d.j),
 		2 * d.k,
 	}
 	den := d.k - 12*d.f

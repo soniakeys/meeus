@@ -72,7 +72,7 @@ func JDToCalendar(jd float64) (year, month int, day float64) {
 	zf, f := math.Modf(jd + .5)
 	z := int64(zf)
 	a := z
-	if z >= 2299151 {
+	if z >= 2299161 {
 		α := base.FloorDiv64(z*100-186721625, 3652425)
 		a = z + 1 + α - base.FloorDiv64(α, 4)
 	}
