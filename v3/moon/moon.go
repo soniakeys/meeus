@@ -70,7 +70,7 @@ func newMoon(jde float64) *moon {
 	D := unit.AngleFromDeg(base.Horner(T,
 		297.8501921, 445267.1114034, -.0018819, 1/545868, -1/113065000)).Rad()
 	M := unit.AngleFromDeg(base.Horner(T,
-		357.5291092, 35999.0502909, -.0001535, 1/24490000)).Rad()
+		357.5291092, 35999.0502909, -.0001536, 1/24490000)).Rad()
 	Mʹ := unit.AngleFromDeg(base.Horner(T,
 		134.9633964, 477198.8675055, .0087414, 1/69699, -1/14712000)).Rad()
 	E := base.Horner(T, 1, -.002516, -.0000074)
