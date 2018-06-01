@@ -28,7 +28,7 @@ func jdToCFrac(jd float64) (cen, dayFrac float64) {
 // The polynomial is in centuries from J2000.0, as given by JDToCFrac.
 // Coefficients are those adopted in 1982 by the International Astronomical
 // Union and are given in (12.2) p. 87.
-var iau82 = []float64{24110.54841, 8640184.812866, 0.093104, 0.0000062}
+var iau82 = []float64{24110.54841, 8640184.812866, 0.093104, -0.0000062}
 
 // Mean returns mean sidereal time at Greenwich for a given JD.
 //

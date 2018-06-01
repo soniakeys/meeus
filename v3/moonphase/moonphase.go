@@ -228,7 +228,7 @@ func (m *mp) flc() float64 {
 		-.0018*math.Sin(m.Mʹ-2*m.F) +
 		-.0007*math.Sin(m.Mʹ+2*m.F) +
 		-.0004*math.Sin(3*m.Mʹ) +
-		-.00034*math.Sin(2*m.Mʹ-m.M) +
+		-.00034*math.Sin(2*m.Mʹ-m.M)*m.E +
 		.00032*math.Sin(m.M+2*m.F)*m.E +
 		.00032*math.Sin(m.M-2*m.F)*m.E +
 		-.00028*math.Sin(m.Mʹ+2*m.M)*m.E*m.E +

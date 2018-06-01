@@ -70,7 +70,7 @@ func newMoon(jde float64) *moon {
 	D := unit.AngleFromDeg(base.Horner(T,
 		297.8501921, 445267.1114034, -.0018819, 1/545868, -1/113065000)).Rad()
 	M := unit.AngleFromDeg(base.Horner(T,
-		357.5291092, 35999.0502909, -.0001535, 1/24490000)).Rad()
+		357.5291092, 35999.0502909, -.0001536, 1/24490000)).Rad()
 	Mʹ := unit.AngleFromDeg(base.Horner(T,
 		134.9633964, 477198.8675055, .0087414, 1/69699, -1/14712000)).Rad()
 	E := base.Horner(T, 1, -.002516, -.0000074)
@@ -173,9 +173,9 @@ func (m *moon) pa(λ, β, b unit.Angle) unit.Angle {
 
 func (m *moon) sun(λ, β unit.Angle, Δ float64, earth *pp.V87Planet) (l0, b0 unit.Angle) {
 	λ0, _, R := solar.ApparentVSOP87(earth, m.jde)
-	ΔR := unit.Angle(Δ / (R * base.AU))
-	λH := λ0 + math.Pi + ΔR.Mul(β.Cos()*(λ0-λ).Sin())
-	βH := ΔR * β
+	ΔR := Δ / (R * base.AU)
+	λH := λ0 + math.Pi + unit.AngleFromDeg(57.296).Mul(ΔR*(β.Cos()*(λ0-λ).Sin()))
+	βH := β.Mul(ΔR)
 	return m.lib(λH, βH)
 }
 

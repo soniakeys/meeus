@@ -149,7 +149,7 @@ func Mercury84(r, Δ float64, i unit.Angle) float64 {
 // and i the phase angle.
 func Venus84(r, Δ float64, i unit.Angle) float64 {
 	return base.Horner(i.Deg(), -4.4+5*math.Log10(r*Δ),
-		.0009, -.000239, .00000065)
+		.0009, .000239, -.00000065)
 }
 
 // Mars84 computes the visual magnitude of Mars.
@@ -182,7 +182,7 @@ func Jupiter84(r, Δ float64, i unit.Angle) float64 {
 // of the Sun and the Earth, measured in the plane of the ring.
 func Saturn84(r, Δ float64, B, ΔU unit.Angle) float64 {
 	s := math.Abs(B.Sin())
-	return -8.88 + 5*math.Log10(r*Δ) + .044/math.Abs(ΔU.Deg()) -
+	return -8.88 + 5*math.Log10(r*Δ) + .044*math.Abs(ΔU.Deg()) -
 		2.6*s + 1.25*s*s
 }
 

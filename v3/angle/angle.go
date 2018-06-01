@@ -33,7 +33,8 @@ func Sep(r1, d1, r2, d2 unit.Angle) unit.Angle {
 		return unit.Angle(math.Acos(cd))
 	}
 	// (17.2) p. 109
-	return unit.Angle(math.Hypot((r2-r1).Rad()*cd1, (d2 - d1).Rad()))
+	dm := (d1 + d2) / 2
+	return unit.Angle(math.Hypot((r2-r1).Rad()*dm.Cos(), (d2 - d1).Rad()))
 }
 
 // MinSep returns the minimum separation between two moving objects.
@@ -145,7 +146,7 @@ func SepPauwels(r1, d1, r2, d2 unit.Angle) unit.Angle {
 //
 // The position angle result is measured counter-clockwise from North.
 func RelativePosition(r1, d1, r2, d2 unit.Angle) unit.Angle {
-	sΔr, cΔr := (r2 - r1).Sincos()
+	sΔr, cΔr := (r1 - r2).Sincos()
 	sd2, cd2 := d2.Sincos()
 	return unit.Angle(math.Atan2(sΔr, cd2*d1.Tan()-sd2*cΔr))
 }
