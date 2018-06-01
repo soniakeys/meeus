@@ -173,9 +173,9 @@ func (m *moon) pa(λ, β, b unit.Angle) unit.Angle {
 
 func (m *moon) sun(λ, β unit.Angle, Δ float64, earth *pp.V87Planet) (l0, b0 unit.Angle) {
 	λ0, _, R := solar.ApparentVSOP87(earth, m.jde)
-	ΔR := unit.Angle(Δ / (R * base.AU))
-	λH := λ0 + math.Pi + ΔR.Mul(β.Cos()*(λ0-λ).Sin())
-	βH := ΔR * β
+	ΔR := Δ / (R * base.AU)
+	λH := λ0 + math.Pi + unit.AngleFromDeg(57.296).Mul(ΔR*(β.Cos()*(λ0-λ).Sin()))
+	βH := β.Mul(ΔR)
 	return m.lib(λH, βH)
 }
 
