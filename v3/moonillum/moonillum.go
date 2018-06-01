@@ -83,7 +83,7 @@ func PhaseAngle3(jde float64) unit.Angle {
 	D := unit.AngleFromDeg(base.Horner(T, 297.8501921,
 		445267.1114034, -.0018819, 1/545868, -1/113065000)).Mod1().Rad()
 	M := unit.AngleFromDeg(base.Horner(T,
-		357.5291092, 35999.0502909, -.0001535, 1/24490000)).Mod1().Rad()
+		357.5291092, 35999.0502909, -.0001536, 1/24490000)).Mod1().Rad()
 	Mʹ := unit.AngleFromDeg(base.Horner(T, 134.9633964,
 		477198.8675055, .0087414, 1/69699, -1/14712000)).Mod1().Rad()
 	return math.Pi - unit.Angle(D) + unit.AngleFromDeg(
