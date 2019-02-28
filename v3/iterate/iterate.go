@@ -33,7 +33,7 @@ func DecimalPlaces(better BetterFunc, start float64, places, maxIterations int) 
 	return 0, errors.New("Maximum iterations reached")
 }
 
-// FullPrecison iterates to (nearly) the full precision of a float64.
+// FullPrecision iterates to (nearly) the full precision of a float64.
 //
 // To allow for a little bit of floating point jitter, FullPrecision iterates
 // to 15 significant figures, which is the maximum number of full significant
