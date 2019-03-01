@@ -163,7 +163,7 @@ func (d *Len3) Extremum() (x, y float64, err error) {
 	return x, y, nil
 }
 
-// Len3Zero finds a zero of the quadratic function represented by the table.
+// Zero finds a zero of the quadratic function represented by the table.
 //
 // That is, it returns an x value that yields y=0.
 //
@@ -350,7 +350,7 @@ func (d *Len5) Extremum() (x, y float64, err error) {
 	return x, y, nil
 }
 
-// Len5Zero finds a zero of the quartic function represented by the table.
+// Zero finds a zero of the quartic function represented by the table.
 //
 // That is, it returns an x value that yields y=0.
 //

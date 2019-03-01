@@ -48,7 +48,7 @@ var (
 	_J  = unit.AngleFromDeg(.00651966)
 )
 
-// ReduceB1950ToJ2000 reduces orbital elements of a solar system body from
+// ReduceB1950FK4ToJ2000FK5 reduces orbital elements of a solar system body from
 // equinox B1950 in the FK4 system to equinox J2000 in the FK5 system.
 func ReduceB1950FK4ToJ2000FK5(eFrom, eTo *Elements) *Elements {
 	W := _L + eFrom.Node

@@ -239,7 +239,7 @@ func NewEclipticPrecessor(epochFrom, epochTo float64) *EclipticPrecessor {
 	return p
 }
 
-// EclipticPrecess precesses coordinates eclFrom, leaving result in eclTo.
+// Precess precesses coordinates eclFrom, leaving result in eclTo.
 //
 // The same struct may be used for eclFrom and eclTo.
 // EclTo is returned for convenience.
